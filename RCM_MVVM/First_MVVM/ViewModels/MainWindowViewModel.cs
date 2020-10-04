@@ -4,13 +4,14 @@ using System;
 using System.Windows.Controls;
 using First_MVVM.Models;
 using System.Data;
+using First_MVVM.Views;
+using Prism.Interactivity.InteractionRequest;
+using First_MVVM.Notifications;
 
 namespace First_MVVM.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
-        DB_Search dB_Search = new DB_Search();
-
         private string _title = "Prism Application";
         public string Title
         {
@@ -46,9 +47,16 @@ namespace First_MVVM.ViewModels
 
         public DelegateCommand<object> LoginCommand { get; private set; }
 
+        public InteractionRequest<ICustomNotification> RegisterAccountViewRequest { get; set; }
+
+        public DelegateCommand RegisterAccountViewCommand { get; set; }
+
         public MainWindowViewModel()
         {
             LoginCommand = new DelegateCommand<object>(LoginExecute);
+
+            RegisterAccountViewRequest = new InteractionRequest<ICustomNotification>();
+            RegisterAccountViewCommand = new DelegateCommand(RaiseRegisterAccountView);
         }
 
         public void LoginExecute(object parameter) 
@@ -58,10 +66,10 @@ namespace First_MVVM.ViewModels
             if (passwordBox != null) { PassWord = passwordBox.Password; }
 
             if (!String.IsNullOrWhiteSpace(UserName) && !String.IsNullOrWhiteSpace(PassWord))
-            {
-                DataTable _userInfo = dB_Search.User_Info(UserName);
+            { 
+                string password = "123456";
 
-                if (_userInfo.Rows[0]["password"].ToString() == PassWord)
+                if (password == PassWord)
                 {
                     UpdateText = "登入成功";
                 }
@@ -74,6 +82,11 @@ namespace First_MVVM.ViewModels
             {
                 UpdateText = "帳號密碼不可為空白";
             }
+        }
+
+        public void RaiseRegisterAccountView()
+        {
+            RegisterAccountViewRequest.Raise(new CustomNotification { Title = "Register Password" });
         }
     }
 }

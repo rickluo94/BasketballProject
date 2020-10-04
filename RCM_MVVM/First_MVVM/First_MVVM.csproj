@@ -15,4 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ModuleA\ModuleA.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Notifications\" />
+  </ItemGroup>
 </Project>

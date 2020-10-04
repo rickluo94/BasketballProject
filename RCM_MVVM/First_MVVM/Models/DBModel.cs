@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Text;
+using System.Windows;
 using MySql.Data.MySqlClient;
 
 namespace First_MVVM.Models
@@ -18,13 +17,8 @@ namespace First_MVVM.Models
         public DataTable DatabaseQuery(string DatabaseName, string QueryString)
         {
             DataTable ReaultDataTable = new DataTable();
-            string ConnectString;
-
-            //確認有無指定資料庫
-            if ((DatabaseName.Length == 0) || (DatabaseName == "null"))
-            { ConnectString = "server=" + DB_IP + ";uid=" + DB_AccountNumber + ";pwd=" + DB_Password + ";Pooling=false;"; }
-            else
-            { ConnectString = "server=" + DB_IP + ";uid=" + DB_AccountNumber + ";pwd=" + DB_Password + ";database=" + DatabaseName + ";Pooling=true;"; }
+            string ConnectString = $"server={DB_IP};uid={DB_AccountNumber};pwd={DB_Password};Pooling=false;";
+            
 
             try
             {
@@ -36,9 +30,9 @@ namespace First_MVVM.Models
                 }
                 Connection.Close();
             }
-            catch //(Exception ex)
+            catch (Exception ex)
             {
-                //MessageBox.Show(ex.Message.ToString() + "(DatabaseQuery)");
+                MessageBox.Show(ex.Message.ToString() + "(DatabaseQuery)");
             }
 
             return ReaultDataTable;

@@ -27,6 +27,7 @@ namespace First_MVVM
         {
             base.ConfigureViewModelLocator();
             ViewModelLocationProvider.Register<MainWindow, MainWindowViewModel>();
+            ViewModelLocationProvider.Register<RegisterAccountView, RegisterAccountViewModel>();
         }
 
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
