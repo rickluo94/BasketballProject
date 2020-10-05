@@ -1,13 +1,13 @@
 ﻿using System.Windows.Controls;
 
-namespace First_MVVM.Views
+namespace First_MVVM.Views.RegisterStep
 {
     /// <summary>
     /// Interaction logic for PrismUserControl1
     /// </summary>
-    public partial class RegisterAccountView : UserControl
+    public partial class RegisterPasswordView : UserControl
     {
-        public RegisterAccountView()
+        public RegisterPasswordView()
         {
             InitializeComponent();
         }

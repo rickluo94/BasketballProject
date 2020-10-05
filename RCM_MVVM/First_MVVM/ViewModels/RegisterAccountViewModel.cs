@@ -1,45 +1,74 @@
-﻿using Prism.Commands;
+﻿using First_MVVM.Notifications;
+using Prism.Commands;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
 using System;
-using First_MVVM.Notifications;
 using System.Windows.Controls;
 
 namespace First_MVVM.ViewModels
 {
     public class RegisterAccountViewModel : BindableBase, IInteractionRequestAware
     {
+
+        private string _AccountStr;
+
+        public string AccountStr
+        {
+            get { return _AccountStr; }
+            set { SetProperty(ref _AccountStr, value); }
+        }
+
+        private string _noticeText;
+
+        public string NoticeText
+        {
+            get { return _noticeText; }
+            set { SetProperty(ref _noticeText, value); }
+        }
+
+
         public DelegateCommand CancelCommand { get; private set; }
         public DelegateCommand<object> CheckCommand { get; private set; }
-
-        private string _passwordBox;
-        public string PasswordBox
-        {
-            get { return _passwordBox; }
-            set { SetProperty(ref _passwordBox, value); }
-        }
+        public InteractionRequest<ICustomNotification> RegisterPasswordViewRequest { get; set; }
+        public DelegateCommand RegisterPasswordViewCommand { get; set; }
 
         public RegisterAccountViewModel()
         {
             CancelCommand = new DelegateCommand(CancelInteraction);
-            CheckCommand = new DelegateCommand<object>(CheckPassword);
-        }
+            CheckCommand = new DelegateCommand<object>(CheckAccount);
 
-        private void CheckPassword(object parameter)
-       {
-            var txtPassword = parameter as TextBox;
-            if (txtPassword.Text == "123")
+            RegisterPasswordViewRequest = new InteractionRequest<ICustomNotification>();
+            RegisterPasswordViewCommand = new DelegateCommand(RaiseRegisterPasswordView);
+        }
+        private void CheckAccount(Object parameter)
+        {
+            var AccountBox = parameter as TextBox;
+            if (AccountBox.Text != "123")
             {
-                txtPassword.Text = "456";
+                NoticeText = "可以使用";
+            }
+            else
+            {
+                NoticeText = "不可以使用";
             }
         }
 
         private void CancelInteraction()
         {
+            AccountStr = null;
+            NoticeText = null;
             FinishInteraction?.Invoke();
         }
 
-        
+        private void RaiseRegisterPasswordView()
+        {
+            if (!string.IsNullOrWhiteSpace(AccountStr))
+            {
+                RegisterPasswordViewRequest.Raise(new CustomNotification { Title = "Register Password"});
+            }
+        }
+
+
 
         public Action FinishInteraction { get; set; }
 
@@ -50,5 +79,6 @@ namespace First_MVVM.ViewModels
             get { return _notification; }
             set { SetProperty(ref _notification, (ICustomNotification)value); }
         }
+
     }
 }

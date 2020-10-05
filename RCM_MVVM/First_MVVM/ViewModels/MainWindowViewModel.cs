@@ -35,8 +35,6 @@ namespace First_MVVM.ViewModels
             set { _passWord = value; }
         }
 
-
-
         private string _updateText;
         public string UpdateText
         {
@@ -59,7 +57,7 @@ namespace First_MVVM.ViewModels
             RegisterAccountViewCommand = new DelegateCommand(RaiseRegisterAccountView);
         }
 
-        public void LoginExecute(object parameter) 
+        private void LoginExecute(object parameter) 
         {
             var passwordBox = parameter as PasswordBox;
 
@@ -84,9 +82,9 @@ namespace First_MVVM.ViewModels
             }
         }
 
-        public void RaiseRegisterAccountView()
+        private void RaiseRegisterAccountView()
         {
-            RegisterAccountViewRequest.Raise(new CustomNotification { Title = "Register Password" });
+            RegisterAccountViewRequest.Raise(new CustomNotification { Title = "Register Account" });
         }
     }
 }
