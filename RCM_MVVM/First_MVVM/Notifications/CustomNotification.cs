@@ -7,7 +7,8 @@ namespace First_MVVM.Notifications
     {
         public CustomNotification()
         {
-           
+
         }
+        
     }
 }

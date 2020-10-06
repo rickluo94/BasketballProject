@@ -1,11 +1,7 @@
-﻿using Prism.Modularity;
+﻿using Prism.Ioc;
 using Prism.Unity;
-using Prism.Ioc;
-using First_MVVM.Views;
-using First_MVVM.Views.RegisterStep;
 using System.Windows;
-using Prism.Mvvm;
-using First_MVVM.ViewModels;
+using First_MVVM.Views;
 
 namespace First_MVVM
 {
@@ -22,20 +18,6 @@ namespace First_MVVM
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
 
-        }
-
-        protected override void ConfigureViewModelLocator()
-        {
-            base.ConfigureViewModelLocator();
-            ViewModelLocationProvider.Register<MainWindow, MainWindowViewModel>();
-            ViewModelLocationProvider.Register<RegisterAccountView, RegisterAccountViewModel>();
-            ViewModelLocationProvider.Register<RegisterPasswordView, RegisterPasswordViewModel>();
-            ViewModelLocationProvider.Register<RegisterEmailView, RegisterEmailViewModel>();
-        }
-
-        protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
-        {
-            moduleCatalog.AddModule<ModuleA.ModuleAModule>();
         }
     }
 }

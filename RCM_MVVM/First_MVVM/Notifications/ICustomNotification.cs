@@ -4,6 +4,6 @@ namespace First_MVVM.Notifications
 {
     public interface ICustomNotification : IConfirmation
     {
-        
+
     }
 }

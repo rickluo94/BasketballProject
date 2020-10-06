@@ -46,8 +46,10 @@ namespace First_MVVM.ViewModels
         public DelegateCommand<object> LoginCommand { get; private set; }
 
         public InteractionRequest<ICustomNotification> RegisterAccountViewRequest { get; set; }
+        public InteractionRequest<ICustomNotification> RegisterStepTabRequest { get; set; }
 
         public DelegateCommand RegisterAccountViewCommand { get; set; }
+        public DelegateCommand RegisterStepTabCommand { get; set; }
 
         public MainWindowViewModel()
         {
@@ -55,6 +57,8 @@ namespace First_MVVM.ViewModels
 
             RegisterAccountViewRequest = new InteractionRequest<ICustomNotification>();
             RegisterAccountViewCommand = new DelegateCommand(RaiseRegisterAccountView);
+            RegisterStepTabRequest = new InteractionRequest<ICustomNotification>();
+            RegisterStepTabCommand = new DelegateCommand(RegisterStepTabView);
         }
 
         private void LoginExecute(object parameter) 
@@ -85,6 +89,11 @@ namespace First_MVVM.ViewModels
         private void RaiseRegisterAccountView()
         {
             RegisterAccountViewRequest.Raise(new CustomNotification { Title = "Register Account" });
+        }
+
+        private void RegisterStepTabView()
+        {
+            RegisterStepTabRequest.Raise(new CustomNotification { Title = "Register Account" });
         }
     }
 }

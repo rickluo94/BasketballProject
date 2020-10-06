@@ -2,14 +2,15 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        xmlns:prism="http://prismlibrary.com/" xmlns:registerStep="clr-namespace:First_MVVM.Views.RegisterStep" FontSize="28"
+        xmlns:prism="http://prismlibrary.com/" FontSize="28"
+        xmlns:View="clr-namespace:First_MVVM.Views"
         prism:ViewModelLocator.AutoWireViewModel="True"
         Title="{Binding Title}" Height="350" Width="525" WindowStartupLocation="CenterScreen" >
     <i:Interaction.Triggers>
-        <prism:InteractionRequestTrigger SourceObject="{Binding RegisterAccountViewRequest}">
+        <prism:InteractionRequestTrigger SourceObject="{Binding RegisterStepTabRequest}">
             <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
                 <prism:PopupWindowAction.WindowContent>
-                    <registerStep:RegisterAccountView />
+                    <View:RegisterStepTab />
                 </prism:PopupWindowAction.WindowContent>
             </prism:PopupWindowAction>
         </prism:InteractionRequestTrigger>
@@ -57,7 +58,7 @@
         </Button>
             <!-- Row 5 -->
         <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding UpdateText}" />
-        <Button Grid.Row="6" Grid.Column="1" Content="註冊" Command="{Binding RegisterAccountViewCommand}">
+        <Button Grid.Row="6" Grid.Column="1" Content="註冊" Command="{Binding RegisterStepTabCommand}">
             
         </Button>
     </Grid>

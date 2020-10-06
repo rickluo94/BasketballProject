@@ -1,0 +1,163 @@
+﻿<UserControl x:Class="First_MVVM.Views.RegisterStepTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:prism="http://prismlibrary.com/"             
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             Height="350" Width="525">
+    <Grid>
+        <TabControl SelectedIndex="{Binding SelectedStepTabIndex}">
+            <TabItem Header="帳號">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="20"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="20"/>
+                    </Grid.RowDefinitions>
+                    <Button Grid.Row="1" Grid.Column="1" Content="X" Command="{Binding ExitCommand}"/>
+                    <TextBlock Grid.Row="2" Grid.Column="3" Text="帳號:"/>
+                    <TextBox Grid.Row="2" Grid.Column="4" MinWidth="200" Width="auto" Name="AccountBox" Text="{Binding AccountStr, Mode=TwoWay}" >
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="TextChanged">
+                                <i:InvokeCommandAction Command="{Binding AccountCommand}" CommandParameter="{Binding ElementName=AccountBox}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
+                    <TextBlock Grid.Row="2" Grid.Column="5" Width="auto" Text="{Binding NoticeText}"/>
+                    <Button Grid.Row="3" Grid.Column="5" Content="下一步" Width="auto" Command="{Binding NextTabCommand}"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="密碼">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="20"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="20"/>
+                    </Grid.RowDefinitions>
+                    <Button Grid.Row="1" Grid.Column="1" Content="↩" Command="{Binding PreviousTabCommand}"/>
+                    <TextBlock Grid.Row="2" Grid.Column="3" Text="設定密碼:"/>
+                    <PasswordBox Grid.Row="2" Grid.Column="4" MinWidth="200" Width="auto" Name="txtPassword">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="PasswordChanged">
+                                <i:InvokeCommandAction Command="{Binding PasswordCommand}" CommandParameter="{Binding ElementName=txtPassword}"/>
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="Loaded">
+                                <i:InvokeCommandAction Command="{Binding PasswordClearCommand}" CommandParameter="{Binding ElementName=txtPassword}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </PasswordBox>
+                    <TextBlock Grid.Row="2" Grid.Column="5" Width="auto" Text="{Binding NoticeText}"/>
+                    <TextBlock Grid.Row="3" Grid.Column="3" Text="確認密碼:"/>
+                    <PasswordBox Grid.Row="3" Grid.Column="4" MinWidth="200" Width="auto" Name="ConfirmPassword">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="PasswordChanged">
+                                <i:InvokeCommandAction Command="{Binding PasswordConfirmCommand}" CommandParameter="{Binding ElementName=ConfirmPassword}"/>
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="Loaded">
+                                <i:InvokeCommandAction Command="{Binding PasswordClearCommand}" CommandParameter="{Binding ElementName=ConfirmPassword}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </PasswordBox>
+                    <Button Grid.Row="4" Grid.Column="5" Content="下一步" Width="auto" Command="{Binding NextTabCommand}" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="信箱">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="20"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="20"/>
+                    </Grid.RowDefinitions>
+                    <Button Grid.Row="1" Grid.Column="1" Content="↩" Command="{Binding PreviousTabCommand}"/>
+                    <TextBlock Grid.Row="2" Grid.Column="3" Text="信箱:"/>
+                    <TextBox Grid.Row="2" Grid.Column="4" MinWidth="300" Width="auto" Name="EmailBox" Text="{Binding EmailStr}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="TextChanged">
+                                <i:InvokeCommandAction Command="{Binding EmailCommand}" CommandParameter="{Binding ElementName=EmailBox}"/>
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="Loaded">
+                                <i:InvokeCommandAction />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
+                    <TextBlock Grid.Row="2" Grid.Column="5" Width="auto" Text="{Binding NoticeText}"/>
+                    <Button Grid.Row="4" Grid.Column="5" Content="下一步" Width="auto" Command="{Binding NextTabCommand}" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="設定悠遊卡">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="20"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="20"/>
+                    </Grid.RowDefinitions>
+                    <Button Grid.Row="1" Grid.Column="1" Content="↩" Command="{Binding PreviousTabCommand}"/>
+                    <TextBlock Grid.Row="2" Grid.Column="3" Text="感應悠遊卡:"/>
+                    <Button Grid.Row="2" Grid.Column="4" Content="點擊後感應" Command="{Binding ReadCardCommand}"/>
+                    <TextBlock Grid.Row="3" Grid.Column="3" Text="{Binding CardID}"/>
+                    <Button Grid.Row="4" Grid.Column="5" Content="下一步" Width="auto" Command="{Binding ExitCommand}" />
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>
