@@ -16,7 +16,8 @@ namespace First_MVVM.ViewModels
         public DelegateCommand<object> ClearPasswordCommand { get; private set; }
         public DelegateCommand<object> CheckCommand { get; private set; }
         public DelegateCommand<object> ConfirmCommand { get; private set; }
-
+        public InteractionRequest<ICustomNotification> RegisterEmailViewRequest { get; set; }
+        public DelegateCommand RegisterEmailViewCommand { get; set; }
         private string _noticeText;
 
         public string NoticeText
@@ -48,6 +49,13 @@ namespace First_MVVM.ViewModels
             CheckCommand = new DelegateCommand<object>(CheckPassword);
             ConfirmCommand = new DelegateCommand<object>(ConfirmPassword);
             ClearPasswordCommand = new DelegateCommand<object>(ClearPassword);
+            RegisterEmailViewRequest = new InteractionRequest<ICustomNotification>();
+            RegisterEmailViewCommand = new DelegateCommand(RaiseRegisterEmailView);
+        }
+        private void RaiseRegisterEmailView()
+        {
+            RegisterEmailViewRequest.Raise(new CustomNotification { Title = "Register Email"});
+            FinishInteraction?.Invoke();
         }
         private void ClearPassword(object parameter)
         {
@@ -73,6 +81,7 @@ namespace First_MVVM.ViewModels
             else
             {
                 passwordBox.Clear();
+                NoticeText = string.Empty;
             }
         }
         private void ConfirmPassword(object parameter)
@@ -93,6 +102,7 @@ namespace First_MVVM.ViewModels
             else
             {
                 passwordBox.Clear();
+                NoticeText = string.Empty;
             }
         }
         private void CancelInteraction()

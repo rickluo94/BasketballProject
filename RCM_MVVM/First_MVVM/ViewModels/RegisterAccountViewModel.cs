@@ -65,6 +65,7 @@ namespace First_MVVM.ViewModels
             if (!string.IsNullOrWhiteSpace(AccountStr))
             {
                 RegisterPasswordViewRequest.Raise(new CustomNotification { Title = "Register Password"});
+                FinishInteraction?.Invoke();
             }
         }
 
