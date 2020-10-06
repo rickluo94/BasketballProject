@@ -6,6 +6,7 @@ using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
 using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -15,7 +16,7 @@ namespace First_MVVM.ViewModels
     public class RegisterStepTabViewModel : BindableBase, IInteractionRequestAware
     {
         private RegisterModel _registerModel = new RegisterModel();
-        
+        private ElectronicCoinModel _eCM = new ElectronicCoinModel();
         private int _selectedStepTabIndex = 0;
         public int SelectedStepTabIndex
         {
@@ -79,7 +80,6 @@ namespace First_MVVM.ViewModels
 
         public RegisterStepTabViewModel()
         {
-            ElectronicCoinModel.InitCom();
             AccountCommand = new DelegateCommand<TextBox>(CheckAccount);
             PasswordCommand = new DelegateCommand<object>(CheckPassword);
             PasswordConfirmCommand = new DelegateCommand<object>(ConfirmPassword);
@@ -167,9 +167,10 @@ namespace First_MVVM.ViewModels
             }
         }
 
-        private void ReadCard()
+        private async void ReadCard()
         {
-            ElectronicCoinModel.Read_card_id_request();
+            await _eCM.ReadCardID();
+            CardID += _eCM.ResultTable.Rows[0]["Card_ID"].ToString();
         }
 
         private void NextTab()

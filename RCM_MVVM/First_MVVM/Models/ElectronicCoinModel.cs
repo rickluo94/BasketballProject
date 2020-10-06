@@ -5,21 +5,25 @@ using Newtonsoft.Json.Linq;
 using STJ = System.Text.Json;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
+using System.Data;
+using Newtonsoft.Json;
 
 namespace First_MVVM.Models
 {
     public class ElectronicCoinModel
     {
-        public static SerialPort SerialPort;
-        public static Read_card_id_response read_Card_Id_Response = new Read_card_id_response();
-        public static Read_card_id_loop_response read_Card_Id_Loop_Response = new Read_card_id_loop_response();
-        public static Read_card_balance_response read_Card_Balance_Response = new Read_card_balance_response();
-        public static Charge_response charge_Response = new Charge_response();
+        public event EventHandler ReadCardReady;
+        public  SerialPort SerialPort = new SerialPort("COM5", 115200, Parity.None, 8, StopBits.One);//電子投幣機
+        public  Read_card_id_response read_Card_Id_Response = new Read_card_id_response();
+        public  Read_card_id_loop_response read_Card_Id_Loop_Response = new Read_card_id_loop_response();
+        public  Read_card_balance_response read_Card_Balance_Response = new Read_card_balance_response();
+        public  Charge_response charge_Response = new Charge_response();
+        public DataTable ResultTable = new DataTable();
 
         #region Port 通訊參數設定
-        public static bool InitCom()
+        public bool InitCom()
         {
-            SerialPort = new SerialPort("COM5", 115200, Parity.None, 8, StopBits.One);//電子投幣機
             SerialPort.DataReceived += new SerialDataReceivedEventHandler(SerialPort_DataReceived);//DataReceived事件委托
             SerialPort.ReceivedBytesThreshold = 1;
             SerialPort.RtsEnable = true;
@@ -28,7 +32,7 @@ namespace First_MVVM.Models
         #endregion
 
         #region 打開連接埠
-        public static bool OpenPort()
+        public bool OpenPort()
         {
             try
             {
@@ -47,7 +51,7 @@ namespace First_MVVM.Models
         #endregion
 
         #region 收到資料觸發事件判斷是否回傳指令成功(成功後執行相關動作)
-        public static void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        public void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             string response = SerialPort.ReadExisting();
             if (IsJsonFormat(response) == true)
@@ -64,15 +68,23 @@ namespace First_MVVM.Models
                             break;
                         case "read.card_id":
                             read_Card_Id_Response = STJ.JsonSerializer.Deserialize<Read_card_id_response>(response);
+                            ResultTable = (DataTable)JsonConvert.DeserializeObject(response, (typeof(DataTable)));
+                            OnReadCardReady();
                             break;
                         case "read.card_id.loop":
                             read_Card_Id_Loop_Response = STJ.JsonSerializer.Deserialize<Read_card_id_loop_response>(response);
+                            ResultTable = (DataTable)JsonConvert.DeserializeObject(response, (typeof(DataTable)));
+                            OnReadCardReady();
                             break;
                         case "read.card_balance":
                             read_Card_Balance_Response = STJ.JsonSerializer.Deserialize<Read_card_balance_response>(response);
+                            ResultTable = (DataTable)JsonConvert.DeserializeObject(response, (typeof(DataTable)));
+                            OnReadCardReady();
                             break;
                         case "charge":
                             charge_Response = STJ.JsonSerializer.Deserialize<Charge_response>(response);
+                            ResultTable = (DataTable)JsonConvert.DeserializeObject(response, (typeof(DataTable)));
+                            OnReadCardReady();
                             break;
                     }
                 }
@@ -100,11 +112,25 @@ namespace First_MVVM.Models
             }
         }
         #endregion
+        public async Task<DataTable> ReadCardID()
+        {
+            Task<bool> ReadCardTask = Read_card_id_request();
+            if (await ReadCardTask == true)
+            {
+                return ResultTable;
+            }
+            else
+            {
+                return null;
+            }
+        }
 
         #region Read_card_id_request()讀取卡號
-        public static void Read_card_id_request()
+        public async Task<bool> Read_card_id_request()
         {
             SerialPort.Write("{\"action\": \"read.card_id\",\"arg\": [],\"kwarg\": { }}");
+            await Task.Delay(3000);
+            return true;
         }
         public class Read_card_id_response
         {
@@ -125,6 +151,7 @@ namespace First_MVVM.Models
         public void Read_card_id_loop_request()
         {
             SerialPort.Write("{\"action\": \"read.card_id.loop\",\"arg\": [],\"kwarg\": {\"search_timeout\": 300,\"search_view_text\":\"\\u6b61\\u8fce\\u5149\\u81e8\\uff0c\\u8acb\\u9760\\u5361\\uff0c\\u5361\\u7247\\u611f\\u61c9\\u4e2d\",\"success_view_text\": \"\\u8b80\\u5361\\u5b8c\\u6210\\u8acb\\u53d6\\u5361\", \"show_success_message\": false}}");
+            
         }
         public class Read_card_id_loop_response
         {
@@ -203,6 +230,11 @@ namespace First_MVVM.Models
             public int deposit_value { get; set; }
         }
         #endregion
+
+        protected virtual void OnReadCardReady()
+        {
+            ReadCardReady?.Invoke(this, EventArgs.Empty);
+        }
 
         #region 檢查回傳是否符合JSON格式
         private static bool IsJsonFormat(string value)
