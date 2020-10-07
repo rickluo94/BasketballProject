@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Data;
 /*Json.NET相關的命名空間*/
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 
 namespace First_MVVM.Models
 {
@@ -17,10 +17,10 @@ namespace First_MVVM.Models
     {
         private int _TimeOut = 0;
         private string _writeBuffer = string.Empty;
-        private SerialPort _serialPort = new SerialPort("COM5", 115200, Parity.None, 8, StopBits.One);//電子投幣機;
+        private SerialPort _serialPort = new SerialPort("COM5", 115200, Parity.None, 8, StopBits.One);
         TaskCompletionSource<JObject> ResultDataObj;
 
-        #region Port 通訊參數設定
+        #region
         public void InitCom()
         {
             _serialPort.DataReceived += new SerialDataReceivedEventHandler(SerialPort_DataReceived);
@@ -28,7 +28,6 @@ namespace First_MVVM.Models
             _serialPort.RtsEnable = true;
             //Open(_serialPort);
         }
-        #endregion
 
         private void Open(SerialPort comport)
         {
@@ -37,8 +36,11 @@ namespace First_MVVM.Models
                 comport.Open();
             }
         }
+        #endregion
 
-        #region 收到資料觸發事件判斷是否回傳指令成功(成功後執行相關動作)
+
+
+        #region
         public void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             Task.Delay(1000).Wait();
@@ -50,14 +52,7 @@ namespace First_MVVM.Models
             bool IsJson = IsJsonFormat(response);
             if (IsJson == true)
             {
-                JObject _obj = JObject.Parse(response);
-                _is_success = (string)_obj["is_success"];
-                _action = (string)_obj["action"];
-                _card_id = (string)_obj["result"]["card_id"];
-                if (_is_success == "True")
-                {
-                    ResultDataObj.TrySetResult(_obj);
-                }
+                ResultDataObj.TrySetResult(JObject.Parse(response));
             }
             else
             {
@@ -67,41 +62,39 @@ namespace First_MVVM.Models
         }
         #endregion
 
+        public async Task<JObject> WriteCommand(string parameter)
+        {
+            ResultDataObj = new TaskCompletionSource<JObject>();
+            _serialPort.Write(parameter);
+            _writeBuffer = parameter;
+            return await ResultDataObj.Task;
+        }
+
         #region 讀取卡號
         public async Task<JObject> Read_card_id_request()
         {
-            ResultDataObj = new TaskCompletionSource<JObject>();
-            _serialPort.Write("{\"action\": \"read.card_id\",\"arg\": [],\"kwarg\": { }}");
-            _writeBuffer = "{\"action\": \"read.card_id\",\"arg\": [],\"kwarg\": { }}";
-            return await ResultDataObj.Task;
+            return await WriteCommand("{\"action\": \"read.card_id\",\"arg\": [],\"kwarg\": { }}");
         }
         #endregion
 
         #region 連續讀取卡號
         public async Task<JObject> Read_card_id_loop_request()
         {
-            ResultDataObj = new TaskCompletionSource<JObject>();
-            _serialPort.Write("{\"action\": \"read.card_id.loop\",\"arg\": [],\"kwarg\": {\"search_timeout\": 300,\"search_view_text\":\"\\u6b61\\u8fce\\u5149\\u81e8\\uff0c\\u8acb\\u9760\\u5361\\uff0c\\u5361\\u7247\\u611f\\u61c9\\u4e2d\",\"success_view_text\": \"\\u8b80\\u5361\\u5b8c\\u6210\\u8acb\\u53d6\\u5361\", \"show_success_message\": false}}");
-            _writeBuffer = "{\"action\": \"read.card_id.loop\",\"arg\": [],\"kwarg\": {\"search_timeout\": 300,\"search_view_text\":\"\\u6b61\\u8fce\\u5149\\u81e8\\uff0c\\u8acb\\u9760\\u5361\\uff0c\\u5361\\u7247\\u611f\\u61c9\\u4e2d\",\"success_view_text\": \"\\u8b80\\u5361\\u5b8c\\u6210\\u8acb\\u53d6\\u5361\", \"show_success_message\": false}}";
-            return await ResultDataObj.Task;
+            return await WriteCommand("{\"action\": \"read.card_id.loop\",\"arg\": [],\"kwarg\": {\"search_timeout\": 300,\"search_view_text\":\"\\u6b61\\u8fce\\u5149\\u81e8\\uff0c\\u8acb\\u9760\\u5361\\uff0c\\u5361\\u7247\\u611f\\u61c9\\u4e2d\",\"success_view_text\": \"\\u8b80\\u5361\\u5b8c\\u6210\\u8acb\\u53d6\\u5361\", \"show_success_message\": false}}");
         }
         #endregion
 
         #region 讀取卡⽚詳細資訊
         public async Task<JObject> Read_card_balance_request()
         {
-            _serialPort.Write("{\"action\": \"read.card_balance\",\"arg\": [],\"kwarg\": { }}");
-            _writeBuffer = "{\"action\": \"read.card_balance\",\"arg\": [],\"kwarg\": { }}";
-            return await ResultDataObj.Task;
+            return await WriteCommand("{\"action\": \"read.card_balance\",\"arg\": [],\"kwarg\": { }}");
         }
         #endregion
 
         #region 扣款
         public async Task<JObject> Charge_request(int amount)
         {
-            _serialPort.Write("{\"action\": \"charge\",\"arg\": [],\"kwarg\": {\"amount\": " + amount + "}}");
-            _writeBuffer = "{\"action\": \"charge\",\"arg\": [],\"kwarg\": {\"amount\": " + amount + "}}";
-            return await ResultDataObj.Task;
+            return await WriteCommand("{\"action\": \"charge\",\"arg\": [],\"kwarg\": {\"amount\": " + amount + "}}");
         }
         #endregion
 

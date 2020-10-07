@@ -29,12 +29,15 @@
                                 <i:EventTrigger EventName="TextChanged">
                                     <i:InvokeCommandAction Command="{Binding AccountCommand}" CommandParameter="{Binding ElementName=AccountBox}"/>
                                 </i:EventTrigger>
+                                <i:EventTrigger EventName="LostFocus">
+                                    <i:InvokeCommandAction Command="{Binding AccountLostFocusCommand}" CommandParameter="{Binding ElementName=AccountBox}"/>
+                                </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </TextBox>
                         <TextBlock Text="簡訊驗證碼" />
                         <TextBox MinWidth="200" Width="auto" Name="VerifySMBox" Text="{Binding VerifySMStr}"/>
                         <Button Content="發送驗證碼" Width="auto" Command="{Binding SMCommand}" CommandParameter="{Binding ElementName=AccountBox}"/>
-                        <Button Content="驗證" Width="auto" Command="{Binding VerifySMCommand}" CommandParameter="{Binding ElementName=}"/>
+                        <Button Content="驗證" Width="auto" Command="{Binding VerifySMCommand}" CommandParameter="{Binding ElementName=VerifySMBox}"/>
                         <TextBlock Width="auto" Text="{Binding NoticeText}"/>
                         <Button Content="下一步" Width="auto" Command="{Binding NextTabCommand}"/>
                     </StackPanel>

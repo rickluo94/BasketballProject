@@ -74,6 +74,7 @@ namespace First_MVVM.ViewModels
 
 
         public DelegateCommand<TextBox> AccountCommand { get; private set; }
+        public DelegateCommand<TextBox> AccountLostFocusCommand { get; private set; }
         public DelegateCommand<TextBox> SMCommand { get; private set; }
         public DelegateCommand<TextBox> VerifySMCommand { get; private set; }
         public DelegateCommand<object> PasswordCommand { get; private set; }
@@ -88,7 +89,8 @@ namespace First_MVVM.ViewModels
         public RegisterStepTabViewModel()
         {
             _eCM.InitCom();
-            AccountCommand = new DelegateCommand<TextBox>(CheckAccount);
+            AccountCommand = new DelegateCommand<TextBox>(_checkAccount);
+            AccountLostFocusCommand = new DelegateCommand<TextBox>(_isAccountExists);
             SMCommand = new DelegateCommand<TextBox>(SendMessageKey);
             VerifySMCommand = new DelegateCommand<TextBox>(VerifyMessageKey);
             PasswordCommand = new DelegateCommand<object>(CheckPassword);
@@ -101,7 +103,7 @@ namespace First_MVVM.ViewModels
             ExitCommand = new DelegateCommand(ExitInteraction);
         }
 
-        private void CheckAccount(TextBox AccountBox)
+        private void _checkAccount(TextBox AccountBox)
         {
             if (_registerModel.IsPhoneNumber(AccountBox.Text) && AccountBox.Text.Length <= 10)
             {
@@ -111,6 +113,10 @@ namespace First_MVVM.ViewModels
             {
                 NoticeText = "不可用";
             }
+        }
+
+        private void _isAccountExists(TextBox AccountBox)
+        {
             if (AccountBox.Text.Length == 10)
             {
                 if (_dB_Search.CheckUsersExist(AccountBox.Text))
@@ -119,6 +125,7 @@ namespace First_MVVM.ViewModels
                 }
             }
         }
+
         private void SendMessageKey(TextBox AccountBox)
         {
             _SMM.SmSendSampleCode(AccountBox.Text);
@@ -126,7 +133,7 @@ namespace First_MVVM.ViewModels
 
         private void VerifyMessageKey(TextBox VerifySMBox)
         {
-            _dB_Search.Verify_SmPhoneBinding_Confirm(AccountBox.Text, VerifySMBox.Text);
+            _dB_Search.Verify_SmPhoneBinding_Confirm(AccountStr, VerifySMBox.Text);
         }
 
 
