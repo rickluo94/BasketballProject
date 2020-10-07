@@ -1,10 +1,12 @@
 ﻿using First_MVVM.Models;
 using First_MVVM.Notifications;
 using Microsoft.VisualBasic.CompilerServices;
+using Newtonsoft.Json.Linq;
 using Prism.Commands;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
 using System;
+using System.Data;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
@@ -15,8 +17,11 @@ namespace First_MVVM.ViewModels
 {
     public class RegisterStepTabViewModel : BindableBase, IInteractionRequestAware
     {
-        private RegisterModel _registerModel = new RegisterModel();
         private ElectronicCoinModel _eCM = new ElectronicCoinModel();
+        private RegisterModel _registerModel = new RegisterModel();
+        private DB_Search _dB_Search = new DB_Search();
+        private SendMessageModel _SMM = new SendMessageModel();
+
         private int _selectedStepTabIndex = 0;
         public int SelectedStepTabIndex
         {
@@ -69,6 +74,8 @@ namespace First_MVVM.ViewModels
 
 
         public DelegateCommand<TextBox> AccountCommand { get; private set; }
+        public DelegateCommand<TextBox> SMCommand { get; private set; }
+        public DelegateCommand<TextBox> VerifySMCommand { get; private set; }
         public DelegateCommand<object> PasswordCommand { get; private set; }
         public DelegateCommand<object> PasswordConfirmCommand { get; private set; }
         public DelegateCommand<object> PasswordClearCommand { get; private set; }
@@ -80,7 +87,10 @@ namespace First_MVVM.ViewModels
 
         public RegisterStepTabViewModel()
         {
+            _eCM.InitCom();
             AccountCommand = new DelegateCommand<TextBox>(CheckAccount);
+            SMCommand = new DelegateCommand<TextBox>(SendMessageKey);
+            VerifySMCommand = new DelegateCommand<TextBox>(VerifyMessageKey);
             PasswordCommand = new DelegateCommand<object>(CheckPassword);
             PasswordConfirmCommand = new DelegateCommand<object>(ConfirmPassword);
             PasswordClearCommand = new DelegateCommand<object>(PasswordClear);
@@ -93,7 +103,7 @@ namespace First_MVVM.ViewModels
 
         private void CheckAccount(TextBox AccountBox)
         {
-            if (AccountBox.Text != "123")
+            if (_registerModel.IsPhoneNumber(AccountBox.Text) && AccountBox.Text.Length <= 10)
             {
                 NoticeText = "可用";
             }
@@ -101,7 +111,24 @@ namespace First_MVVM.ViewModels
             {
                 NoticeText = "不可用";
             }
+            if (AccountBox.Text.Length == 10)
+            {
+                if (_dB_Search.CheckUsersExist(AccountBox.Text))
+                {
+                    NoticeText = "此帳號已存在";
+                }
+            }
         }
+        private void SendMessageKey(TextBox AccountBox)
+        {
+            _SMM.SmSendSampleCode(AccountBox.Text);
+        }
+
+        private void VerifyMessageKey(TextBox VerifySMBox)
+        {
+            _dB_Search.Verify_SmPhoneBinding_Confirm(AccountBox.Text, VerifySMBox.Text);
+        }
+
 
         private void CheckPassword(object parameter)
         {
@@ -169,8 +196,8 @@ namespace First_MVVM.ViewModels
 
         private async void ReadCard()
         {
-            await _eCM.ReadCardID();
-            CardID += _eCM.ResultTable.Rows[0]["Card_ID"].ToString();
+            JObject _data = await _eCM.Read_card_id_request();
+            CardID = (string)_data["result"]["card_id"];
         }
 
         private void NextTab()
@@ -186,6 +213,7 @@ namespace First_MVVM.ViewModels
             AccountStr = null;
             EmailStr = null;
             NoticeText = null;
+            CardID = null;
             SelectedStepTabIndex = 0;
             FinishInteraction?.Invoke();
         }
@@ -233,8 +261,6 @@ namespace First_MVVM.ViewModels
                 return false;
             }
         }
-
-
 
         public Action FinishInteraction { get; set; }
 
