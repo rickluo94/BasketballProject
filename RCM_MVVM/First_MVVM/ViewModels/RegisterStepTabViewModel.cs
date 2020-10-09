@@ -12,15 +12,20 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using EasyCardModel;
+using System.Windows.Navigation;
+using DBModel;
 
 namespace First_MVVM.ViewModels
 {
     public class RegisterStepTabViewModel : BindableBase, IInteractionRequestAware
     {
-        private ElectronicCoinModel _eCM = new ElectronicCoinModel();
+        //private ElectronicCoinModel _eCM = new ElectronicCoinModel();
         private RegisterModel _registerModel = new RegisterModel();
         private DB_Search _dB_Search = new DB_Search();
         private SendMessageModel _SMM = new SendMessageModel();
+        private EasyCard easyCard = new EasyCard();
+        private DB _dB = new DB();
 
         private int _selectedStepTabIndex = 0;
         public int SelectedStepTabIndex
@@ -85,10 +90,11 @@ namespace First_MVVM.ViewModels
         public DelegateCommand NextTabCommand { get; private set; }
         public DelegateCommand PreviousTabCommand { get; private set; }
         public DelegateCommand ExitCommand { get; private set; }
+        
 
         public RegisterStepTabViewModel()
         {
-            _eCM.InitCom();
+            easyCard.SetDevicePort("COM4", 115200, 500); easyCard.Open();
             AccountCommand = new DelegateCommand<TextBox>(_checkAccount);
             AccountLostFocusCommand = new DelegateCommand<TextBox>(_isAccountExists);
             SMCommand = new DelegateCommand<TextBox>(SendMessageKey);
@@ -103,27 +109,31 @@ namespace First_MVVM.ViewModels
             ExitCommand = new DelegateCommand(ExitInteraction);
         }
 
-        private void _checkAccount(TextBox AccountBox)
+        private async void _checkAccount(TextBox AccountBox)
         {
-            if (_registerModel.IsPhoneNumber(AccountBox.Text) && AccountBox.Text.Length <= 10)
+            if (_registerModel.IsPhoneNumber(AccountBox.Text) && AccountBox.Text.Length == 10)
             {
-                NoticeText = "可用";
-            }
-            else
-            {
-                NoticeText = "不可用";
-            }
-        }
-
-        private void _isAccountExists(TextBox AccountBox)
-        {
-            if (AccountBox.Text.Length == 10)
-            {
-                if (_dB_Search.CheckUsersExist(AccountBox.Text))
+                DataTable table = await _dB.Read(AccountBox.Text);
+                if (table.Rows.Count > 0)
                 {
                     NoticeText = "此帳號已存在";
                 }
+                else
+                {
+                    NoticeText = "可用";
+                }
             }
+            else
+            {
+                NoticeText = "不正確";
+            }
+            
+        }
+
+        private async void _isAccountExists(TextBox AccountBox)
+        {
+            
+            
         }
 
         private void SendMessageKey(TextBox AccountBox)
@@ -203,8 +213,9 @@ namespace First_MVVM.ViewModels
 
         private async void ReadCard()
         {
-            JObject _data = await _eCM.Read_card_id_request();
-            CardID = (string)_data["result"]["card_id"];
+            CardID = "請靠感應";
+            string Data = await Task.Run<string>(() => { return easyCard.Read_card_balance_request(); });
+            CardID = (string)JObject.Parse(Data)["result"]["card_id"];
         }
 
         private void NextTab()

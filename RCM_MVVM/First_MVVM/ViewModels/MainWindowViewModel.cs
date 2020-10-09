@@ -7,7 +7,6 @@ using System.Data;
 using First_MVVM.Views;
 using Prism.Interactivity.InteractionRequest;
 using First_MVVM.Notifications;
-
 namespace First_MVVM.ViewModels
 {
     public class MainWindowViewModel : BindableBase
@@ -53,8 +52,8 @@ namespace First_MVVM.ViewModels
 
         public MainWindowViewModel()
         {
-            LoginCommand = new DelegateCommand<object>(LoginExecute);
 
+            LoginCommand = new DelegateCommand<object>(LoginExecute);
             RegisterAccountViewRequest = new InteractionRequest<ICustomNotification>();
             RegisterAccountViewCommand = new DelegateCommand(RaiseRegisterAccountView);
             RegisterStepTabRequest = new InteractionRequest<ICustomNotification>();
