@@ -34,6 +34,7 @@ namespace First_MVVM.ViewModels
             set { SetProperty(ref _selectedStepTabIndex, value); }
         }
 
+        private string _accountBuffer;
         private string _accountStr;
         public string AccountStr
         {
@@ -48,11 +49,11 @@ namespace First_MVVM.ViewModels
             set { SetProperty(ref _passwordStr, value); }
         }
 
-        private string _confirmPasswordStr;
-        public string ConfirmPasswordStr
+        private string _PasswordStrBuffer;
+        public string PasswordStrBuffer
         {
-            get { return _confirmPasswordStr; }
-            set { SetProperty(ref _confirmPasswordStr, value); }
+            get { return _PasswordStrBuffer; }
+            set { SetProperty(ref _PasswordStrBuffer, value); }
         }
 
         private string _emailStr;
@@ -78,9 +79,9 @@ namespace First_MVVM.ViewModels
         }
 
 
-        public DelegateCommand<TextBox> AccountCommand { get; private set; }
-        public DelegateCommand<TextBox> AccountLostFocusCommand { get; private set; }
-        public DelegateCommand<TextBox> SMCommand { get; private set; }
+        public DelegateCommand<TextBox> AccountCmd { get; private set; }
+        public DelegateCommand<TextBox> AccountLostFocusCmd { get; private set; }
+        public DelegateCommand<TextBox> SMCmd { get; private set; }
         public DelegateCommand<TextBox> VerifySMCommand { get; private set; }
         public DelegateCommand<object> PasswordCommand { get; private set; }
         public DelegateCommand<object> PasswordConfirmCommand { get; private set; }
@@ -95,9 +96,9 @@ namespace First_MVVM.ViewModels
         public RegisterStepTabViewModel()
         {
             easyCard.SetDevicePort("COM4", 115200, 500); easyCard.Open();
-            AccountCommand = new DelegateCommand<TextBox>(_checkAccount);
-            AccountLostFocusCommand = new DelegateCommand<TextBox>(_isAccountExists);
-            SMCommand = new DelegateCommand<TextBox>(SendMessageKey);
+            AccountCmd = new DelegateCommand<TextBox>(_checkAccount);
+            AccountLostFocusCmd = new DelegateCommand<TextBox>(_isAccountExists);
+            SMCmd = new DelegateCommand<TextBox>(SendMessageKey);
             VerifySMCommand = new DelegateCommand<TextBox>(VerifyMessageKey);
             PasswordCommand = new DelegateCommand<object>(CheckPassword);
             PasswordConfirmCommand = new DelegateCommand<object>(ConfirmPassword);
@@ -111,6 +112,7 @@ namespace First_MVVM.ViewModels
 
         private async void _checkAccount(TextBox AccountBox)
         {
+            if (string.IsNullOrWhiteSpace(AccountBox.Text) || _accountBuffer == AccountBox.Text) return;
             if (_registerModel.IsPhoneNumber(AccountBox.Text) && AccountBox.Text.Length == 10)
             {
                 DataTable table = await _dB.Read(AccountBox.Text);
@@ -120,6 +122,7 @@ namespace First_MVVM.ViewModels
                 }
                 else
                 {
+                    _accountBuffer = AccountBox.Text;
                     NoticeText = "可用";
                 }
             }
@@ -127,12 +130,10 @@ namespace First_MVVM.ViewModels
             {
                 NoticeText = "不正確";
             }
-            
         }
 
         private async void _isAccountExists(TextBox AccountBox)
         {
-            
             
         }
 
@@ -153,7 +154,7 @@ namespace First_MVVM.ViewModels
             if (_registerModel.Checkpassword(passwordBox.Password))
             {
                 PasswordStr = passwordBox.Password;
-                if (ConfirmPasswordStr == PasswordStr)
+                if (PasswordStrBuffer == PasswordStr)
                 {
                     NoticeText = "可用";
                 }
@@ -174,7 +175,7 @@ namespace First_MVVM.ViewModels
             var passwordBox = parameter as PasswordBox;
             if (_registerModel.Checkpassword(passwordBox.Password))
             {
-                ConfirmPasswordStr = passwordBox.Password;
+                PasswordStrBuffer = passwordBox.Password;
                 if (passwordBox.Password == PasswordStr)
                 {
                     NoticeText = "可用";
