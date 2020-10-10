@@ -2,29 +2,44 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:prism="http://prismlibrary.com/"             
+             xmlns:prism="http://prismlibrary.com/"  
              prism:ViewModelLocator.AutoWireViewModel="True"
-             Height="350" Width="525">
+             Height="1024" Width="600" FontSize="20">
     <Grid>
-        <TabControl SelectedIndex="{Binding SelectedStepTabIndex}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="5"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="5"/>
+        </Grid.RowDefinitions>
+        <TabControl SelectedIndex="{Binding SelectedStepTabIndex}" Grid.Row="1" Grid.Column="1">
             <TabItem Header="帳號">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="20"/>
                         <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto" MinWidth="200"/>
+                        <ColumnDefinition Width="Auto" MinWidth="200"/>
                         <ColumnDefinition Width="20"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="20"/>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="88*"/>
                         <RowDefinition Height="20"/>
                     </Grid.RowDefinitions>
-                    <Button Content="X" Command="{Binding ExitCommand}"/>
-                    <TextBlock Text="帳號:" Grid.Column="2" Margin="20,8,322,119" Grid.Row="1"/>
-                    <TextBlock Text="簡訊驗證碼" Grid.Column="2" Margin="20,30,322,97" Grid.Row="1" />
-                    <TextBox MinWidth="200" Width="auto" x:Name="AccountBox" Text="{Binding AccountStr}" Grid.Column="2" Margin="108,6,142,119" Grid.Row="1" >
+                    <Button Content="X" Command="{Binding ExitCommand}" Grid.Column="1" Grid.Row="1"/>
+                    <TextBlock Text="帳號:" Grid.Column="2" Margin="10,10,10,10" Grid.Row="2" />
+                    <TextBlock Text="簡訊驗證碼" Grid.Column="2" Margin="10,10,10,10" Grid.Row="3"/>
+                    <TextBox x:Name="AccountBox" Text="{Binding AccountStr}" Grid.Column="3" Margin="10,10,10,10" Grid.Row="2" >
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="LostFocus">
                                 <i:InvokeCommandAction Command="{Binding AccountCmd}" CommandParameter="{Binding ElementName=AccountBox}"/>
@@ -34,31 +49,33 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </TextBox>
-                    <TextBox MinWidth="200" Width="auto" x:Name="VerifySMBox" Text="{Binding VerifySMStr}" Grid.Column="2" Margin="108,28,142,97" Grid.Row="1"/>
-                    <Button Content="發送驗證碼" Width="auto" Command="{Binding SMCmd}" CommandParameter="{Binding ElementName=AccountBox}" Grid.Column="2" Margin="337,26,38,97" Grid.Row="1"/>
-                    <TextBlock Width="auto" Text="{Binding NoticeText}" Grid.Column="2" Margin="337,6,38,121" Grid.Row="1"/>
-                    <Button Content="驗證" Width="auto" Command="{Binding VerifySMCommand}" CommandParameter="{Binding ElementName=VerifySMBox}" Grid.Column="2" Margin="108,52,291,71" Grid.Row="1"/>
-                    <Button Content="下一步" Width="auto" Command="{Binding NextTabCommand}" Grid.Column="2" Margin="417,113,10,10" Grid.Row="1"/>
+                    <TextBox x:Name="VerifySMBox" Text="{Binding VerifySMStr}" Grid.Column="3" Margin="10,10,10,10" Grid.Row="3" />
+                    <Button Content="發送驗證碼" Command="{Binding SMCmd}" CommandParameter="{Binding ElementName=AccountBox}" Grid.Column="4" Margin="10,10,10,10" Grid.Row="3"/>
+                    <TextBlock Width="auto" Text="{Binding NoticeText}" Grid.Column="4" Margin="10,10,10,10" Grid.Row="2"/>
+                    <Button Content="驗證" Command="{Binding VerifySMCommand}" CommandParameter="{Binding ElementName=VerifySMBox}" Grid.Column="3" Margin="10,10,10,10" Grid.Row="4"/>
+                    <Button Content="下一步" Command="{Binding NextTabCommand}" Grid.Column="4" Margin="10,10,10,10" Grid.Row="5"/>
                 </Grid>
             </TabItem>
             <TabItem Header="密碼">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" MinWidth="200"/>
+                        <ColumnDefinition Width="auto" MinWidth="200"/>
+                        <ColumnDefinition Width="5" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="5" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="5" />
                     </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="1" Grid.Column="1">
-                        <Button  Content="↩" Command="{Binding PreviousTabCommand}"/>
-                        <TextBlock Text="設定密碼:"/>
-                        <PasswordBox MinWidth="200" Width="auto" Name="txtPassword">
+                    <Button  Content="↩" Command="{Binding PreviousTabCommand}" Grid.Column="1" Grid.Row="1" Margin="10,10,10,10"/>
+                    <PasswordBox Width="auto" x:Name="txtPassword" Grid.Column="3" Grid.Row="2" Margin="10,10,10,10">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="PasswordChanged">
                                     <i:InvokeCommandAction Command="{Binding PasswordCommand}" CommandParameter="{Binding ElementName=txtPassword}"/>
@@ -68,9 +85,10 @@
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </PasswordBox>
-                        <TextBlock Width="auto" Text="{Binding NoticeText}"/>
-                        <TextBlock Text="確認密碼:"/>
-                        <PasswordBox MinWidth="200" Width="auto" Name="ConfirmPassword">
+                        <TextBlock Text="設定密碼:" Grid.Column="2" Grid.Row="2" Margin="10,10,10,10"/>
+                    <TextBlock Text="{Binding NoticeText}" Grid.Column="4" Grid.Row="2" Margin="10,10,10,10"/>
+                        <TextBlock Text="確認密碼:" Grid.Column="2" Grid.Row="3" Margin="10,10,10,10" />
+                        <PasswordBox Name="ConfirmPassword" Grid.Column="3" Grid.Row="3" Margin="10,10,10,10">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="PasswordChanged">
                                     <i:InvokeCommandAction Command="{Binding PasswordConfirmCommand}" CommandParameter="{Binding ElementName=ConfirmPassword}"/>
@@ -80,8 +98,7 @@
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </PasswordBox>
-                        <Button Content="下一步" Width="auto" Command="{Binding NextTabCommand}" />
-                    </StackPanel>
+                    <Button Content="下一步" Width="auto" Command="{Binding NextTabCommand}" Grid.Column="4" Grid.Row="4" Margin="10,10,10,10"/>
                 </Grid>
             </TabItem>
             <TabItem Header="信箱">
