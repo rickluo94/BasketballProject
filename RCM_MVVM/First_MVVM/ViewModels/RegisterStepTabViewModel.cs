@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using EasyCardModel;
+using RfidModel;
 using System.Windows.Navigation;
 using DBModel;
 
@@ -24,8 +25,18 @@ namespace First_MVVM.ViewModels
         private RegisterModel _registerModel = new RegisterModel();
         private DB_Search _dB_Search = new DB_Search();
         private SendMessageModel _SMM = new SendMessageModel();
-        private EasyCard easyCard = new EasyCard();
+        private EasyCard _easyCard = new EasyCard();
+        private RFID _rfid = new RFID();
         private DB _dB = new DB();
+
+        private string _rfidStr;
+
+        public string RfidStr
+        {
+            get { return _rfidStr; }
+            set { SetProperty(ref _rfidStr, value); }
+        }
+
 
         private int _selectedStepTabIndex = 0;
         public int SelectedStepTabIndex
@@ -92,10 +103,14 @@ namespace First_MVVM.ViewModels
         public DelegateCommand PreviousTabCommand { get; private set; }
         public DelegateCommand ExitCommand { get; private set; }
         
+        //TEST
+        public DelegateCommand OpenCmd { get; private set; }
+        public DelegateCommand CloseCmd { get; private set; }
 
         public RegisterStepTabViewModel()
         {
-            easyCard.SetDevicePort("COM4", 115200, 500); easyCard.Open();
+            _easyCard.SetDevicePort("COM6", 115200, 500); _easyCard.Open();
+            _rfid.SetDevicePort("COM4", 115200, 1000);
             AccountCmd = new DelegateCommand<TextBox>(_checkAccount);
             AccountLostFocusCmd = new DelegateCommand<TextBox>(_isAccountExists);
             SMCmd = new DelegateCommand<TextBox>(SendMessageKey);
@@ -108,6 +123,35 @@ namespace First_MVVM.ViewModels
             NextTabCommand = new DelegateCommand(NextTab);
             PreviousTabCommand = new DelegateCommand(PreviousTab);
             ExitCommand = new DelegateCommand(ExitInteraction);
+
+            //TEST
+            OpenCmd = new DelegateCommand(RFIDOpen);
+            CloseCmd = new DelegateCommand(RFIDClose);
+        }
+
+        private async void RFIDOpen()
+        {
+            bool Data = await Task.Run<bool>(() => { return _rfid.Open(); });
+            if (Data == true)
+            {
+                RfidStr = "連線成功";
+            }
+            else
+            {
+                RfidStr = "連線失敗";
+            }
+        }
+        private async void RFIDClose()
+        {
+            bool Data = await Task.Run<bool>(() => { return _rfid.Close(); });
+            if (Data == true)
+            {
+                RfidStr = "斷線成功";
+            }
+            else
+            {
+                RfidStr = "斷線失敗";
+            }
         }
 
         private async void _checkAccount(TextBox AccountBox)
@@ -144,7 +188,15 @@ namespace First_MVVM.ViewModels
 
         private void VerifyMessageKey(TextBox VerifySMBox)
         {
-            _dB_Search.Verify_SmPhoneBinding_Confirm(AccountStr, VerifySMBox.Text);
+            bool _verify = _dB_Search.Verify_SmPhoneBinding_Confirm(AccountStr, VerifySMBox.Text);
+            if (_verify == true)
+            {
+                NoticeText = "驗證成功";
+            }
+            else
+            {
+                NoticeText = "驗證有誤";
+            }
         }
 
 
@@ -215,7 +267,7 @@ namespace First_MVVM.ViewModels
         private async void ReadCard()
         {
             CardID = "請靠感應";
-            string Data = await Task.Run<string>(() => { return easyCard.Read_card_balance_request(); });
+            string Data = await Task.Run<string>(() => { return _easyCard.Read_card_balance_request(); });
             CardID = (string)JObject.Parse(Data)["result"]["card_id"];
         }
 

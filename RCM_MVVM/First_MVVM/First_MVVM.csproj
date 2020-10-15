@@ -15,9 +15,10 @@
     <PackageReference Include="System.IO.Ports" Version="4.7.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\source\repos\EasyCardModel\EasyCardModel\EasyCardModel.csproj" />
     <ProjectReference Include="..\DB\DB.csproj" />
+    <ProjectReference Include="..\EasyCardModel\EasyCardModel\EasyCardModel.csproj" />
     <ProjectReference Include="..\ModuleA\ModuleA.csproj" />
+    <ProjectReference Include="..\RfidModel\RfidModel.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Notifications\" />

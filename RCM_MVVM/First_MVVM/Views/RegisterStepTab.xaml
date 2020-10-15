@@ -172,6 +172,9 @@
                         <RowDefinition Height="20"/>
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="1" Grid.Column="1">
+                        <TextBlock Text="{Binding RfidStr}" FontSize="20"/>
+                        <Button Content="連線" Width="auto" Command="{Binding OpenCmd}"/>
+                        <Button Content="斷線" Width="auto" Command="{Binding CloseCmd}"/>
                         <Button Content="完成" Width="auto" Command="{Binding ExitCommand}" />
                     </StackPanel>
                 </Grid>
