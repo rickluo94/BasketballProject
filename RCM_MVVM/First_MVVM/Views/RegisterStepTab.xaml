@@ -53,7 +53,7 @@
                     <Button Content="發送驗證碼" Command="{Binding SMCmd}" CommandParameter="{Binding ElementName=AccountBox}" Grid.Column="4" Margin="10,10,10,10" Grid.Row="3"/>
                     <TextBlock Width="auto" Text="{Binding NoticeText}" Grid.Column="4" Margin="10,10,10,10" Grid.Row="2"/>
                     <Button Content="驗證" Command="{Binding VerifySMCommand}" CommandParameter="{Binding ElementName=VerifySMBox}" Grid.Column="3" Margin="10,10,10,10" Grid.Row="4"/>
-                    <Button Content="下一步" Command="{Binding NextTabCommand}" Grid.Column="4" Margin="10,10,10,10" Grid.Row="5"/>
+                    <Button Content="下一步" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Grid.Column="4" Margin="10,10,10,10" Grid.Row="5"/>
                 </Grid>
             </TabItem>
             <TabItem Header="密碼">
@@ -98,7 +98,7 @@
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </PasswordBox>
-                    <Button Content="下一步" Width="auto" Command="{Binding NextTabCommand}" Grid.Column="4" Grid.Row="4" Margin="10,10,10,10"/>
+                    <Button Content="下一步" Width="auto" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Grid.Column="4" Grid.Row="4" Margin="10,10,10,10"/>
                 </Grid>
             </TabItem>
             <TabItem Header="信箱">
@@ -132,7 +132,7 @@
                         </i:Interaction.Triggers>
                     </TextBox>
                     <TextBlock Grid.Row="2" Grid.Column="4" Width="auto" Text="{Binding NoticeText}"/>
-                    <Button Grid.Row="3" Grid.Column="4" Content="下一步" Width="auto" Command="{Binding NextTabCommand}" Margin="10,10,10,10" />
+                    <Button Grid.Row="3" Grid.Column="4" Content="下一步" Width="auto" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="10,10,10,10" />
                 </Grid>
             </TabItem>
             <TabItem Header="設定悠遊卡">
@@ -157,7 +157,7 @@
                     <TextBlock Grid.Row="2" Grid.Column="2" Text="卡號:" Margin="10,10,10,10"/>
                     <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding CardID}" Margin="10,10,10,10" />
                     <Button Grid.Row="3" Grid.Column="3" Content="靠卡感應" Command="{Binding ReadCardCommand}" Margin="10,10,10,10"/>
-                    <Button Grid.Row="4" Grid.Column="4" Content="下一步" Width="auto" Command="{Binding NextTabCommand}" Margin="10,10,10,10"/>
+                    <Button Grid.Row="4" Grid.Column="4" Content="下一步" Width="auto" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="10,10,10,10"/>
                 </Grid>
             </TabItem>
             <TabItem Header="完成註冊">

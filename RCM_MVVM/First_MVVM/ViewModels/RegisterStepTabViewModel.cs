@@ -89,6 +89,12 @@ namespace First_MVVM.ViewModels
             set { SetProperty(ref _noticeText, value); }
         }
 
+        private bool _nextStepIsEnabledBool;
+        public bool NextStepIsEnabledBool
+        {
+            get { return _nextStepIsEnabledBool; }
+            set { SetProperty(ref _nextStepIsEnabledBool, value); }
+        }
 
         public DelegateCommand<TextBox> AccountCmd { get; private set; }
         public DelegateCommand<TextBox> AccountLostFocusCmd { get; private set; }
@@ -102,7 +108,8 @@ namespace First_MVVM.ViewModels
         public DelegateCommand NextTabCommand { get; private set; }
         public DelegateCommand PreviousTabCommand { get; private set; }
         public DelegateCommand ExitCommand { get; private set; }
-        
+
+
         //TEST
         public DelegateCommand OpenCmd { get; private set; }
         public DelegateCommand CloseCmd { get; private set; }
@@ -192,10 +199,12 @@ namespace First_MVVM.ViewModels
             if (_verify == true)
             {
                 NoticeText = "驗證成功";
+                NextStepIsEnabledBool = true;
             }
             else
             {
                 NoticeText = "驗證有誤";
+                NextStepIsEnabledBool = false;
             }
         }
 
@@ -209,10 +218,12 @@ namespace First_MVVM.ViewModels
                 if (PasswordStrBuffer == PasswordStr)
                 {
                     NoticeText = "可用";
+                    NextStepIsEnabledBool = true;
                 }
                 else
                 {
                     NoticeText = "密碼不一致";
+                    NextStepIsEnabledBool = false;
                 }
             }
             else
@@ -231,10 +242,12 @@ namespace First_MVVM.ViewModels
                 if (passwordBox.Password == PasswordStr)
                 {
                     NoticeText = "可用";
+                    NextStepIsEnabledBool = true;
                 }
                 else
                 {
                     NoticeText = "密碼不一致";
+                    NextStepIsEnabledBool = false;
                 }
             }
             else
@@ -257,10 +270,12 @@ namespace First_MVVM.ViewModels
             if (boolResult)
             {
                 NoticeText = "正確";
+                NextStepIsEnabledBool = true;
             }
             else
             {
                 NoticeText = "有誤";
+                NextStepIsEnabledBool = false;
             }
         }
 
@@ -274,6 +289,20 @@ namespace First_MVVM.ViewModels
         private void NextTab()
         {
             SelectedStepTabIndex += 1;
+            switch (_selectedStepTabIndex)
+            {
+                case 1:
+                    _registerModel.ID = _accountStr;
+                    break;
+                case 2:
+                    _registerModel.Password = _passwordStr;
+                    break;
+                case 3:
+                    _registerModel.Email = _emailStr;
+                    break;
+                default:
+                    break;
+            }
         }
         private void PreviousTab()
         {
