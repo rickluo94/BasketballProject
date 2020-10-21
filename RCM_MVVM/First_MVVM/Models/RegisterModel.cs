@@ -12,6 +12,11 @@ namespace First_MVVM.Models
         public string Address { get; set; }
         public string CardNumber { get; set; }
         
+        public bool AddNewCustomer()
+        {
+
+        }
+
 
         public bool Checkpassword(string password)
         {

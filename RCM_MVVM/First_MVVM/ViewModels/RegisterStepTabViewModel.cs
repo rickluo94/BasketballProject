@@ -108,16 +108,10 @@ namespace First_MVVM.ViewModels
         public DelegateCommand NextTabCommand { get; private set; }
         public DelegateCommand PreviousTabCommand { get; private set; }
         public DelegateCommand ExitCommand { get; private set; }
-
-
-        //TEST
-        public DelegateCommand OpenCmd { get; private set; }
-        public DelegateCommand CloseCmd { get; private set; }
-
+       
         public RegisterStepTabViewModel()
         {
             _easyCard.SetDevicePort("COM6", 115200, 500); _easyCard.Open();
-            _rfid.SetDevicePort("COM4", 115200, 1000);
             AccountCmd = new DelegateCommand<TextBox>(_checkAccount);
             AccountLostFocusCmd = new DelegateCommand<TextBox>(_isAccountExists);
             SMCmd = new DelegateCommand<TextBox>(SendMessageKey);
@@ -130,10 +124,6 @@ namespace First_MVVM.ViewModels
             NextTabCommand = new DelegateCommand(NextTab);
             PreviousTabCommand = new DelegateCommand(PreviousTab);
             ExitCommand = new DelegateCommand(ExitInteraction);
-
-            //TEST
-            OpenCmd = new DelegateCommand(RFIDOpen);
-            CloseCmd = new DelegateCommand(RFIDClose);
         }
 
         private async void RFIDOpen()
@@ -288,6 +278,7 @@ namespace First_MVVM.ViewModels
 
         private void NextTab()
         {
+            NextStepIsEnabledBool = false;
             SelectedStepTabIndex += 1;
             switch (_selectedStepTabIndex)
             {

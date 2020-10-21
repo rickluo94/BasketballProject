@@ -163,21 +163,22 @@
             <TabItem Header="完成註冊">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="20" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" MinWidth="200"/>
+                        <ColumnDefinition Width="auto" MinWidth="200"/>
+                        <ColumnDefinition Width="20" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="20" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="20" />
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="1" Grid.Column="1">
-                        <TextBlock Text="{Binding RfidStr}" FontSize="20"/>
-                        <Button Content="連線" Width="auto" Command="{Binding OpenCmd}"/>
-                        <Button Content="斷線" Width="auto" Command="{Binding CloseCmd}"/>
                         <Button Content="完成" Width="auto" Command="{Binding ExitCommand}" />
                     </StackPanel>
                 </Grid>

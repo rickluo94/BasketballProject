@@ -49,6 +49,5 @@ namespace DBModel
 
             return table;
         }
-
     }
 }
