@@ -5,9 +5,17 @@ using MySqlConnector;
 
 namespace DBModel
 {
-    public class DB
+    public class DBRead
     {
-        
+        MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder
+        {
+            Server = "35.201.200.86",
+            Database = "ste_SBSCS",
+            UserID = "root",
+            Password = "Jyste42876046",
+            //SslMode = MySqlSslMode.Required,
+        };
+
         public async Task<DataTable> Read(string Account)
         {
             DataTable table = new DataTable();
@@ -18,14 +26,7 @@ namespace DBModel
             column.ColumnName = "customer_user_id";
             table.Columns.Add(column);
             string buffer = string.Empty;
-            var builder = new MySqlConnectionStringBuilder
-            {
-                Server = "35.201.200.86",
-                Database = "ste_SBSCS",
-                UserID = "root",
-                Password = "Jyste42876046",
-                //SslMode = MySqlSslMode.Required,
-            };
+            
 
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {
@@ -50,4 +51,44 @@ namespace DBModel
             return table;
         }
     }
+
+    public class DBWrite
+    {
+        MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder
+        {
+            Server = "35.201.200.86",
+            Database = "ste_SBSCS",
+            UserID = "root",
+            Password = "Jyste42876046",
+            //SslMode = MySqlSslMode.Required,
+        };
+
+        public async Task<bool> Customer_info(string ID, string UserName, string Email)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`Customer_info` (`customer_user_id`, `username`, `email`) VALUES ('{ID}', '{UserName}', '{Email}');";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+
+
+    }
+
+
 }

@@ -16,27 +16,18 @@ using EasyCardModel;
 using RfidModel;
 using System.Windows.Navigation;
 using DBModel;
+using System.Diagnostics;
 
 namespace First_MVVM.ViewModels
 {
     public class RegisterStepTabViewModel : BindableBase, IInteractionRequestAware
     {
-        //private ElectronicCoinModel _eCM = new ElectronicCoinModel();
         private RegisterModel _registerModel = new RegisterModel();
         private DB_Search _dB_Search = new DB_Search();
         private SendMessageModel _SMM = new SendMessageModel();
         private EasyCard _easyCard = new EasyCard();
-        private RFID _rfid = new RFID();
-        private DB _dB = new DB();
-
-        private string _rfidStr;
-
-        public string RfidStr
-        {
-            get { return _rfidStr; }
-            set { SetProperty(ref _rfidStr, value); }
-        }
-
+        private DBRead _dBRead = new DBRead();
+        private DBWrite _dBWrite = new DBWrite();
 
         private int _selectedStepTabIndex = 0;
         public int SelectedStepTabIndex
@@ -67,14 +58,22 @@ namespace First_MVVM.ViewModels
             set { SetProperty(ref _PasswordStrBuffer, value); }
         }
 
+        private string _nameStr;
+
+        public string NameStr
+        {
+            get { return _nameStr; }
+            set { SetProperty(ref _nameStr, value); }
+        }
+
         private string _emailStr;
         public string EmailStr
         {
             get { return _emailStr; }
             set { SetProperty(ref _emailStr, value); }
         }
-        private string _cardID;
 
+        private string _cardID;
         public string CardID
         {
             get { return _cardID; }
@@ -103,10 +102,12 @@ namespace First_MVVM.ViewModels
         public DelegateCommand<object> PasswordCommand { get; private set; }
         public DelegateCommand<object> PasswordConfirmCommand { get; private set; }
         public DelegateCommand<object> PasswordClearCommand { get; private set; }
+        public DelegateCommand<TextBox> NameCommand { get; private set; }
         public DelegateCommand<TextBox> EmailCommand { get; private set; }
         public DelegateCommand ReadCardCommand { get; private set; }
         public DelegateCommand NextTabCommand { get; private set; }
         public DelegateCommand PreviousTabCommand { get; private set; }
+        public DelegateCommand RegisterSuccess { get; private set; }
         public DelegateCommand ExitCommand { get; private set; }
        
         public RegisterStepTabViewModel()
@@ -119,36 +120,13 @@ namespace First_MVVM.ViewModels
             PasswordCommand = new DelegateCommand<object>(CheckPassword);
             PasswordConfirmCommand = new DelegateCommand<object>(ConfirmPassword);
             PasswordClearCommand = new DelegateCommand<object>(PasswordClear);
+            NameCommand = new DelegateCommand<TextBox>(CheckNameStr);
             EmailCommand = new DelegateCommand<TextBox>(CheckEmailStr);
             ReadCardCommand = new DelegateCommand(ReadCard);
             NextTabCommand = new DelegateCommand(NextTab);
             PreviousTabCommand = new DelegateCommand(PreviousTab);
+            RegisterSuccess = new DelegateCommand(RegisterAction);
             ExitCommand = new DelegateCommand(ExitInteraction);
-        }
-
-        private async void RFIDOpen()
-        {
-            bool Data = await Task.Run<bool>(() => { return _rfid.Open(); });
-            if (Data == true)
-            {
-                RfidStr = "連線成功";
-            }
-            else
-            {
-                RfidStr = "連線失敗";
-            }
-        }
-        private async void RFIDClose()
-        {
-            bool Data = await Task.Run<bool>(() => { return _rfid.Close(); });
-            if (Data == true)
-            {
-                RfidStr = "斷線成功";
-            }
-            else
-            {
-                RfidStr = "斷線失敗";
-            }
         }
 
         private async void _checkAccount(TextBox AccountBox)
@@ -156,7 +134,7 @@ namespace First_MVVM.ViewModels
             if (string.IsNullOrWhiteSpace(AccountBox.Text) || _accountBuffer == AccountBox.Text) return;
             if (_registerModel.IsPhoneNumber(AccountBox.Text) && AccountBox.Text.Length == 10)
             {
-                DataTable table = await _dB.Read(AccountBox.Text);
+                DataTable table = await _dBRead.Read(AccountBox.Text);
                 if (table.Rows.Count > 0)
                 {
                     NoticeText = "此帳號已存在";
@@ -253,10 +231,26 @@ namespace First_MVVM.ViewModels
             passwordBox.Clear();
         }
 
+        private async void CheckNameStr(TextBox nameBox)
+        {
+            _registerModel.Name = nameBox.Text;
+            bool boolResult = await Task.Run<bool>(() => { return _registerModel.IsChinese(_registerModel.Name); });
+            if (boolResult)
+            {
+                NoticeText = "正確";
+                NextStepIsEnabledBool = true;
+            }
+            else
+            {
+                NoticeText = "有誤";
+                NextStepIsEnabledBool = false;
+            }
+        }
+
         private async void CheckEmailStr(TextBox emailBox)
         {
-            var returnedTaskTResult = IsValidEmail(emailBox.Text);
-            bool boolResult = await returnedTaskTResult;
+            _registerModel.Email = emailBox.Text;
+            bool boolResult = await Task.Run<bool>(() => { return _registerModel.IsValidEmail(_registerModel.Email); });
             if (boolResult)
             {
                 NoticeText = "正確";
@@ -279,6 +273,7 @@ namespace First_MVVM.ViewModels
         private void NextTab()
         {
             NextStepIsEnabledBool = false;
+            NoticeText = null;
             SelectedStepTabIndex += 1;
             switch (_selectedStepTabIndex)
             {
@@ -289,6 +284,9 @@ namespace First_MVVM.ViewModels
                     _registerModel.Password = _passwordStr;
                     break;
                 case 3:
+                    _registerModel.Name = _nameStr;
+                    break;
+                case 4:
                     _registerModel.Email = _emailStr;
                     break;
                 default:
@@ -299,58 +297,34 @@ namespace First_MVVM.ViewModels
         {
             SelectedStepTabIndex -= 1;
         }
-        private void ExitInteraction()
+
+        private async void RegisterAction()
         {
-            AccountStr = null;
-            EmailStr = null;
-            NoticeText = null;
-            CardID = null;
-            SelectedStepTabIndex = 0;
-            FinishInteraction?.Invoke();
+            bool RegisterAccount = await _dBWrite.Customer_info(_registerModel.ID, _registerModel.Name, _registerModel.Email);
+
+            if (RegisterAccount == true)
+            {
+                ExitInteraction();
+            }
         }
 
-        private async Task<bool> IsValidEmail(string email)
+        private void ExitInteraction()
         {
-            if (string.IsNullOrWhiteSpace(email))
-                return false;
+            _registerModel.ID = null;
+            _registerModel.Password = null;
+            _registerModel.Name = null;
+            _registerModel.Email = null;
+            _registerModel.Address = null;
+            _registerModel.CardNumber = null;
+            AccountStr = null;
+            PasswordStr = null;
+            PasswordStrBuffer = null;
+            NameStr = null;
+            EmailStr = null;
+            CardID = null;
 
-            try
-            {
-                // Normalize the domain
-                email = Regex.Replace(email, @"(@)(.+)$", DomainMapper,
-                                      RegexOptions.None, TimeSpan.FromMilliseconds(200));
-
-                // Examines the domain part of the email and normalizes it.
-                string DomainMapper(Match match)
-                {
-                    // Use IdnMapping class to convert Unicode domain names.
-                    var idn = new IdnMapping();
-
-                    // Pull out and process domain name (throws ArgumentException on invalid)
-                    string domainName = idn.GetAscii(match.Groups[2].Value);
-
-                    return match.Groups[1].Value + domainName;
-                }
-            }
-            catch (RegexMatchTimeoutException e)
-            {
-                return false;
-            }
-            catch (ArgumentException e)
-            {
-                return false;
-            }
-
-            try
-            {
-                return Regex.IsMatch(email,
-                    @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
-                    RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250));
-            }
-            catch (RegexMatchTimeoutException)
-            {
-                return false;
-            }
+            SelectedStepTabIndex = 0;
+            FinishInteraction?.Invoke();
         }
 
         public Action FinishInteraction { get; set; }
