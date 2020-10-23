@@ -2,6 +2,7 @@
 using Prism.Unity;
 using System.Windows;
 using First_MVVM.Views;
+using Prism.Modularity;
 
 namespace First_MVVM
 {
@@ -18,6 +19,10 @@ namespace First_MVVM
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
 
+        }
+        protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
+        {
+        
         }
     }
 }

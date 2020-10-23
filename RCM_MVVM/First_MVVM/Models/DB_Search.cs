@@ -8,8 +8,6 @@ namespace First_MVVM.Models
 {
     public class DB_Search
     {
-        DBModel dBModel = new DBModel();//使用資料庫查詢相關模組
-
         public DataTable User_Info(String UserName)
         {
             DataTable Table = null;

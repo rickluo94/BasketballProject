@@ -59,7 +59,7 @@
             <!-- Row 5 -->
         <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding UpdateText}" />
         <Button Grid.Row="6" Grid.Column="1" Content="註冊" Command="{Binding RegisterStepTabCommand}">
-            
+
         </Button>
     </Grid>
 </Window>

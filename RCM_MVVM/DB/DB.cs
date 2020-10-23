@@ -16,7 +16,7 @@ namespace DBModel
             //SslMode = MySqlSslMode.Required,
         };
 
-        public async Task<DataTable> Read(string Account)
+        public async Task<DataTable> Customer_Address(string Account)
         {
             DataTable table = new DataTable();
             DataColumn column;
@@ -50,6 +50,49 @@ namespace DBModel
 
             return table;
         }
+
+        public async Task<DataTable> Verify_SmPhoneBinding(string PhoneNumber,string RandomKey)
+        {
+            DataTable table = new DataTable();
+            DataColumn column;
+            DataRow row;
+            string[] _columnName = {"Verify_user_id", "ModifyDate", "Verify_SmKeyBinding"};
+            foreach (string _name in _columnName)
+            {
+                column = new DataColumn();
+                column.DataType = Type.GetType("System.String");
+                column.ColumnName = _name;
+                table.Columns.Add(column);
+            }
+
+            string buffer = string.Empty;
+
+
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"SELECT* FROM ste_SBSCS.Verify_SmPhoneBinding WHERE Verify_user_id ='{PhoneNumber}' AND Verify_SmKeyBinding = SHA2('{RandomKey}', 256);";
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            row = table.NewRow();
+                            row["Verify_user_id"] = reader.GetString(0);
+                            row["ModifyDate"] = reader.GetString(0);
+                            row["Verify_SmKeyBinding"] = reader.GetString(0);
+                            table.Rows.Add(row);
+                        }
+                    }
+                }
+
+            }
+
+            return table;
+        }
+
     }
 
     public class DBWrite
@@ -86,6 +129,29 @@ namespace DBModel
             }
         }
 
+        public async Task<bool> Verify_SmPhoneBinding(string PhoneNumber, string RandomKey)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"INSERT INTO ste_SBSCS.Verify_SmPhoneBinding(Verify_user_id, Verify_SmKeyBinding) " +
+                    "VALUES ('" + PhoneNumber + "',SHA2('" + RandomKey + "',256)) ON DUPLICATE KEY UPDATE Verify_SmKeyBinding = SHA2('" + RandomKey + "',256);";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
 
 
     }

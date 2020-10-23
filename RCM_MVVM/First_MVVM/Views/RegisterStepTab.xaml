@@ -44,9 +44,6 @@
                             <i:EventTrigger EventName="LostFocus">
                                 <i:InvokeCommandAction Command="{Binding AccountCmd}" CommandParameter="{Binding ElementName=AccountBox}"/>
                             </i:EventTrigger>
-                            <i:EventTrigger EventName="LostFocus">
-                                <i:InvokeCommandAction Command="{Binding AccountLostFocusCmd}" CommandParameter="{Binding ElementName=AccountBox}"/>
-                            </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </TextBox>
                     <TextBox x:Name="VerifySMBox" Text="{Binding VerifySMStr}" Grid.Column="3" Margin="10,10,10,10" Grid.Row="3" />

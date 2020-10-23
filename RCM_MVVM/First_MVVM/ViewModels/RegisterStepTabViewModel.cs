@@ -23,8 +23,7 @@ namespace First_MVVM.ViewModels
     public class RegisterStepTabViewModel : BindableBase, IInteractionRequestAware
     {
         private RegisterModel _registerModel = new RegisterModel();
-        private DB_Search _dB_Search = new DB_Search();
-        private SendMessageModel _SMM = new SendMessageModel();
+        private SendMessageModel _sendMessageModel = new SendMessageModel();
         private EasyCard _easyCard = new EasyCard();
         private DBRead _dBRead = new DBRead();
         private DBWrite _dBWrite = new DBWrite();
@@ -96,7 +95,6 @@ namespace First_MVVM.ViewModels
         }
 
         public DelegateCommand<TextBox> AccountCmd { get; private set; }
-        public DelegateCommand<TextBox> AccountLostFocusCmd { get; private set; }
         public DelegateCommand<TextBox> SMCmd { get; private set; }
         public DelegateCommand<TextBox> VerifySMCommand { get; private set; }
         public DelegateCommand<object> PasswordCommand { get; private set; }
@@ -114,7 +112,6 @@ namespace First_MVVM.ViewModels
         {
             _easyCard.SetDevicePort("COM6", 115200, 500); _easyCard.Open();
             AccountCmd = new DelegateCommand<TextBox>(_checkAccount);
-            AccountLostFocusCmd = new DelegateCommand<TextBox>(_isAccountExists);
             SMCmd = new DelegateCommand<TextBox>(SendMessageKey);
             VerifySMCommand = new DelegateCommand<TextBox>(VerifyMessageKey);
             PasswordCommand = new DelegateCommand<object>(CheckPassword);
@@ -134,7 +131,7 @@ namespace First_MVVM.ViewModels
             if (string.IsNullOrWhiteSpace(AccountBox.Text) || _accountBuffer == AccountBox.Text) return;
             if (_registerModel.IsPhoneNumber(AccountBox.Text) && AccountBox.Text.Length == 10)
             {
-                DataTable table = await _dBRead.Read(AccountBox.Text);
+                DataTable table = await _dBRead.Customer_Address(AccountBox.Text);
                 if (table.Rows.Count > 0)
                 {
                     NoticeText = "此帳號已存在";
@@ -151,20 +148,22 @@ namespace First_MVVM.ViewModels
             }
         }
 
-        private async void _isAccountExists(TextBox AccountBox)
+        private async void SendMessageKey(TextBox AccountBox)
         {
-            
+            string _phoneNumber = AccountBox.Text;
+            string _randomKey = _sendMessageModel.RandomKey(6);
+
+            bool result = await _dBWrite.Verify_SmPhoneBinding(_phoneNumber,_randomKey);
+            if (result == true)
+            {
+                _sendMessageModel.SmSendSampleCode(_phoneNumber, _randomKey);
+            }
         }
 
-        private void SendMessageKey(TextBox AccountBox)
+        private async void VerifyMessageKey(TextBox VerifySMBox)
         {
-            _SMM.SmSendSampleCode(AccountBox.Text);
-        }
-
-        private void VerifyMessageKey(TextBox VerifySMBox)
-        {
-            bool _verify = _dB_Search.Verify_SmPhoneBinding_Confirm(AccountStr, VerifySMBox.Text);
-            if (_verify == true)
+            DataTable table = await _dBRead.Verify_SmPhoneBinding(AccountStr, VerifySMBox.Text);
+            if (table.Rows.Count > 0)
             {
                 NoticeText = "驗證成功";
                 NextStepIsEnabledBool = true;

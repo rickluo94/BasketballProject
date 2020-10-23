@@ -6,6 +6,9 @@
     <AssemblyName>First_MVVM</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Models\DB_Search.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="App.config" />
   </ItemGroup>
   <ItemGroup>
@@ -17,7 +20,6 @@
   <ItemGroup>
     <ProjectReference Include="..\DB\DB.csproj" />
     <ProjectReference Include="..\EasyCardModel\EasyCardModel\EasyCardModel.csproj" />
-    <ProjectReference Include="..\ModuleA\ModuleA.csproj" />
     <ProjectReference Include="..\RfidModel\RfidModel.csproj" />
   </ItemGroup>
   <ItemGroup>
