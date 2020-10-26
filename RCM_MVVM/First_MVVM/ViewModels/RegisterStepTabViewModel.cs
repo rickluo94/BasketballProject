@@ -28,7 +28,7 @@ namespace First_MVVM.ViewModels
         private DBRead _dBRead = new DBRead();
         private DBWrite _dBWrite = new DBWrite();
 
-        private int _selectedStepTabIndex = 0;
+        private int _selectedStepTabIndex;
         public int SelectedStepTabIndex
         {
             get { return _selectedStepTabIndex; }
@@ -94,6 +94,24 @@ namespace First_MVVM.ViewModels
             set { SetProperty(ref _nextStepIsEnabledBool, value); }
         }
 
+        private bool _sMCmdIsEnabledBool;
+
+        public bool SMCmdIsEnabledBool
+        {
+            get { return _sMCmdIsEnabledBool; }
+            set { SetProperty(ref _sMCmdIsEnabledBool , value); }
+        }
+
+        private bool _accountBoxIsEnabled;
+
+        public bool AccountBoxIsEnabled
+        {
+            get { return _accountBoxIsEnabled; }
+            set { SetProperty(ref _accountBoxIsEnabled , value); }
+        }
+
+
+        public DelegateCommand RegisterStepTabLoadCmd { get; private set; }
         public DelegateCommand<TextBox> AccountCmd { get; private set; }
         public DelegateCommand<TextBox> SMCmd { get; private set; }
         public DelegateCommand<TextBox> VerifySMCommand { get; private set; }
@@ -110,6 +128,7 @@ namespace First_MVVM.ViewModels
        
         public RegisterStepTabViewModel()
         {
+            RegisterStepTabLoadCmd = new DelegateCommand(RegisterStepTabLoad);
             _easyCard.SetDevicePort("COM6", 115200, 500); _easyCard.Open();
             AccountCmd = new DelegateCommand<TextBox>(_checkAccount);
             SMCmd = new DelegateCommand<TextBox>(SendMessageKey);
@@ -126,25 +145,55 @@ namespace First_MVVM.ViewModels
             ExitCommand = new DelegateCommand(ExitInteraction);
         }
 
+        private void RegisterStepTabLoad()
+        {
+            SelectedStepTabIndex = 0;
+            AccountBoxIsEnabled = true;
+            SMCmdIsEnabledBool = false;
+            NextStepIsEnabledBool = false;
+            _registerModel.ID = null;
+            _registerModel.Password = null;
+            _registerModel.Name = null;
+            _registerModel.Email = null;
+            _registerModel.Address = null;
+            _registerModel.CardNumber = null;
+            AccountStr = null;
+            PasswordStr = null;
+            PasswordStrBuffer = null;
+            NameStr = null;
+            EmailStr = null;
+            CardID = null;
+            NoticeText = string.Empty;
+        }
+
         private async void _checkAccount(TextBox AccountBox)
         {
-            if (string.IsNullOrWhiteSpace(AccountBox.Text) || _accountBuffer == AccountBox.Text) return;
+            if (string.IsNullOrWhiteSpace(AccountBox.Text)) 
+            {
+                NoticeText = "不可為空白";
+                SMCmdIsEnabledBool = false;
+                return;
+            } 
+
             if (_registerModel.IsPhoneNumber(AccountBox.Text) && AccountBox.Text.Length == 10)
             {
                 DataTable table = await _dBRead.Customer_Address(AccountBox.Text);
                 if (table.Rows.Count > 0)
                 {
                     NoticeText = "此帳號已存在";
+                    SMCmdIsEnabledBool = false;
                 }
                 else
                 {
                     _accountBuffer = AccountBox.Text;
                     NoticeText = "可用";
+                    SMCmdIsEnabledBool = true;
                 }
             }
             else
             {
                 NoticeText = "不正確";
+                SMCmdIsEnabledBool = false;
             }
         }
 
@@ -153,11 +202,27 @@ namespace First_MVVM.ViewModels
             string _phoneNumber = AccountBox.Text;
             string _randomKey = _sendMessageModel.RandomKey(6);
 
+            #region 資料庫寫入true=>發送驗證碼
+
             bool result = await _dBWrite.Verify_SmPhoneBinding(_phoneNumber,_randomKey);
             if (result == true)
             {
                 _sendMessageModel.SmSendSampleCode(_phoneNumber, _randomKey);
+                AccountBoxIsEnabled = false;
+                SMCmdIsEnabledBool = false;
             }
+            else
+            {
+                bool resultAgain = await _dBWrite.Verify_SmPhoneBinding_UPDATE(_phoneNumber, _randomKey);
+                if (resultAgain == true)
+                {
+                    _sendMessageModel.SmSendSampleCode(_phoneNumber, _randomKey);
+                    AccountBoxIsEnabled = false;
+                    SMCmdIsEnabledBool = false;
+                }
+            }
+            #endregion
+
         }
 
         private async void VerifyMessageKey(TextBox VerifySMBox)
@@ -321,8 +386,6 @@ namespace First_MVVM.ViewModels
             NameStr = null;
             EmailStr = null;
             CardID = null;
-
-            SelectedStepTabIndex = 0;
             FinishInteraction?.Invoke();
         }
 

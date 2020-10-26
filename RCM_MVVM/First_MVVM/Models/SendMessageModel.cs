@@ -12,26 +12,33 @@ namespace First_MVVM.Models
         /// 帶入使用者輸入電話寫入資料庫，搜尋手機號綁定之RandomKey，發送帶有RandomKey之簡訊。
         /// </summary>
         /// <param name="_phoneNumber"></param>
-        public void SmSendSampleCode(string PhoneNumber,string RandomKeynote)
+        public bool SmSendSampleCode(string PhoneNumber,string RandomKeynote)
         {
-            
-            StringBuilder reqUrl = new StringBuilder();
-            reqUrl.Append("https://smsapi.mitake.com.tw/api/mtk/SmSend?&CharsetURL=UTF-8");
-            StringBuilder _params = new StringBuilder();
-            _params.Append("username=42876046");
-            _params.Append("&password=jyste9697");
-            _params.Append($"&dstaddr={PhoneNumber}");
-            _params.Append($"&smbody=智慧籃球櫃服務手機簡訊驗證碼：{RandomKeynote}，請於收到簡訊90秒內完成手機驗證。");
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(new
-            Uri(reqUrl.ToString()));
-            request.Method = "POST";
-            request.ContentType = "application/x-www-form-urlencoded";
-            byte[] bs = Encoding.UTF8.GetBytes(_params.ToString());
-            request.ContentLength = bs.Length;
-            request.GetRequestStream().Write(bs, 0, bs.Length);
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            StreamReader sr = new StreamReader(response.GetResponseStream());
-            string result = sr.ReadToEnd();
+            if (!string.IsNullOrWhiteSpace(PhoneNumber) && !string.IsNullOrWhiteSpace(RandomKeynote))
+            {
+                StringBuilder reqUrl = new StringBuilder();
+                reqUrl.Append("https://smsapi.mitake.com.tw/api/mtk/SmSend?&CharsetURL=UTF-8");
+                StringBuilder _params = new StringBuilder();
+                _params.Append("username=42876046");
+                _params.Append("&password=jyste9697");
+                _params.Append($"&dstaddr={PhoneNumber}");
+                _params.Append($"&smbody=智慧籃球櫃服務手機簡訊驗證碼：{RandomKeynote}，請於收到簡訊90秒內完成手機驗證。");
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(new
+                Uri(reqUrl.ToString()));
+                request.Method = "POST";
+                request.ContentType = "application/x-www-form-urlencoded";
+                byte[] bs = Encoding.UTF8.GetBytes(_params.ToString());
+                request.ContentLength = bs.Length;
+                request.GetRequestStream().Write(bs, 0, bs.Length);
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                StreamReader sr = new StreamReader(response.GetResponseStream());
+                string result = sr.ReadToEnd();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>
