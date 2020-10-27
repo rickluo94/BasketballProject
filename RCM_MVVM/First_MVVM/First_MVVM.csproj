@@ -21,6 +21,7 @@
     <ProjectReference Include="..\DB\DB.csproj" />
     <ProjectReference Include="..\EasyCardModel\EasyCardModel\EasyCardModel.csproj" />
     <ProjectReference Include="..\RfidModel\RfidModel.csproj" />
+    <ProjectReference Include="..\SendMessageModel\SendMessageModel.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Notifications\" />

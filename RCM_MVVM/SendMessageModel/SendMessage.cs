@@ -4,15 +4,15 @@ using System.Net;
 using System.Text;
 using System.Security.Cryptography;
 
-namespace First_MVVM.Models
+namespace SendMessageModel
 {
-    public class SendMessageModel
+    public class SendMessage
     {
         /// <summary>
         /// 帶入使用者輸入電話寫入資料庫，搜尋手機號綁定之RandomKey，發送帶有RandomKey之簡訊。
         /// </summary>
         /// <param name="_phoneNumber"></param>
-        public bool SmSendSampleCode(string PhoneNumber,string RandomKeynote)
+        public bool SmSendSampleCode(string PhoneNumber, string RandomKeynote)
         {
             if (!string.IsNullOrWhiteSpace(PhoneNumber) && !string.IsNullOrWhiteSpace(RandomKeynote))
             {

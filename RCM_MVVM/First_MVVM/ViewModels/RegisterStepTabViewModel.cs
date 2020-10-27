@@ -1,38 +1,43 @@
 ﻿using First_MVVM.Models;
 using First_MVVM.Notifications;
-using Microsoft.VisualBasic.CompilerServices;
 using Newtonsoft.Json.Linq;
 using Prism.Commands;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
 using System;
 using System.Data;
-using System.Globalization;
-using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using EasyCardModel;
-using RfidModel;
-using System.Windows.Navigation;
 using DBModel;
-using System.Diagnostics;
+using SendMessageModel;
+using System.Threading;
+using System.Timers;
 
 namespace First_MVVM.ViewModels
 {
     public class RegisterStepTabViewModel : BindableBase, IInteractionRequestAware
     {
-        private RegisterModel _registerModel = new RegisterModel();
-        private SendMessageModel _sendMessageModel = new SendMessageModel();
+        private RegisterModel _registerModel { get; set; }
+        private Business _business = new Business();
+        private SendMessage _sendMessage = new SendMessage();
         private EasyCard _easyCard = new EasyCard();
         private DBRead _dBRead = new DBRead();
         private DBWrite _dBWrite = new DBWrite();
 
+        #region 資料容器
         private int _selectedStepTabIndex;
         public int SelectedStepTabIndex
         {
             get { return _selectedStepTabIndex; }
             set { SetProperty(ref _selectedStepTabIndex, value); }
+        }
+
+        private string _selectedStepTabName;
+        public string SelectedStepTabName
+        {
+            get { return _selectedStepTabName; }
+            set { SetProperty(ref _selectedStepTabName, value); }
         }
 
         private string _accountBuffer;
@@ -109,8 +114,9 @@ namespace First_MVVM.ViewModels
             get { return _accountBoxIsEnabled; }
             set { SetProperty(ref _accountBoxIsEnabled , value); }
         }
+        #endregion 資料流 資料
 
-
+        #region 命令物件
         public DelegateCommand RegisterStepTabLoadCmd { get; private set; }
         public DelegateCommand<TextBox> AccountCmd { get; private set; }
         public DelegateCommand<TextBox> SMCmd { get; private set; }
@@ -125,11 +131,13 @@ namespace First_MVVM.ViewModels
         public DelegateCommand PreviousTabCommand { get; private set; }
         public DelegateCommand RegisterSuccess { get; private set; }
         public DelegateCommand ExitCommand { get; private set; }
-       
+        #endregion
+
         public RegisterStepTabViewModel()
         {
-            RegisterStepTabLoadCmd = new DelegateCommand(RegisterStepTabLoad);
+            _registerModel = new RegisterModel();
             _easyCard.SetDevicePort("COM6", 115200, 500); _easyCard.Open();
+            RegisterStepTabLoadCmd = new DelegateCommand(RegisterStepTabLoad);
             AccountCmd = new DelegateCommand<TextBox>(_checkAccount);
             SMCmd = new DelegateCommand<TextBox>(SendMessageKey);
             VerifySMCommand = new DelegateCommand<TextBox>(VerifyMessageKey);
@@ -147,16 +155,16 @@ namespace First_MVVM.ViewModels
 
         private void RegisterStepTabLoad()
         {
+            //_registerModel.ID = null;
+            //_registerModel.Password = null;
+            //_registerModel.Name = null;
+            //_registerModel.Email = null;
+            //_registerModel.Address = null;
+            //_registerModel.CardNumber = null;
             SelectedStepTabIndex = 0;
             AccountBoxIsEnabled = true;
             SMCmdIsEnabledBool = false;
             NextStepIsEnabledBool = false;
-            _registerModel.ID = null;
-            _registerModel.Password = null;
-            _registerModel.Name = null;
-            _registerModel.Email = null;
-            _registerModel.Address = null;
-            _registerModel.CardNumber = null;
             AccountStr = null;
             PasswordStr = null;
             PasswordStrBuffer = null;
@@ -175,7 +183,7 @@ namespace First_MVVM.ViewModels
                 return;
             } 
 
-            if (_registerModel.IsPhoneNumber(AccountBox.Text) && AccountBox.Text.Length == 10)
+            if (_business.IsPhoneNumber(AccountBox.Text) && AccountBox.Text.Length == 10)
             {
                 DataTable table = await _dBRead.Customer_Address(AccountBox.Text);
                 if (table.Rows.Count > 0)
@@ -197,17 +205,32 @@ namespace First_MVVM.ViewModels
             }
         }
 
+        private void SetTimer()
+        {
+            System.Timers.Timer smTimer = new System.Timers.Timer(1000);
+            smTimer.AutoReset = true;
+            smTimer.Elapsed += OnTimedEvent;
+            smTimer.Enabled = true;
+        }
+
+        private void OnTimedEvent(Object source, ElapsedEventArgs e)
+        {
+            
+        }
+
         private async void SendMessageKey(TextBox AccountBox)
         {
+            
+
             string _phoneNumber = AccountBox.Text;
-            string _randomKey = _sendMessageModel.RandomKey(6);
+            string _randomKey = _sendMessage.RandomKey(6);
 
             #region 資料庫寫入true=>發送驗證碼
 
             bool result = await _dBWrite.Verify_SmPhoneBinding(_phoneNumber,_randomKey);
             if (result == true)
             {
-                _sendMessageModel.SmSendSampleCode(_phoneNumber, _randomKey);
+                //_sendMessage.SmSendSampleCode(_phoneNumber, _randomKey);
                 AccountBoxIsEnabled = false;
                 SMCmdIsEnabledBool = false;
             }
@@ -216,7 +239,7 @@ namespace First_MVVM.ViewModels
                 bool resultAgain = await _dBWrite.Verify_SmPhoneBinding_UPDATE(_phoneNumber, _randomKey);
                 if (resultAgain == true)
                 {
-                    _sendMessageModel.SmSendSampleCode(_phoneNumber, _randomKey);
+                    //_sendMessage.SmSendSampleCode(_phoneNumber, _randomKey);
                     AccountBoxIsEnabled = false;
                     SMCmdIsEnabledBool = false;
                 }
@@ -244,7 +267,7 @@ namespace First_MVVM.ViewModels
         private void CheckPassword(object parameter)
         {
             var passwordBox = parameter as PasswordBox;
-            if (_registerModel.Checkpassword(passwordBox.Password))
+            if (_business.Checkpassword(passwordBox.Password))
             {
                 PasswordStr = passwordBox.Password;
                 if (PasswordStrBuffer == PasswordStr)
@@ -268,7 +291,7 @@ namespace First_MVVM.ViewModels
         private void ConfirmPassword(object parameter)
         {
             var passwordBox = parameter as PasswordBox;
-            if (_registerModel.Checkpassword(passwordBox.Password))
+            if (_business.Checkpassword(passwordBox.Password))
             {
                 PasswordStrBuffer = passwordBox.Password;
                 if (passwordBox.Password == PasswordStr)
@@ -298,7 +321,7 @@ namespace First_MVVM.ViewModels
         private async void CheckNameStr(TextBox nameBox)
         {
             _registerModel.Name = nameBox.Text;
-            bool boolResult = await Task.Run<bool>(() => { return _registerModel.IsChinese(_registerModel.Name); });
+            bool boolResult = await Task.Run<bool>(() => { return _business.IsChinese(_registerModel.Name); });
             if (boolResult)
             {
                 NoticeText = "正確";
@@ -314,7 +337,7 @@ namespace First_MVVM.ViewModels
         private async void CheckEmailStr(TextBox emailBox)
         {
             _registerModel.Email = emailBox.Text;
-            bool boolResult = await Task.Run<bool>(() => { return _registerModel.IsValidEmail(_registerModel.Email); });
+            bool boolResult = await Task.Run<bool>(() => { return _business.IsValidEmail(_registerModel.Email); });
             if (boolResult)
             {
                 NoticeText = "正確";
@@ -334,28 +357,36 @@ namespace First_MVVM.ViewModels
             CardID = (string)JObject.Parse(Data)["result"]["card_id"];
         }
 
-        private void NextTab()
+        private void FillInProfile()
         {
-            NextStepIsEnabledBool = false;
-            NoticeText = null;
-            SelectedStepTabIndex += 1;
-            switch (_selectedStepTabIndex)
+            switch (_selectedStepTabName)
             {
-                case 1:
+                case "帳號":
                     _registerModel.ID = _accountStr;
                     break;
-                case 2:
+                case "密碼":
                     _registerModel.Password = _passwordStr;
                     break;
-                case 3:
+                case "個人資料":
                     _registerModel.Name = _nameStr;
                     break;
-                case 4:
+                case "信箱":
                     _registerModel.Email = _emailStr;
+                    break;
+                case "完成註冊":
+                    
                     break;
                 default:
                     break;
             }
+        }
+
+        private void NextTab()
+        {
+            FillInProfile();
+            NextStepIsEnabledBool = false;
+            NoticeText = null;
+            SelectedStepTabIndex += 1;
         }
         private void PreviousTab()
         {
