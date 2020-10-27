@@ -3,9 +3,9 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 
 
-namespace First_MVVM.Models
+namespace First_MVVM.Business
 {
-    public class Business
+    public class StrVerify
     {
         public bool Checkpassword(string password)
         {

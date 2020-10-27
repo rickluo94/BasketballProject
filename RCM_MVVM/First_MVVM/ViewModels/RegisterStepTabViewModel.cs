@@ -1,4 +1,5 @@
 ﻿using First_MVVM.Models;
+using First_MVVM.Business;
 using First_MVVM.Notifications;
 using Newtonsoft.Json.Linq;
 using Prism.Commands;
@@ -13,13 +14,16 @@ using DBModel;
 using SendMessageModel;
 using System.Threading;
 using System.Timers;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace First_MVVM.ViewModels
 {
     public class RegisterStepTabViewModel : BindableBase, IInteractionRequestAware
     {
         private RegisterModel _registerModel { get; set; }
-        private Business _business = new Business();
+        private NationalCities _nationalCities = new NationalCities();
+        private StrVerify _strVerify = new StrVerify();
         private SendMessage _sendMessage = new SendMessage();
         private EasyCard _easyCard = new EasyCard();
         private DBRead _dBRead = new DBRead();
@@ -39,6 +43,57 @@ namespace First_MVVM.ViewModels
             get { return _selectedStepTabName; }
             set { SetProperty(ref _selectedStepTabName, value); }
         }
+
+        private int _selectedCitiesIndex;
+
+        public int SelectedCitiesIndex
+        {
+            get { return _selectedCitiesIndex; }
+            set 
+            { 
+                SetProperty(ref _selectedCitiesIndex, value); 
+                Township = _nationalCities.FillTownshipData(_nationalCities.FillDefaultData(), _selectedCitiesIndex); 
+            }
+        }
+
+        private string _selectedCities;
+
+        public string SelectedCities
+        {
+            get { return _selectedCities; }
+            set { SetProperty(ref _selectedCities, value); }
+        }
+
+        private string _selectedTownship;
+
+        public string SelectedTownship
+        {
+            get { return _selectedTownship; }
+            set 
+            { 
+                SetProperty(ref _selectedTownship, value);
+                if (!string.IsNullOrWhiteSpace(_selectedTownship)) NextStepIsEnabledBool = true;
+            }
+        }
+
+
+
+        private List<string> _cities;
+
+        public List<string> Cities
+        {
+            get { return _cities; }
+            set { SetProperty(ref _cities, value); }
+        }
+
+        private List<string> _township;
+
+        public List<string> Township
+        {
+            get { return _township; }
+            set { SetProperty(ref _township, value); }
+        }
+
 
         private string _accountBuffer;
         private string _accountStr;
@@ -151,16 +206,12 @@ namespace First_MVVM.ViewModels
             PreviousTabCommand = new DelegateCommand(PreviousTab);
             RegisterSuccess = new DelegateCommand(RegisterAction);
             ExitCommand = new DelegateCommand(ExitInteraction);
+            Cities = _nationalCities.FillCitiesData(_nationalCities.FillDefaultData());
         }
 
         private void RegisterStepTabLoad()
         {
-            //_registerModel.ID = null;
-            //_registerModel.Password = null;
-            //_registerModel.Name = null;
-            //_registerModel.Email = null;
-            //_registerModel.Address = null;
-            //_registerModel.CardNumber = null;
+            SelectedCitiesIndex = -1;
             SelectedStepTabIndex = 0;
             AccountBoxIsEnabled = true;
             SMCmdIsEnabledBool = false;
@@ -183,7 +234,7 @@ namespace First_MVVM.ViewModels
                 return;
             } 
 
-            if (_business.IsPhoneNumber(AccountBox.Text) && AccountBox.Text.Length == 10)
+            if (_strVerify.IsPhoneNumber(AccountBox.Text) && AccountBox.Text.Length == 10)
             {
                 DataTable table = await _dBRead.Customer_Address(AccountBox.Text);
                 if (table.Rows.Count > 0)
@@ -220,8 +271,6 @@ namespace First_MVVM.ViewModels
 
         private async void SendMessageKey(TextBox AccountBox)
         {
-            
-
             string _phoneNumber = AccountBox.Text;
             string _randomKey = _sendMessage.RandomKey(6);
 
@@ -230,7 +279,7 @@ namespace First_MVVM.ViewModels
             bool result = await _dBWrite.Verify_SmPhoneBinding(_phoneNumber,_randomKey);
             if (result == true)
             {
-                //_sendMessage.SmSendSampleCode(_phoneNumber, _randomKey);
+                _sendMessage.SmSendSampleCode(_phoneNumber, _randomKey);
                 AccountBoxIsEnabled = false;
                 SMCmdIsEnabledBool = false;
             }
@@ -239,7 +288,7 @@ namespace First_MVVM.ViewModels
                 bool resultAgain = await _dBWrite.Verify_SmPhoneBinding_UPDATE(_phoneNumber, _randomKey);
                 if (resultAgain == true)
                 {
-                    //_sendMessage.SmSendSampleCode(_phoneNumber, _randomKey);
+                    _sendMessage.SmSendSampleCode(_phoneNumber, _randomKey);
                     AccountBoxIsEnabled = false;
                     SMCmdIsEnabledBool = false;
                 }
@@ -267,7 +316,7 @@ namespace First_MVVM.ViewModels
         private void CheckPassword(object parameter)
         {
             var passwordBox = parameter as PasswordBox;
-            if (_business.Checkpassword(passwordBox.Password))
+            if (_strVerify.Checkpassword(passwordBox.Password))
             {
                 PasswordStr = passwordBox.Password;
                 if (PasswordStrBuffer == PasswordStr)
@@ -291,7 +340,7 @@ namespace First_MVVM.ViewModels
         private void ConfirmPassword(object parameter)
         {
             var passwordBox = parameter as PasswordBox;
-            if (_business.Checkpassword(passwordBox.Password))
+            if (_strVerify.Checkpassword(passwordBox.Password))
             {
                 PasswordStrBuffer = passwordBox.Password;
                 if (passwordBox.Password == PasswordStr)
@@ -321,7 +370,7 @@ namespace First_MVVM.ViewModels
         private async void CheckNameStr(TextBox nameBox)
         {
             _registerModel.Name = nameBox.Text;
-            bool boolResult = await Task.Run<bool>(() => { return _business.IsChinese(_registerModel.Name); });
+            bool boolResult = await Task.Run<bool>(() => { return _strVerify.IsChinese(_registerModel.Name); });
             if (boolResult)
             {
                 NoticeText = "正確";
@@ -337,7 +386,7 @@ namespace First_MVVM.ViewModels
         private async void CheckEmailStr(TextBox emailBox)
         {
             _registerModel.Email = emailBox.Text;
-            bool boolResult = await Task.Run<bool>(() => { return _business.IsValidEmail(_registerModel.Email); });
+            bool boolResult = await Task.Run<bool>(() => { return _strVerify.IsValidEmail(_registerModel.Email); });
             if (boolResult)
             {
                 NoticeText = "正確";
@@ -357,7 +406,7 @@ namespace First_MVVM.ViewModels
             CardID = (string)JObject.Parse(Data)["result"]["card_id"];
         }
 
-        private void FillInProfile()
+        private void FillProfile()
         {
             switch (_selectedStepTabName)
             {
@@ -370,11 +419,11 @@ namespace First_MVVM.ViewModels
                 case "個人資料":
                     _registerModel.Name = _nameStr;
                     break;
+                case "地區":
+                    _registerModel.Address = _selectedCities + _selectedTownship;
+                    break;
                 case "信箱":
                     _registerModel.Email = _emailStr;
-                    break;
-                case "完成註冊":
-                    
                     break;
                 default:
                     break;
@@ -383,7 +432,7 @@ namespace First_MVVM.ViewModels
 
         private void NextTab()
         {
-            FillInProfile();
+            FillProfile();
             NextStepIsEnabledBool = false;
             NoticeText = null;
             SelectedStepTabIndex += 1;

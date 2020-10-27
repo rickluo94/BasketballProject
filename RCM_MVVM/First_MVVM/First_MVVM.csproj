@@ -10,6 +10,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="App.config" />
+    <None Remove="Json\CityCountyData.json" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MySql.Data" Version="8.0.21" />
@@ -25,5 +26,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Notifications\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Json\CityCountyData.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

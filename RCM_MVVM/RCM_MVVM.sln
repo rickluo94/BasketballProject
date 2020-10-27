@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyCardModel", "EasyCardMo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RfidModel", "RfidModel\RfidModel.csproj", "{00F582B1-3BEA-4C75-8948-5DE50896F3A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SendMessageModel", "SendMessageModel\SendMessageModel.csproj", "{10AE0C61-E0EF-4C63-9D50-D81F717165FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SendMessageModel", "SendMessageModel\SendMessageModel.csproj", "{10AE0C61-E0EF-4C63-9D50-D81F717165FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
