@@ -49,11 +49,7 @@ namespace First_MVVM.ViewModels
         public int SelectedCitiesIndex
         {
             get { return _selectedCitiesIndex; }
-            set 
-            { 
-                SetProperty(ref _selectedCitiesIndex, value); 
-                Township = _nationalCities.FillTownshipData(_nationalCities.FillDefaultData(), _selectedCitiesIndex); 
-            }
+            set { SetProperty(ref _selectedCitiesIndex, value); }
         }
 
         private string _selectedCities;
@@ -69,11 +65,7 @@ namespace First_MVVM.ViewModels
         public string SelectedTownship
         {
             get { return _selectedTownship; }
-            set 
-            { 
-                SetProperty(ref _selectedTownship, value);
-                if (!string.IsNullOrWhiteSpace(_selectedTownship)) NextStepIsEnabledBool = true;
-            }
+            set { SetProperty(ref _selectedTownship, value); }
         }
 
 
@@ -180,6 +172,10 @@ namespace First_MVVM.ViewModels
         public DelegateCommand<object> PasswordConfirmCommand { get; private set; }
         public DelegateCommand<object> PasswordClearCommand { get; private set; }
         public DelegateCommand<TextBox> NameCommand { get; private set; }
+
+        public DelegateCommand CitiesIsChangeCmd { get; private set; }
+        public DelegateCommand TownshipIsChangeCmd { get; private set; }
+
         public DelegateCommand<TextBox> EmailCommand { get; private set; }
         public DelegateCommand ReadCardCommand { get; private set; }
         public DelegateCommand NextTabCommand { get; private set; }
@@ -200,6 +196,8 @@ namespace First_MVVM.ViewModels
             PasswordConfirmCommand = new DelegateCommand<object>(ConfirmPassword);
             PasswordClearCommand = new DelegateCommand<object>(PasswordClear);
             NameCommand = new DelegateCommand<TextBox>(CheckNameStr);
+            CitiesIsChangeCmd = new DelegateCommand(FillTownshipData);
+            TownshipIsChangeCmd = new DelegateCommand(CheckAddress);
             EmailCommand = new DelegateCommand<TextBox>(CheckEmailStr);
             ReadCardCommand = new DelegateCommand(ReadCard);
             NextTabCommand = new DelegateCommand(NextTab);
@@ -379,6 +377,23 @@ namespace First_MVVM.ViewModels
             else
             {
                 NoticeText = "有誤";
+                NextStepIsEnabledBool = false;
+            }
+        }
+
+        private void FillTownshipData()
+        {
+            Township = _nationalCities.FillTownshipData(_nationalCities.FillDefaultData(), _selectedCitiesIndex);
+        }
+
+        private void CheckAddress()
+        {
+            if (!string.IsNullOrWhiteSpace(_selectedCities) && !string.IsNullOrWhiteSpace(_selectedTownship))
+            {
+                NextStepIsEnabledBool = true;
+            }
+            else
+            {
                 NextStepIsEnabledBool = false;
             }
         }

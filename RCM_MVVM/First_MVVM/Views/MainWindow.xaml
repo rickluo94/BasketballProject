@@ -58,8 +58,9 @@
         </Button>
             <!-- Row 5 -->
         <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding UpdateText}" />
-        <Button Grid.Row="6" Grid.Column="1" Content="註冊" Command="{Binding RegisterStepTabCommand}">
+        <Button Grid.Row="6" Grid.Column="1" Content="註冊" Command="{Binding RegisterStepTabCommand}"/>
+        <Button Grid.Row="6" Grid.Column="2" Content="租借" Command="{Binding }"/>
+        <Button Grid.Row="6" Grid.Column="3" Content="歸還" Command="{Binding }"/>
 
-        </Button>
     </Grid>
 </Window>

@@ -49,6 +49,7 @@ namespace First_MVVM.Business
         public string CityEngName { get; set; }
         public IList<AreaList> AreaList { get; set; }
     }
+
     public class AreaList
     {
         public string ZipCode { get; set; }
