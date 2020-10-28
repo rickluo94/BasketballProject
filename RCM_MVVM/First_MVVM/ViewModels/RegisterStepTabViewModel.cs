@@ -12,10 +12,8 @@ using System.Windows.Controls;
 using EasyCardModel;
 using DBModel;
 using SendMessageModel;
-using System.Threading;
 using System.Timers;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace First_MVVM.ViewModels
 {
