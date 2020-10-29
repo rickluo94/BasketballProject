@@ -5,6 +5,11 @@
              xmlns:prism="http://prismlibrary.com/"
              prism:ViewModelLocator.AutoWireViewModel="True"
              Height="1024" Width="600" FontSize="20" >
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding RentalStepTabLoadCmd}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5"/>
@@ -67,15 +72,15 @@
                         <RowDefinition Height="20"/>
                     </Grid.RowDefinitions>
                     <Button Grid.Row="1" Grid.Column="1"  Content="↩" Command="{Binding }" Margin="10,10,10,10"/>
-                    <Button Grid.Row="2" Grid.Column="2"  Content="A1" Command="{Binding A1_Cmd}" IsEnabled="{Binding A1_IsIsEnabled}" Margin="10,10,10,10"/>
-                    <Button Grid.Row="3" Grid.Column="2"  Content="A2" Command="{Binding A2_Cmd}" IsEnabled="{Binding A2_IsIsEnabled}" Margin="10,10,10,10"/>
-                    <Button Grid.Row="4" Grid.Column="2"  Content="A3" Command="{Binding A3_Cmd}" IsEnabled="{Binding A3_IsIsEnabled}" Margin="10,10,10,10"/>
-                    <Button Grid.Row="5" Grid.Column="2"  Content="A4" Command="{Binding A4_Cmd}" IsEnabled="{Binding A4_IsIsEnabled}" Margin="10,10,10,10"/>
+                    <Button Grid.Row="2" Grid.Column="2"  Content="A1" Command="{Binding A1_Cmd}" IsEnabled="{Binding A1_IsEnabled}" Margin="10,10,10,10"/>
+                    <Button Grid.Row="3" Grid.Column="2"  Content="A2" Command="{Binding A2_Cmd}" IsEnabled="{Binding A2_IsEnabled}" Margin="10,10,10,10"/>
+                    <Button Grid.Row="4" Grid.Column="2"  Content="A3" Command="{Binding A3_Cmd}" IsEnabled="{Binding A3_IsEnabled}" Margin="10,10,10,10"/>
+                    <Button Grid.Row="5" Grid.Column="2"  Content="A4" Command="{Binding A4_Cmd}" IsEnabled="{Binding A4_IsEnabled}" Margin="10,10,10,10"/>
 
-                    <Button Grid.Row="2" Grid.Column="3"  Content="A5" Command="{Binding A5_Cmd}" IsEnabled="{Binding A5_IsIsEnabled}" Margin="10,10,10,10"/>
-                    <Button Grid.Row="3" Grid.Column="3"  Content="A6" Command="{Binding A6_Cmd}" IsEnabled="{Binding A6_IsIsEnabled}" Margin="10,10,10,10"/>
-                    <Button Grid.Row="4" Grid.Column="3"  Content="A7" Command="{Binding A7_Cmd}" IsEnabled="{Binding A7_IsIsEnabled}" Margin="10,10,10,10"/>
-                    <Button Grid.Row="5" Grid.Column="3"  Content="下一步" Command="{Binding NextTabCommand}"  IsEnabled="{Binding NextStepIsEnabled}" Margin="10,10,10,10"/>
+                    <Button Grid.Row="2" Grid.Column="3"  Content="A5" Command="{Binding A5_Cmd}" IsEnabled="{Binding A5_IsEnabled}" Margin="10,10,10,10"/>
+                    <Button Grid.Row="3" Grid.Column="3"  Content="A6" Command="{Binding A6_Cmd}" IsEnabled="{Binding A6_IsEnabled}" Margin="10,10,10,10"/>
+                    <Button Grid.Row="4" Grid.Column="3"  Content="A7" Command="{Binding A7_Cmd}" IsEnabled="{Binding A7_IsEnabled}" Margin="10,10,10,10"/>
+                    <Button Grid.Row="5" Grid.Column="3"  Content="下一步" Command="{Binding NextTabCmd}"  IsEnabled="{Binding NextStepIsEnabled}" Margin="10,10,10,10"/>
                 </Grid>
             </TabItem>
             <TabItem Header="租借流程">

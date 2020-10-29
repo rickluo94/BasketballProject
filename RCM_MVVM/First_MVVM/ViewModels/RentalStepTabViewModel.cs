@@ -15,9 +15,10 @@ namespace First_MVVM.ViewModels
     {
         IO _IO = new IO();
         RentalModel _rentalModel = new RentalModel();
-        AvailableLockers _availableLockers = new AvailableLockers();
 
-        #region 資料容器
+        ResStatus _resStatus = new ResStatus();
+
+        #region Interface Property
         private int _selectedStepTabIndex;
         public int SelectedStepTabIndex
         {
@@ -48,68 +49,69 @@ namespace First_MVVM.ViewModels
             set { _lockerSelectedIndex = value; }
         }
 
-        private bool _a1_IsIsEnabled;
+        private bool _a1_IsEnabled;
 
-        public bool A1_IsIsEnabled
+        public bool A1_IsEnabled
         {
-            get { return _a1_IsIsEnabled; }
-            set { SetProperty(ref _a1_IsIsEnabled, value); }
+            get { return _a1_IsEnabled; }
+            set { SetProperty(ref _a1_IsEnabled, value); }
         }
 
-        private bool _a2_IsIsEnabled;
+        private bool _a2_IsEnabled;
 
-        public bool A2_IsIsEnabled
+        public bool A2_IsEnabled
         {
-            get { return _a2_IsIsEnabled; }
-            set { SetProperty(ref _a2_IsIsEnabled, value); }
+            get { return _a2_IsEnabled; }
+            set { SetProperty(ref _a2_IsEnabled, value); }
         }
 
-        private bool _a3_IsIsEnabled;
+        private bool _a3_IsEnabled;
 
-        public bool A3_IsIsEnabled
+        public bool A3_IsEnabled
         {
-            get { return _a3_IsIsEnabled; }
-            set { SetProperty(ref _a3_IsIsEnabled, value); }
+            get { return _a3_IsEnabled; }
+            set { SetProperty(ref _a3_IsEnabled, value); }
         }
 
-        private bool _a4_IsIsEnabled;
+        private bool _a4_IsEnabled;
 
-        public bool A4_IsIsEnabled
+        public bool A4_IsEnabled
         {
-            get { return _a4_IsIsEnabled; }
-            set { SetProperty(ref _a4_IsIsEnabled, value); }
+            get { return _a4_IsEnabled; }
+            set { SetProperty(ref _a4_IsEnabled, value); }
         }
 
-        private bool _a5_IsIsEnabled;
+        private bool _a5_IsEnabled;
 
-        public bool A5_IsIsEnabled
+        public bool A5_IsEnabled
         {
-            get { return _a5_IsIsEnabled; }
-            set { SetProperty(ref _a5_IsIsEnabled, value); }
+            get { return _a5_IsEnabled; }
+            set { SetProperty(ref _a5_IsEnabled, value); }
         }
 
-        private bool _a6_IsIsEnabled;
+        private bool _a6_IsEnabled;
 
-        public bool A6_IsIsEnabled
+        public bool A6_IsEnabled
         {
-            get { return _a6_IsIsEnabled; }
-            set { SetProperty(ref _a6_IsIsEnabled, value); }
+            get { return _a6_IsEnabled; }
+            set { SetProperty(ref _a6_IsEnabled, value); }
         }
 
-        private bool _a7_IsIsEnabled;
+        private bool _a7_IsEnabled;
 
-        public bool A7_IsIsEnabled
+        public bool A7_IsEnabled
         {
-            get { return _a7_IsIsEnabled; }
-            set { SetProperty(ref _a7_IsIsEnabled, value); }
+            get { return _a7_IsEnabled; }
+            set { SetProperty(ref _a7_IsEnabled, value); }
         }
 
 
 
         #endregion
 
-        #region 命令物件
-        public DelegateCommand NextTabCommand { get; private set; }
+        #region Interface Command 
+        public DelegateCommand RentalStepTabLoadCmd { get; private set; }
+        public DelegateCommand NextTabCmd { get; private set; }
         public DelegateCommand A1_Cmd { get; private set; }
         public DelegateCommand A2_Cmd { get; private set; }
         public DelegateCommand A3_Cmd { get; private set; }
@@ -122,7 +124,8 @@ namespace First_MVVM.ViewModels
         public RentalStepTabViewModel()
         {
             //_IO.SetDevicePort("COM3", 57600); _IO.SetIOParameter();
-            NextTabCommand = new DelegateCommand(NextTab);
+            RentalStepTabLoadCmd = new DelegateCommand(RentalStepTabLoad);
+            NextTabCmd = new DelegateCommand(NextTab);
             A1_Cmd = new DelegateCommand(A1_Selected);
             A2_Cmd = new DelegateCommand(A2_Selected);
             A3_Cmd = new DelegateCommand(A3_Selected);
@@ -130,6 +133,26 @@ namespace First_MVVM.ViewModels
             A5_Cmd = new DelegateCommand(A5_Selected);
             A6_Cmd = new DelegateCommand(A6_Selected);
             A7_Cmd = new DelegateCommand(A7_Selected);
+        }
+
+        private void RentalStepTabLoad()
+        {
+            #region 更新取得物品狀態
+            if (_resStatus.Update() == true)
+            {
+                A1_IsEnabled = _resStatus.A1;
+                A2_IsEnabled = _resStatus.A2;
+                A3_IsEnabled = _resStatus.A3;
+                A4_IsEnabled = _resStatus.A4;
+                A5_IsEnabled = _resStatus.A5;
+                A6_IsEnabled = _resStatus.A6;
+                A7_IsEnabled = _resStatus.A7;
+            }
+            else
+            {
+                
+            }
+            #endregion
         }
 
         private void NextTab()
@@ -153,7 +176,6 @@ namespace First_MVVM.ViewModels
                     break;
             }
         }
-
 
         private void A1_Selected() { LockerSelectedIndex = 1; }
         private void A2_Selected() { LockerSelectedIndex = 2; }
