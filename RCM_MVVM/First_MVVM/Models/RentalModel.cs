@@ -10,6 +10,6 @@ namespace First_MVVM.Models
         public string CardID { get; set; }
         public string Balance { get; set; }
         public string Epc { get; set; }
-        public int LockerName { get; set; }
+        public string LockerSelectedIndex { get; set; }
     }
 }

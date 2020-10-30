@@ -8,6 +8,10 @@ using System.Linq;
 using IOModel;
 using First_MVVM.Models;
 using First_MVVM.Business;
+using System.Collections.ObjectModel;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows;
 
 namespace First_MVVM.ViewModels
 {
@@ -16,7 +20,7 @@ namespace First_MVVM.ViewModels
         IO _IO = new IO();
         RentalModel _rentalModel = new RentalModel();
 
-        ResStatus _resStatus = new ResStatus();
+
 
         #region Interface Property
         private int _selectedStepTabIndex;
@@ -41,118 +45,37 @@ namespace First_MVVM.ViewModels
             set { SetProperty(ref _nextStepIsEnabled, value); }
         }
 
-        private int _lockerSelectedIndex;
+        private string _lockerSelectedIndex;
 
-        public int LockerSelectedIndex
+        public string LockerSelectedIndex
         {
             get { return _lockerSelectedIndex; }
             set { _lockerSelectedIndex = value; }
         }
 
-        private bool _a1_IsEnabled;
-
-        public bool A1_IsEnabled
-        {
-            get { return _a1_IsEnabled; }
-            set { SetProperty(ref _a1_IsEnabled, value); }
-        }
-
-        private bool _a2_IsEnabled;
-
-        public bool A2_IsEnabled
-        {
-            get { return _a2_IsEnabled; }
-            set { SetProperty(ref _a2_IsEnabled, value); }
-        }
-
-        private bool _a3_IsEnabled;
-
-        public bool A3_IsEnabled
-        {
-            get { return _a3_IsEnabled; }
-            set { SetProperty(ref _a3_IsEnabled, value); }
-        }
-
-        private bool _a4_IsEnabled;
-
-        public bool A4_IsEnabled
-        {
-            get { return _a4_IsEnabled; }
-            set { SetProperty(ref _a4_IsEnabled, value); }
-        }
-
-        private bool _a5_IsEnabled;
-
-        public bool A5_IsEnabled
-        {
-            get { return _a5_IsEnabled; }
-            set { SetProperty(ref _a5_IsEnabled, value); }
-        }
-
-        private bool _a6_IsEnabled;
-
-        public bool A6_IsEnabled
-        {
-            get { return _a6_IsEnabled; }
-            set { SetProperty(ref _a6_IsEnabled, value); }
-        }
-
-        private bool _a7_IsEnabled;
-
-        public bool A7_IsEnabled
-        {
-            get { return _a7_IsEnabled; }
-            set { SetProperty(ref _a7_IsEnabled, value); }
-        }
-
-
+        public ObservableCollection<bool> ResStatus { get; private set; } = new ObservableCollection<bool>();
+        private Business.ResStatus _resStatusGroup = null;
 
         #endregion
 
         #region Interface Command 
-        public DelegateCommand RentalStepTabLoadCmd { get; private set; }
+        public DelegateCommand<Grid> RentalStepTabLoadCmd { get; private set; }
+        public DelegateCommand PreviousTabCmd { get; private set; }
         public DelegateCommand NextTabCmd { get; private set; }
-        public DelegateCommand A1_Cmd { get; private set; }
-        public DelegateCommand A2_Cmd { get; private set; }
-        public DelegateCommand A3_Cmd { get; private set; }
-        public DelegateCommand A4_Cmd { get; private set; }
-        public DelegateCommand A5_Cmd { get; private set; }
-        public DelegateCommand A6_Cmd { get; private set; }
-        public DelegateCommand A7_Cmd { get; private set; }
         #endregion
 
-        public RentalStepTabViewModel()
+        public RentalStepTabViewModel(Business.ResStatus resStatusGroup)
         {
+            _resStatusGroup = resStatusGroup;
             //_IO.SetDevicePort("COM3", 57600); _IO.SetIOParameter();
-            RentalStepTabLoadCmd = new DelegateCommand(RentalStepTabLoad);
+            RentalStepTabLoadCmd = new DelegateCommand<Grid>(RentalStepTabLoad);
+            PreviousTabCmd = new DelegateCommand(PreviousTab);
             NextTabCmd = new DelegateCommand(NextTab);
-            A1_Cmd = new DelegateCommand(A1_Selected);
-            A2_Cmd = new DelegateCommand(A2_Selected);
-            A3_Cmd = new DelegateCommand(A3_Selected);
-            A4_Cmd = new DelegateCommand(A4_Selected);
-            A5_Cmd = new DelegateCommand(A5_Selected);
-            A6_Cmd = new DelegateCommand(A6_Selected);
-            A7_Cmd = new DelegateCommand(A7_Selected);
         }
 
-        private void RentalStepTabLoad()
+        private void RentalStepTabLoad(Grid Lockers)
         {
-            #region 更新取得物品狀態
-            if (_resStatus.Update() == true)
-            {
-                A1_IsEnabled = _resStatus.A1;
-                A2_IsEnabled = _resStatus.A2;
-                A3_IsEnabled = _resStatus.A3;
-                A4_IsEnabled = _resStatus.A4;
-                A5_IsEnabled = _resStatus.A5;
-                A6_IsEnabled = _resStatus.A6;
-                A7_IsEnabled = _resStatus.A7;
-            }
-            else
-            {
-                
-            }
-            #endregion
+            FillCabinetBtns(Lockers);
         }
 
         private void NextTab()
@@ -162,29 +85,72 @@ namespace First_MVVM.ViewModels
             SelectedStepTabIndex += 1;
         }
 
+        private void PreviousTab()
+        {
+            SelectedStepTabIndex -= 1;
+        }
+
         private void FillProfile()
         {
             switch (_selectedStepTabName)
             {
                 case "選擇櫃位":
-                    _rentalModel.LockerName = _lockerSelectedIndex;
+                    _rentalModel.LockerSelectedIndex = _lockerSelectedIndex;
+
+                    _IO.Write(_rentalModel.LockerSelectedIndex, _IO.UnLock);
+
                     break;
                 case "租借流程":
-                    
+
                     break;
                 default:
                     break;
             }
         }
 
-        private void A1_Selected() { LockerSelectedIndex = 1; }
-        private void A2_Selected() { LockerSelectedIndex = 2; }
-        private void A3_Selected() { LockerSelectedIndex = 3; }
-        private void A4_Selected() { LockerSelectedIndex = 4; }
-        private void A5_Selected() { LockerSelectedIndex = 5; }
-        private void A6_Selected() { LockerSelectedIndex = 6; }
-        private void A7_Selected() { LockerSelectedIndex = 7; }
-        
+        private void FillCabinetBtns(Grid Lockers)
+        {
+            //取得櫃位狀態
+            List<bool> _resStatuslist = _resStatusGroup.GetAll();
+            Lockers.Children.Clear();
+            List<Button> CabinetButton = new List<Button>
+            {
+                new Button(),
+                new Button(),
+                new Button(),
+                new Button(),
+                new Button(),
+                new Button(),
+                new Button()
+            };
+            for (int i = 0; i < CabinetButton.Count; i++)
+            {
+                CabinetButton[i].Content = $"A{Math.Abs(i + 1)}";
+                CabinetButton[i].Width = 200;
+                CabinetButton[i].Height = 200;
+                CabinetButton[i].IsEnabled = _resStatuslist[i];
+                CabinetButton[i].Margin = new Thickness() { Bottom = 10, Left = 10, Right = 10, Top = 10 };
+                if (i < 4)
+                {
+                    Grid.SetColumn(CabinetButton[i], 1);
+                    Grid.SetRow(CabinetButton[i], i);
+                }
+                else
+                {
+                    Grid.SetColumn(CabinetButton[i], 2);
+                    Grid.SetRow(CabinetButton[i], i - 4);
+                }
+                CabinetButton[i].Click += new System.Windows.RoutedEventHandler(CabinetBtns_Click);
+                Lockers.Children.Add(CabinetButton[i]);
+            }
+        }
+
+        public void CabinetBtns_Click(object sender, EventArgs e)
+        {
+            var parameter = sender as Button;
+            _lockerSelectedIndex = parameter.Content.ToString();
+            NextStepIsEnabled = true;
+        }
 
         public Action FinishInteraction { get; set; }
 

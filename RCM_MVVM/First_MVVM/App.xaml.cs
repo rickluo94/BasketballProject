@@ -18,8 +18,9 @@ namespace First_MVVM
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-
+            containerRegistry.Register<Business.ResStatus, Business.DBResStatus>();
         }
+
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {
         

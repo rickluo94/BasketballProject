@@ -6,44 +6,40 @@ namespace IOModel
 {
     public class IO
     {
-        public const byte Lock = 1;
-        public const byte Unlock = 0;
+        public Arduino _IO;
+        public readonly byte Lock = 1;
+        public readonly byte UnLock = 0;
 
         #region DoorCheck signal
-        public readonly int A1_IN = 0;
-        public readonly int A2_IN = 1;
-        public readonly int A3_IN = 2;
-        public readonly int A4_IN = 3;
-        public readonly int A5_IN = 4;
-        public readonly int A6_IN = 0;
-        public readonly int A7_IN = 0;
-        public readonly int A8_IN = 6;
+        enum IN
+        {
+            A1 = 0,
+            A2 = 1,
+            A3 = 2,
+            A4 = 3,
+            A5 = 4,
+            A6 = 0,
+            A7 = 0,
+            A8 = 6,
+            Pump = 5
+        }
         #endregion
 
         #region DoorLocker
-        public readonly int A1_OUT = 7;
-        public readonly int A2_OUT = 8;
-        public readonly int A3_OUT = 9;
-        public readonly int A4_OUT = 10;
-        public readonly int A5_OUT = 11;
-        public readonly int A6_OUT = 7;
-        public readonly int A7_OUT = 7;
-        public readonly int A8_OUT = 21;
+        enum Out
+        {
+            A1 = 7,
+            A2 = 8,
+            A3 = 9,
+            A4 = 10,
+            A5 = 11,
+            A6 = 7,
+            A7 = 7,
+            A8 = 21,
+            Pump = 22,
+            Buzz = 23
+        }
         #endregion
-
-        #region pumpBtnIn
-        public static readonly int pump_IN = 5;
-        #endregion
-
-        #region pump
-        public readonly int pump_OUT = 22;
-        #endregion
-
-        #region buzz
-        public readonly int buzz_OUT = 23;
-        #endregion
-
-        public Arduino _IO;
 
         public bool SetDevicePort(string PortName,int BaudRate)
         {
@@ -63,41 +59,42 @@ namespace IOModel
             try
             {
                 #region digital INPUT
-                _IO.pinMode(A1_IN, Arduino.INPUT);
-                _IO.pinMode(A2_IN, Arduino.INPUT);
-                _IO.pinMode(A3_IN, Arduino.INPUT);
-                _IO.pinMode(A4_IN, Arduino.INPUT);
-                _IO.pinMode(A5_IN, Arduino.INPUT);
-                _IO.pinMode(A6_IN, Arduino.INPUT);
-                _IO.pinMode(A7_IN, Arduino.INPUT);
-                _IO.pinMode(A8_IN, Arduino.INPUT);
-                _IO.pinMode(pump_IN, Arduino.INPUT);
+                _IO.pinMode((int)IN.A1, Arduino.INPUT);
+                _IO.pinMode((int)IN.A2, Arduino.INPUT);
+                _IO.pinMode((int)IN.A3, Arduino.INPUT);
+                _IO.pinMode((int)IN.A4, Arduino.INPUT);
+                _IO.pinMode((int)IN.A5, Arduino.INPUT);
+                _IO.pinMode((int)IN.A6, Arduino.INPUT);
+                _IO.pinMode((int)IN.A7, Arduino.INPUT);
+                _IO.pinMode((int)IN.A8, Arduino.INPUT);
+                _IO.pinMode((int)IN.Pump, Arduino.INPUT);
                 #endregion
 
                 #region digital OUTPUT
-                _IO.pinMode(A1_OUT, Arduino.OUTPUT);
-                _IO.pinMode(A2_OUT, Arduino.OUTPUT);
-                _IO.pinMode(A3_OUT, Arduino.OUTPUT);
-                _IO.pinMode(A4_OUT, Arduino.OUTPUT);
-                _IO.pinMode(A5_OUT, Arduino.OUTPUT);
-                _IO.pinMode(A6_OUT, Arduino.OUTPUT);
-                _IO.pinMode(A7_OUT, Arduino.OUTPUT);
-                _IO.pinMode(A8_OUT, Arduino.OUTPUT);
-                _IO.pinMode(pump_OUT, Arduino.OUTPUT);
-                _IO.pinMode(buzz_OUT, Arduino.OUTPUT);
+                _IO.pinMode((int)Out.A1, Arduino.OUTPUT);
+                _IO.pinMode((int)Out.A2, Arduino.OUTPUT);
+                _IO.pinMode((int)Out.A3, Arduino.OUTPUT);
+                _IO.pinMode((int)Out.A4, Arduino.OUTPUT);
+                _IO.pinMode((int)Out.A5, Arduino.OUTPUT);
+                _IO.pinMode((int)Out.A6, Arduino.OUTPUT);
+                _IO.pinMode((int)Out.A7, Arduino.OUTPUT);
+                _IO.pinMode((int)Out.A8, Arduino.OUTPUT);
+                _IO.pinMode((int)Out.Pump, Arduino.OUTPUT);
+                _IO.pinMode((int)Out.Buzz, Arduino.OUTPUT);
                 #endregion
 
                 #region OUTPUT 預設關
-                _IO.digitalWrite(A1_OUT, Lock);
-                _IO.digitalWrite(A2_OUT, Lock);
-                _IO.digitalWrite(A3_OUT, Lock);
-                _IO.digitalWrite(A4_OUT, Lock);
-                _IO.digitalWrite(A5_OUT, Lock);
-                _IO.digitalWrite(A6_OUT, Lock);
-                _IO.digitalWrite(A7_OUT, Lock);
-                _IO.digitalWrite(A8_OUT, Lock);
-                _IO.digitalWrite(pump_OUT, Lock);
-                _IO.digitalWrite(buzz_OUT, Lock);
+
+                _IO.digitalWrite((int)Out.A1, Lock);
+                _IO.digitalWrite((int)Out.A2, Lock);
+                _IO.digitalWrite((int)Out.A3, Lock);
+                _IO.digitalWrite((int)Out.A4, Lock);
+                _IO.digitalWrite((int)Out.A5, Lock);
+                _IO.digitalWrite((int)Out.A6, Lock);
+                _IO.digitalWrite((int)Out.A7, Lock);
+                _IO.digitalWrite((int)Out.A8, Lock);
+                _IO.digitalWrite((int)Out.Pump, Lock);
+                _IO.digitalWrite((int)Out.Buzz, Lock);
                 #endregion
                 return true;
             }
@@ -107,11 +104,41 @@ namespace IOModel
             }
         }
 
-        public int Read(int Pin)
+        public int Read(string PinName)
         {
             try
             {
-                int result = _IO.digitalRead(Pin);
+                int result = -1;
+                switch (PinName)
+                {
+                    case "A1":
+                        result = _IO.digitalRead((int)IN.A1);
+                        break;
+                    case "A2":
+                        result = _IO.digitalRead((int)IN.A2);
+                        break;
+                    case "A3":
+                        result = _IO.digitalRead((int)IN.A3);
+                        break;
+                    case "A4":
+                        result = _IO.digitalRead((int)IN.A4);
+                        break;
+                    case "A5":
+                        result = _IO.digitalRead((int)IN.A5);
+                        break;
+                    case "A6":
+                        result = _IO.digitalRead((int)IN.A6);
+                        break;
+                    case "A7":
+                        result = _IO.digitalRead((int)IN.A7);
+                        break;
+                    case "A8":
+                        result = _IO.digitalRead((int)IN.A8);
+                        break;
+                    case "Pump":
+                        result = _IO.digitalRead((int)IN.Pump);
+                        break;
+                }
                 return result;
             }
             catch (Exception e)
@@ -120,11 +147,43 @@ namespace IOModel
             }
         }
 
-        public bool Write(int Pin, byte Value)
+        public bool Write(string PinName, byte Value)
         {
             try
             {
-                _IO.digitalWrite(Pin, Value);
+                switch (PinName)
+                {
+                    case "A1":
+                        _IO.digitalWrite((int)Out.A1, Value);
+                        break;
+                    case "A2":
+                        _IO.digitalWrite((int)Out.A2, Value);
+                        break;
+                    case "A3":
+                        _IO.digitalWrite((int)Out.A3, Value);
+                        break;
+                    case "A4":
+                        _IO.digitalWrite((int)Out.A4, Value);
+                        break;
+                    case "A5":
+                        _IO.digitalWrite((int)Out.A5, Value);
+                        break;
+                    case "A6":
+                        _IO.digitalWrite((int)Out.A6, Value);
+                        break;
+                    case "A7":
+                        _IO.digitalWrite((int)Out.A7, Value);
+                        break;
+                    case "A8":
+                        _IO.digitalWrite((int)Out.A8, Value);
+                        break;
+                    case "Pump":
+                        _IO.digitalWrite((int)Out.Pump, Value);
+                        break;
+                    case "Buzz":
+                        _IO.digitalWrite((int)Out.Buzz, Value);
+                        break;
+                }
                 return true;
             }
             catch (Exception)
