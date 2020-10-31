@@ -190,11 +190,9 @@ namespace First_MVVM.ViewModels
                     _rentalModel.LockerSelectedIndex = _lockerSelectedIndex;
                     //_IO.Write(_rentalModel.LockerSelectedIndex, _IO.UnLock);
                     NoticeText = "提醒您開啟球櫃後開始計費";
-                    SetDoorCheckTimer();
-                    break;
-                case "租借完成":
                     
-
+                    //在此函式判斷是否開始計費 or 操作逾時
+                    SetDoorCheckTimer();
                     break;
                 default:
                     break;
