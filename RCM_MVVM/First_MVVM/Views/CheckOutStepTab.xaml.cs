@@ -5,9 +5,9 @@ namespace First_MVVM.Views
     /// <summary>
     /// Interaction logic for RentalStepTab
     /// </summary>
-    public partial class RentalStepTab : UserControl
+    public partial class CheckOutStepTab : UserControl
     {
-        public RentalStepTab()
+        public CheckOutStepTab()
         {
             InitializeComponent();
         }

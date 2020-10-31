@@ -19,7 +19,7 @@ using System.Diagnostics;
 
 namespace First_MVVM.ViewModels
 {
-    public class RentalStepTabViewModel : BindableBase, IInteractionRequestAware
+    public class CheckOutStepTabViewModel : BindableBase, IInteractionRequestAware
     {
         private RentalModel _rentalModel { get; set; }
         private IO _IO = new IO();
@@ -107,7 +107,7 @@ namespace First_MVVM.ViewModels
 
         #endregion
 
-        public RentalStepTabViewModel(Business.ResStatus resStatusGroup)
+        public CheckOutStepTabViewModel(Business.ResStatus resStatusGroup)
         {
             _rentalModel = new RentalModel();
             _resStatusGroup = resStatusGroup;
@@ -167,6 +167,7 @@ namespace First_MVVM.ViewModels
         private void NextTab()
         {
             FillProfile();
+            NoticeText = null;
             NextStepIsEnabled = false;
             SelectedStepTabIndex += 1;
         }
@@ -215,8 +216,8 @@ namespace First_MVVM.ViewModels
             for (int i = 0; i < CabinetButton.Count; i++)
             {
                 CabinetButton[i].Content = $"A{Math.Abs(i + 1)}";
-                CabinetButton[i].Width = 200;
-                CabinetButton[i].Height = 200;
+                CabinetButton[i].Width = 50;
+                CabinetButton[i].Height = 50;
                 CabinetButton[i].IsEnabled = _resStatuslist[i];
                 CabinetButton[i].Margin = new Thickness() { Bottom = 10, Left = 10, Right = 10, Top = 10 };
                 if (i < 4)
@@ -263,7 +264,7 @@ namespace First_MVVM.ViewModels
             if (string.IsNullOrWhiteSpace(_rentalModel.LockerSelectedIndex))
             {
                 Counter += 1;
-                if (Counter == 5)
+                if (Counter == 20)
                 {
                     Counter = 0;
                     OperationTimer.Elapsed -= OnTimedOperationEvent;
@@ -277,6 +278,7 @@ namespace First_MVVM.ViewModels
                 OperationTimer.Elapsed -= OnTimedOperationEvent;
                 OperationTimer.Close();
             }
+            NoticeText = $"省餘操作時間 {(20 - Counter)} sec";
         }
 
         private void SetDoorCheckTimer()
@@ -313,6 +315,7 @@ namespace First_MVVM.ViewModels
 
                 SelectedStepTabName = "租借完成";
             }
+            NoticeText = $"省餘操作時間 {(10 - Counter)} sec";
         }
 
 
