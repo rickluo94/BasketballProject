@@ -18,12 +18,12 @@ namespace First_MVVM.Business
             return new List<bool>()
 			{
                 true,
-                true,
-                true,
-                true,
-                true,
-                true,
-                true
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
             };
 		}
 	}

@@ -16,6 +16,7 @@ namespace DBModel
             //SslMode = MySqlSslMode.Required,
         };
 
+
         public async Task<DataTable> Customer_Address(string Account)
         {
             DataTable table = new DataTable();
@@ -92,6 +93,11 @@ namespace DBModel
             return table;
         }
 
+        public async Task<DataTable> Verify_TheMember(string CardID)
+        {
+            DataTable table = new DataTable();
+            return table;
+        }
     }
 
     public class DBWrite
@@ -174,6 +180,8 @@ namespace DBModel
                 }
             }
         }
+
+
 
     }
 
