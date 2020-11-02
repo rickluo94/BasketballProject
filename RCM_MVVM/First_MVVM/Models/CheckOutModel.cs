@@ -4,7 +4,7 @@ using System.Text;
 
 namespace First_MVVM.Models
 {
-    public class RentalModel
+    public class CheckOutModel
     {
         public string ID { get; set; }
         public string CardID { get; set; }

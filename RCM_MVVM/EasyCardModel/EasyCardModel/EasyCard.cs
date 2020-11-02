@@ -100,6 +100,13 @@ namespace EasyCardModel
         }
         #endregion
 
+        #region 口款
+        public string Charge_request(int Amount)
+        {
+            return ExecuteCommand("{\"action\": \"charge\",\"arg\": [],\"kwarg\": {\"amount\": "+ Amount +" }}");
+        }
+        #endregion
+
         private string ExecuteCommand(string cmd)
         {
             _serialPort.DiscardOutBuffer();

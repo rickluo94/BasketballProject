@@ -21,7 +21,7 @@ namespace First_MVVM.ViewModels
 {
     public class CheckOutStepTabViewModel : BindableBase, IInteractionRequestAware
     {
-        private RentalModel _rentalModel { get; set; }
+        private CheckOutModel _checkOutModel { get; set; }
         private IO _IO = new IO();
         private EasyCard _easyCard = new EasyCard();
         private DBRead _dBRead = new DBRead();
@@ -109,7 +109,7 @@ namespace First_MVVM.ViewModels
 
         public CheckOutStepTabViewModel(Business.ResStatus resStatusGroup)
         {
-            _rentalModel = new RentalModel();
+            _checkOutModel = new CheckOutModel();
             _resStatusGroup = resStatusGroup;
             //_IO.SetDevicePort("COM3", 57600); _IO.SetIOParameter();
             _easyCard.SetDevicePort("COM6", 115200, 500); _easyCard.Open();
@@ -192,13 +192,13 @@ namespace First_MVVM.ViewModels
             switch (_selectedStepTabName)
             {
                 case "登入":
-                    _rentalModel.ID = _accountStr;
-                    _rentalModel.Balance = _balanceStr;
+                    _checkOutModel.ID = _accountStr;
+                    _checkOutModel.Balance = _balanceStr;
 
                     SetOperationTimer();
                     break;
                 case "選擇櫃位":
-                    _rentalModel.LockerSelectedIndex = _lockerSelectedIndex;
+                    _checkOutModel.LockerSelectedIndex = _lockerSelectedIndex;
                     //_IO.Write(_rentalModel.LockerSelectedIndex, _IO.UnLock);
                     NoticeText = "提醒您球櫃開起後未關閉視同已借出";
                     
@@ -271,7 +271,7 @@ namespace First_MVVM.ViewModels
 
         private void OnTimedOperationEvent(Object source, ElapsedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(_rentalModel.LockerSelectedIndex))
+            if (string.IsNullOrWhiteSpace(_checkOutModel.LockerSelectedIndex))
             {
                 Counter += 1;
                 if (Counter == 20)
@@ -302,7 +302,7 @@ namespace First_MVVM.ViewModels
 
         private void OnTimedDoorCheckEvent(Object source, ElapsedEventArgs e)
         {
-            if (_IO.Read(_rentalModel.LockerSelectedIndex) == _IO.Lock)
+            if (_IO.Read(_checkOutModel.LockerSelectedIndex) == _IO.Lock)
             {
                 Counter += 1;
                 if (Counter == 10)
@@ -311,7 +311,7 @@ namespace First_MVVM.ViewModels
                     DoorCheckTimer.Elapsed -= OnTimedDoorCheckEvent;
                     DoorCheckTimer.Close();
                     SelectedStepTabName = "操作逾時";
-                    _IO.Write(_rentalModel.LockerSelectedIndex, _IO.Lock);
+                    _IO.Write(_checkOutModel.LockerSelectedIndex, _IO.Lock);
                 }
             }
             else
@@ -319,7 +319,7 @@ namespace First_MVVM.ViewModels
                 Counter = 0;
                 DoorCheckTimer.Elapsed -= OnTimedDoorCheckEvent;
                 DoorCheckTimer.Close();
-                _IO.Write(_rentalModel.LockerSelectedIndex, _IO.Lock);
+                _IO.Write(_checkOutModel.LockerSelectedIndex, _IO.Lock);
 
                 ///資料庫新增會員借出紀錄依據_rentalModel內資料寫入//
 
@@ -340,7 +340,7 @@ namespace First_MVVM.ViewModels
 
         private void OnTimedRFIDCheckEvent(Object source, ElapsedEventArgs e)
         {
-            if (_IO.Read(_rentalModel.LockerSelectedIndex) == _IO.UnLock)
+            if (_IO.Read(_checkOutModel.LockerSelectedIndex) == _IO.UnLock)
             {
                 Counter += 1;
                 if (Counter == 10)
@@ -370,7 +370,7 @@ namespace First_MVVM.ViewModels
                     RFIDCheckTimer.Elapsed -= OnTimedRFIDCheckEvent;
                     RFIDCheckTimer.Close();
 
-                    _IO.Write(_rentalModel.LockerSelectedIndex, _IO.UnLock);
+                    _IO.Write(_checkOutModel.LockerSelectedIndex, _IO.UnLock);
                     SetDoorCheckTimer();
                     SelectedStepTabName = "請取球";
                 }

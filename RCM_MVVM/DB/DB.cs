@@ -104,6 +104,12 @@ namespace DBModel
             DataTable table = new DataTable();
             return table;
         }
+
+        public async Task<DataTable> CheckOut_History(string UserID)
+        {
+            DataTable table = new DataTable();
+            return table;
+        }
     }
 
     public class DBWrite
