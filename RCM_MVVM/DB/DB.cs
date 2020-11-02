@@ -98,6 +98,12 @@ namespace DBModel
             DataTable table = new DataTable();
             return table;
         }
+
+        public async Task<DataTable> Outstanding_Amount(string UserID)
+        {
+            DataTable table = new DataTable();
+            return table;
+        }
     }
 
     public class DBWrite

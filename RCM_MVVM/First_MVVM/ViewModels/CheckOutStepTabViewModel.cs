@@ -28,7 +28,7 @@ namespace First_MVVM.ViewModels
         private DBWrite _dBWrite = new DBWrite();
         private System.Timers.Timer OperationTimer;
         private System.Timers.Timer DoorCheckTimer;
-
+        private System.Timers.Timer RFIDCheckTimer;
         #region Interface Property
         private int _counter;
         public int Counter
@@ -99,7 +99,7 @@ namespace First_MVVM.ViewModels
         #endregion
 
         #region Interface Command 
-        public DelegateCommand<Grid> RentalStepTabLoadCmd { get; private set; }
+        public DelegateCommand<Grid> CheckOutStepTabLoadCmd { get; private set; }
         public DelegateCommand ExitCmd { get; private set; }
         public DelegateCommand PreviousTabCmd { get; private set; }
         public DelegateCommand NextTabCmd { get; private set; }
@@ -113,15 +113,14 @@ namespace First_MVVM.ViewModels
             _resStatusGroup = resStatusGroup;
             //_IO.SetDevicePort("COM3", 57600); _IO.SetIOParameter();
             _easyCard.SetDevicePort("COM6", 115200, 500); _easyCard.Open();
-            RentalStepTabLoadCmd = new DelegateCommand<Grid>(RentalStepTabLoad);
+            CheckOutStepTabLoadCmd = new DelegateCommand<Grid>(CheckOutStepTabLoad);
             ExitCmd = new DelegateCommand(ExitInteraction);
             PreviousTabCmd = new DelegateCommand(PreviousTab);
             NextTabCmd = new DelegateCommand(NextTab);
             ReadCardCmd = new DelegateCommand(ReadCard);
-
         }
 
-        private void RentalStepTabLoad(Grid Lockers)
+        private void CheckOutStepTabLoad(Grid Lockers)
         {
             NextStepIsEnabled = true;
             SelectedStepTabIndex = 0;
@@ -147,13 +146,24 @@ namespace First_MVVM.ViewModels
             string Data = await Task.Run<string>(() => { return _easyCard.Read_card_balance_request(); });
             string _card_id = (string)JObject.Parse(Data)["result"]["card_id"];
             if (string.IsNullOrWhiteSpace(_card_id)) return;
-            DataTable table = await _dBRead.Verify_TheMember(_card_id);
-            if (table.Rows.Count > 0)
+            DataTable _member_Profile = await _dBRead.Verify_TheMember(_card_id);
+
+            if (_member_Profile.Rows.Count > 0)
             {
-                AccountStr = table.Rows[0]["UserID"].ToString();
+                AccountStr = _member_Profile.Rows[0]["UserID"].ToString();
                 BalanceStr = (string)JObject.Parse(Data)["result"]["balance"];
-                NoticeText = string.Empty;
-                NextStepIsEnabled = true;
+
+                DataTable _outstanding_Amount = await _dBRead.Outstanding_Amount(AccountStr);
+                if (_outstanding_Amount.Rows.Count > 0)
+                {
+                    NoticeText = "尚有未付款";
+                    NextStepIsEnabled = false;
+                }
+                else
+                {
+                    NoticeText = string.Empty;
+                    NextStepIsEnabled = true;
+                }
             }
             else
             {
@@ -190,7 +200,7 @@ namespace First_MVVM.ViewModels
                 case "選擇櫃位":
                     _rentalModel.LockerSelectedIndex = _lockerSelectedIndex;
                     //_IO.Write(_rentalModel.LockerSelectedIndex, _IO.UnLock);
-                    NoticeText = "提醒您開啟球櫃後開始計費";
+                    NoticeText = "提醒您球櫃開起後未關閉視同已借出";
                     
                     //在此函式判斷是否開始計費 or 操作逾時
                     SetDoorCheckTimer();
@@ -278,7 +288,7 @@ namespace First_MVVM.ViewModels
                 OperationTimer.Elapsed -= OnTimedOperationEvent;
                 OperationTimer.Close();
             }
-            NoticeText = $"省餘操作時間 {(20 - Counter)} sec";
+            NoticeText = $"剩餘操作時間 {(20 - Counter)} sec";
         }
 
         private void SetDoorCheckTimer()
@@ -313,11 +323,60 @@ namespace First_MVVM.ViewModels
 
                 ///資料庫新增會員借出紀錄依據_rentalModel內資料寫入//
 
-                SelectedStepTabName = "租借完成";
+                //SelectedStepTabName = "租借完成";
+                SetRFIDCheckTimer();
             }
-            NoticeText = $"省餘操作時間 {(10 - Counter)} sec";
+            NoticeText = $"剩餘操作時間 {(10 - Counter)} sec";
         }
 
+        private void SetRFIDCheckTimer()
+        {
+            Counter = 0;
+            RFIDCheckTimer = new System.Timers.Timer(1000);
+            RFIDCheckTimer.Elapsed += OnTimedRFIDCheckEvent;
+            RFIDCheckTimer.AutoReset = true;
+            RFIDCheckTimer.Enabled = true;
+        }
+
+        private void OnTimedRFIDCheckEvent(Object source, ElapsedEventArgs e)
+        {
+            if (_IO.Read(_rentalModel.LockerSelectedIndex) == _IO.UnLock)
+            {
+                Counter += 1;
+                if (Counter == 10)
+                {
+                    Counter = 0;
+                    RFIDCheckTimer.Elapsed -= OnTimedRFIDCheckEvent;
+                    RFIDCheckTimer.Close();
+
+                    SelectedStepTabName = "租借完成";
+                }
+            }
+            else
+            {
+                //此處需要引用RFID模組
+                bool _rfid = false;
+                if (_rfid == false)
+                {
+                    Counter = 0;
+                    RFIDCheckTimer.Elapsed -= OnTimedRFIDCheckEvent;
+                    RFIDCheckTimer.Close();
+
+                    SelectedStepTabName = "租借完成";
+                }
+                else
+                {
+                    Counter = 0;
+                    RFIDCheckTimer.Elapsed -= OnTimedRFIDCheckEvent;
+                    RFIDCheckTimer.Close();
+
+                    _IO.Write(_rentalModel.LockerSelectedIndex, _IO.UnLock);
+                    SetDoorCheckTimer();
+                    SelectedStepTabName = "請取球";
+                }
+            }
+            NoticeText = $"剩餘操作時間 {(10 - Counter)} sec";
+        }
 
         public Action FinishInteraction { get; set; }
 

@@ -7,7 +7,7 @@
              Height="1024" Width="600" FontSize="20" >
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding RentalStepTabLoadCmd}" CommandParameter="{Binding ElementName=LockersList}"/>
+            <i:InvokeCommandAction Command="{Binding CheckOutStepTabLoadCmd}" CommandParameter="{Binding ElementName=LockersList}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Grid>
