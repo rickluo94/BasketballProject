@@ -5,7 +5,7 @@
         xmlns:prism="http://prismlibrary.com/" FontSize="28"
         xmlns:View="clr-namespace:First_MVVM.Views"
         prism:ViewModelLocator.AutoWireViewModel="True"
-        Title="{Binding Title}" Height="350" Width="525" WindowStartupLocation="CenterScreen" >
+        Title="{Binding Title}" Height="1024" Width="600" WindowStartupLocation="CenterScreen" >
     <i:Interaction.Triggers>
         <prism:InteractionRequestTrigger SourceObject="{Binding RegisterStepTabRequest}">
             <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
@@ -39,7 +39,8 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="20" />
         </Grid.RowDefinitions>
         <!-- Row 1 -->
@@ -67,7 +68,7 @@
         <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding UpdateText}" />
         <Button Grid.Row="6" Grid.Column="1" Content="註冊" Command="{Binding RegisterStepTabCommand}"/>
         <Button Grid.Row="6" Grid.Column="2" Content="租借" Command="{Binding CheckOutStepTabCommand}"/>
-        <Button Grid.Row="6" Grid.Column="3" Content="歸還" Command="{Binding }"/>
+        <Button Grid.Row="6" Grid.Column="3" Content="歸還" />
 
     </Grid>
 </Window>

@@ -7,7 +7,9 @@ namespace First_MVVM.Models
         public string Password { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
-        public string Address { get; set; }
-        public string CardNumber { get; set; }
+        public string City { get; set; }
+        public string Area { get; set; }
+        public string Card_id { get; set; }
+        public string Card_purse_id { get; set; }
     }
 }

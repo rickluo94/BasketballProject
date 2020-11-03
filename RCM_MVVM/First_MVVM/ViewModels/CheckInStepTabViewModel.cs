@@ -25,7 +25,7 @@ namespace First_MVVM.ViewModels
         private EasyCard _easyCard = new EasyCard();
         private DBRead _dBRead = new DBRead();
         private DBWrite _dBWrite = new DBWrite();
-        private System.Timers.Timer OperationTimer;
+        //private System.Timers.Timer OperationTimer;
         private System.Timers.Timer DoorCheckTimer;
         private System.Timers.Timer DoorCheckWithRFIDVerifyTimer;
         private System.Timers.Timer DebitCheckTimer;

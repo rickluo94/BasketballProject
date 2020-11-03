@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "First_MVVM": {
+      "commandName": "Project",
+      "remoteDebugEnabled": false,
+      "remoteDebugMachine": "",
+      "authenticationMode": "Windows"
+    }
+  }
+}

@@ -146,6 +146,75 @@ namespace DBModel
             }
         }
 
+        public async Task<bool> Users(string ID, string UserName, string Password)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`users` (`user_id`, `username`, `password`) VALUES ('{ID}', '{UserName}', '{Password}');";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        public async Task<bool> Customer_Address(string ID, string City, string Area)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`Customer_Address` (`customer_user_id`, `city`, `area`) VALUES ('{ID}', '{City}', '{Area}');";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        public async Task<bool> RFID_Users(string ID, string RFID_Card_ID, string RFID_Card_Purse_ID)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`RFID_Users` (`RFID_user_id`, `RFID_Card_ID`, `RFID_Card_Purse_ID`) VALUES ('{ID}', '{RFID_Card_ID}', '{RFID_Card_Purse_ID}');";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
         public async Task<bool> Verify_SmPhoneBinding(string PhoneNumber, string RandomKey)
         {
             using (var conn = new MySqlConnection(builder.ConnectionString))

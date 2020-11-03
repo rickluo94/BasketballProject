@@ -66,8 +66,6 @@ namespace First_MVVM.ViewModels
             set { SetProperty(ref _selectedTownship, value); }
         }
 
-
-
         private List<string> _cities;
 
         public List<string> Cities
@@ -122,13 +120,19 @@ namespace First_MVVM.ViewModels
             set { SetProperty(ref _emailStr, value); }
         }
 
-        private string _cardID;
-        public string CardID
+        private string _card_ID;
+        public string Card_ID
         {
-            get { return _cardID; }
-            set { SetProperty(ref _cardID, value); }
+            get { return _card_ID; }
+            set { SetProperty(ref _card_ID, value); }
         }
 
+        private string _card_purse_id;
+        public string Card_purse_id
+        {
+            get { return _card_purse_id; }
+            set { SetProperty(ref _card_purse_id, value); }
+        }
 
         private string _noticeText;
         public string NoticeText
@@ -217,7 +221,7 @@ namespace First_MVVM.ViewModels
             PasswordStrBuffer = null;
             NameStr = null;
             EmailStr = null;
-            CardID = null;
+            Card_ID = null;
             NoticeText = string.Empty;
         }
 
@@ -414,9 +418,20 @@ namespace First_MVVM.ViewModels
 
         private async void ReadCard()
         {
-            CardID = "請靠感應";
-            string Data = await Task.Run<string>(() => { return _easyCard.Read_card_balance_request(); });
-            CardID = (string)JObject.Parse(Data)["result"]["card_id"];
+            Card_ID = "請靠感應";
+            //string Data = await Task.Run<string>(() => { return _easyCard.Read_card_balance_request(); });
+            //Card_ID = (string)JObject.Parse(Data)["result"]["card_id"];
+            //Card_purse_id = (string)JObject.Parse(Data)["result"]["card_purse_id"];
+            Card_ID = "4334488813";
+            Card_purse_id = "4334488813";
+            if (string.IsNullOrWhiteSpace(Card_ID) || string.IsNullOrWhiteSpace(Card_purse_id))
+            {
+                NextStepIsEnabledBool = false;
+            }
+            else
+            {
+                NextStepIsEnabledBool = true;
+            }
         }
 
         private void FillProfile()
@@ -433,10 +448,15 @@ namespace First_MVVM.ViewModels
                     _registerModel.Name = _nameStr;
                     break;
                 case "地區":
-                    _registerModel.Address = _selectedCities + _selectedTownship;
+                    _registerModel.City = _selectedCities;
+                    _registerModel.Area = _selectedTownship;
                     break;
                 case "信箱":
                     _registerModel.Email = _emailStr;
+                    break;
+                case "設定悠遊卡":
+                    _registerModel.Card_id = _card_ID;
+                    _registerModel.Card_purse_id = _card_purse_id;
                     break;
                 default:
                     break;
@@ -458,8 +478,10 @@ namespace First_MVVM.ViewModels
         private async void RegisterAction()
         {
             bool RegisterAccount = await _dBWrite.Customer_info(_registerModel.ID, _registerModel.Name, _registerModel.Email);
-
-            if (RegisterAccount == true)
+            bool RegisterLogin = await _dBWrite.Users(_registerModel.ID, _registerModel.Name, _registerModel.Password);
+            bool RegisterAddress = await _dBWrite.Customer_Address(_registerModel.ID, _registerModel.City, _registerModel.Area);
+            bool RegisterCardPofile = await _dBWrite.RFID_Users(_registerModel.ID, _registerModel.Card_id, _registerModel.Card_purse_id);
+            if (RegisterAccount == RegisterLogin == RegisterAddress == RegisterCardPofile == true)
             {
                 ExitInteraction();
             }
@@ -467,18 +489,12 @@ namespace First_MVVM.ViewModels
 
         private void ExitInteraction()
         {
-            _registerModel.ID = null;
-            _registerModel.Password = null;
-            _registerModel.Name = null;
-            _registerModel.Email = null;
-            _registerModel.Address = null;
-            _registerModel.CardNumber = null;
             AccountStr = null;
             PasswordStr = null;
             PasswordStrBuffer = null;
             NameStr = null;
             EmailStr = null;
-            CardID = null;
+            Card_ID = null;
             FinishInteraction?.Invoke();
         }
 
