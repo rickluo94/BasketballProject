@@ -16,20 +16,28 @@ using DBModel;
 using System.Data;
 using System.Timers;
 using System.Diagnostics;
+using System.Dynamic;
 
 namespace First_MVVM.ViewModels
 {
     public class CheckOutStepTabViewModel : BindableBase, IInteractionRequestAware
     {
         private CheckOutModel _checkOutModel { get; set; }
-        private IO _IO = new IO();
         private EasyCard _easyCard = new EasyCard();
         private DBRead _dBRead = new DBRead();
         private DBWrite _dBWrite = new DBWrite();
-        private System.Timers.Timer OperationTimer;
-        private System.Timers.Timer DoorCheckTimer;
-        private System.Timers.Timer RFIDCheckTimer;
+        private System.Timers.Timer OperationTimer = new System.Timers.Timer(1000);
+        private System.Timers.Timer DoorCheckTimer = new System.Timers.Timer(1000);
+        private System.Timers.Timer RFIDCheckTimer = new System.Timers.Timer(1000);
         #region Interface Property
+
+        private int _doorCheckCounter;
+        public int DoorCheckCounter
+        {
+            get { return _doorCheckCounter; }
+            set { SetProperty(ref _doorCheckCounter, value); }
+        }
+
         private int _counter;
         public int Counter
         {
@@ -109,10 +117,7 @@ namespace First_MVVM.ViewModels
 
         public CheckOutStepTabViewModel(Business.ResStatus resStatusGroup)
         {
-            _checkOutModel = new CheckOutModel();
             _resStatusGroup = resStatusGroup;
-            //_IO.SetDevicePort("COM3", 57600); _IO.SetIOParameter();
-            _easyCard.SetDevicePort("COM6", 115200, 500); _easyCard.Open();
             CheckOutStepTabLoadCmd = new DelegateCommand<Grid>(CheckOutStepTabLoad);
             ExitCmd = new DelegateCommand(ExitInteraction);
             PreviousTabCmd = new DelegateCommand(PreviousTab);
@@ -122,6 +127,8 @@ namespace First_MVVM.ViewModels
 
         private void CheckOutStepTabLoad(Grid Lockers)
         {
+            _checkOutModel = new CheckOutModel();
+            _easyCard.SetDevicePort("COM6", 115200, 500); _easyCard.Open();
             NextStepIsEnabled = true;
             SelectedStepTabIndex = 0;
             if (CheckAvailableUse() == true) { FillCabinetBtns(Lockers); } else { MessageBox.Show("目前沒有可租借籃球"); ExitInteraction(); }
@@ -146,11 +153,11 @@ namespace First_MVVM.ViewModels
             string Data = await Task.Run<string>(() => { return _easyCard.Read_card_balance_request(); });
             string _card_id = (string)JObject.Parse(Data)["result"]["card_id"];
             if (string.IsNullOrWhiteSpace(_card_id)) return;
-            DataTable _member_Profile = await _dBRead.Verify_TheMember(_card_id);
+            DataTable _rFID_UsersProfile = await _dBRead.RFID_Users(_card_id);
 
-            if (_member_Profile.Rows.Count > 0)
+            if (_rFID_UsersProfile.Rows.Count > 0)
             {
-                AccountStr = _member_Profile.Rows[0]["UserID"].ToString();
+                AccountStr = _rFID_UsersProfile.Rows[0]["RFID_user_id"].ToString();
                 BalanceStr = (string)JObject.Parse(Data)["result"]["balance"];
 
                 DataTable _outstanding_Amount = await _dBRead.Outstanding_Amount(AccountStr);
@@ -199,7 +206,7 @@ namespace First_MVVM.ViewModels
                     break;
                 case "選擇櫃位":
                     _checkOutModel.LockerSelectedIndex = _lockerSelectedIndex;
-                    //_IO.Write(_rentalModel.LockerSelectedIndex, _IO.UnLock);
+                    IO.Write(_checkOutModel.LockerSelectedIndex, IO.UnLock);
                     NoticeText = "提醒您球櫃開起後未關閉視同已借出";
                     
                     //在此函式判斷是否開始計費 or 操作逾時
@@ -257,13 +264,14 @@ namespace First_MVVM.ViewModels
             AccountStr = null;
             BalanceStr = null;
             NoticeText = null;
+            DoorCheckCounter = 0;
+            _easyCard.Close();
             FinishInteraction?.Invoke();
         }
 
         private void SetOperationTimer()
         {
             Counter = 0;
-            OperationTimer = new System.Timers.Timer(1000);
             OperationTimer.Elapsed += OnTimedOperationEvent;
             OperationTimer.AutoReset = true;
             OperationTimer.Enabled = true;
@@ -294,7 +302,6 @@ namespace First_MVVM.ViewModels
         private void SetDoorCheckTimer()
         {
             Counter = 0;
-            DoorCheckTimer = new System.Timers.Timer(1000);
             DoorCheckTimer.Elapsed += OnTimedDoorCheckEvent;
             DoorCheckTimer.AutoReset = true;
             DoorCheckTimer.Enabled = true;
@@ -302,16 +309,16 @@ namespace First_MVVM.ViewModels
 
         private void OnTimedDoorCheckEvent(Object source, ElapsedEventArgs e)
         {
-            if (_IO.Read(_checkOutModel.LockerSelectedIndex) == _IO.Lock)
+            if (IO.Read(_checkOutModel.LockerSelectedIndex) == IO.DoorLock)
             {
                 Counter += 1;
-                if (Counter == 10)
+                if (Counter == 15)
                 {
                     Counter = 0;
                     DoorCheckTimer.Elapsed -= OnTimedDoorCheckEvent;
                     DoorCheckTimer.Close();
                     SelectedStepTabName = "操作逾時";
-                    _IO.Write(_checkOutModel.LockerSelectedIndex, _IO.Lock);
+                    IO.Write(_checkOutModel.LockerSelectedIndex, IO.Lock);
                 }
             }
             else
@@ -319,20 +326,19 @@ namespace First_MVVM.ViewModels
                 Counter = 0;
                 DoorCheckTimer.Elapsed -= OnTimedDoorCheckEvent;
                 DoorCheckTimer.Close();
-                _IO.Write(_checkOutModel.LockerSelectedIndex, _IO.Lock);
+                IO.Write(_checkOutModel.LockerSelectedIndex, IO.Lock);
 
                 ///資料庫新增會員借出紀錄依據_rentalModel內資料寫入//
 
                 //SelectedStepTabName = "租借完成";
                 SetRFIDCheckTimer();
             }
-            NoticeText = $"剩餘操作時間 {(10 - Counter)} sec";
+            NoticeText = $"剩餘操作時間 {(15 - Counter)} sec";
         }
 
         private void SetRFIDCheckTimer()
         {
             Counter = 0;
-            RFIDCheckTimer = new System.Timers.Timer(1000);
             RFIDCheckTimer.Elapsed += OnTimedRFIDCheckEvent;
             RFIDCheckTimer.AutoReset = true;
             RFIDCheckTimer.Enabled = true;
@@ -340,10 +346,10 @@ namespace First_MVVM.ViewModels
 
         private void OnTimedRFIDCheckEvent(Object source, ElapsedEventArgs e)
         {
-            if (_IO.Read(_checkOutModel.LockerSelectedIndex) == _IO.UnLock)
+            if (IO.Read(_checkOutModel.LockerSelectedIndex) == IO.DoorOpen)
             {
                 Counter += 1;
-                if (Counter == 10)
+                if (Counter == 20)
                 {
                     Counter = 0;
                     RFIDCheckTimer.Elapsed -= OnTimedRFIDCheckEvent;
@@ -355,8 +361,8 @@ namespace First_MVVM.ViewModels
             else
             {
                 //此處需要引用RFID模組
-                bool _rfid = false;
-                if (_rfid == false)
+                bool _rfid = true;
+                if (_rfid == false || DoorCheckCounter >= 3)
                 {
                     Counter = 0;
                     RFIDCheckTimer.Elapsed -= OnTimedRFIDCheckEvent;
@@ -370,12 +376,12 @@ namespace First_MVVM.ViewModels
                     RFIDCheckTimer.Elapsed -= OnTimedRFIDCheckEvent;
                     RFIDCheckTimer.Close();
 
-                    _IO.Write(_checkOutModel.LockerSelectedIndex, _IO.UnLock);
-                    SetDoorCheckTimer();
+                    IO.Write(_checkOutModel.LockerSelectedIndex, IO.UnLock);
+                    SetDoorCheckTimer(); DoorCheckCounter += 1;
                     SelectedStepTabName = "請取球";
                 }
             }
-            NoticeText = $"剩餘操作時間 {(10 - Counter)} sec";
+            NoticeText = $"剩餘操作時間 {(20 - Counter)} sec";
         }
 
         public Action FinishInteraction { get; set; }

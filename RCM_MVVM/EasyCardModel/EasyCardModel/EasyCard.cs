@@ -96,6 +96,7 @@ namespace EasyCardModel
         #region 讀取卡⽚詳細資訊
         public string Read_card_balance_request()
         {
+            Task.Delay(1000).Wait();
             return ExecuteCommand("{\"action\": \"read.card_balance\",\"arg\": [],\"kwarg\": { }}");
         }
         #endregion
@@ -103,6 +104,7 @@ namespace EasyCardModel
         #region 口款
         public string Charge_request(int Amount)
         {
+            Task.Delay(1000).Wait();
             return ExecuteCommand("{\"action\": \"charge\",\"arg\": [],\"kwarg\": {\"amount\": "+ Amount +" }}");
         }
         #endregion

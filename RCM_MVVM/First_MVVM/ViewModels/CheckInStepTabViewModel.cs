@@ -21,7 +21,6 @@ namespace First_MVVM.ViewModels
     public class CheckInStepTabViewModel : BindableBase , IInteractionRequestAware
     {
         private CheckInModel _checkInModel { get; set; }
-        private IO _IO = new IO();
         private EasyCard _easyCard = new EasyCard();
         private DBRead _dBRead = new DBRead();
         private DBWrite _dBWrite = new DBWrite();
@@ -138,6 +137,7 @@ namespace First_MVVM.ViewModels
 
         private void CheckInStepTabLoad()
         {
+            _easyCard.SetDevicePort("COM6", 115200, 500); _easyCard.Open();
             NextStepIsEnabled = true;
             SelectedStepTabIndex = 0;
         }
@@ -147,11 +147,11 @@ namespace First_MVVM.ViewModels
             string Data = await Task.Run<string>(() => { return _easyCard.Read_card_balance_request(); });
             string _card_id = (string)JObject.Parse(Data)["result"]["card_id"];
             if (string.IsNullOrWhiteSpace(_card_id)) return;
-            DataTable _member_Profile = await _dBRead.Verify_TheMember(_card_id);
+            DataTable _rFID_UsersProfile = await _dBRead.RFID_Users(_card_id);
 
-            if (_member_Profile.Rows.Count > 0)
+            if (_rFID_UsersProfile.Rows.Count > 0)
             {
-                AccountStr = _member_Profile.Rows[0]["UserID"].ToString();
+                AccountStr = _rFID_UsersProfile.Rows[0]["RFID_user_id"].ToString();
                 BalanceStr = (string)JObject.Parse(Data)["result"]["balance"];
 
                 DataTable _outstanding_Amount = await _dBRead.Outstanding_Amount(AccountStr);
@@ -199,6 +199,7 @@ namespace First_MVVM.ViewModels
             AccountStr = null;
             BalanceStr = null;
             NoticeText = null;
+            _easyCard.Close();
             FinishInteraction?.Invoke();
         }
 
@@ -216,7 +217,7 @@ namespace First_MVVM.ViewModels
                 case "借出紀錄":
                     _checkInModel.InTime = "現在時間";
 
-                    _IO.Write(_checkInModel.LockerSelectedIndex, _IO.UnLock);
+                    IO.Write(_checkInModel.LockerSelectedIndex, IO.UnLock);
 
                     SelectedStepTabName = "歸還";
 
@@ -250,7 +251,7 @@ namespace First_MVVM.ViewModels
 
         private void OnTimedDoorCheckEvent(Object source, ElapsedEventArgs e)
         {
-            if (_IO.Read(_checkInModel.LockerSelectedIndex) == _IO.Lock)
+            if (IO.Read(_checkInModel.LockerSelectedIndex) == IO.Lock)
             {
                 Counter += 1;
                 if (Counter == 20)
@@ -260,7 +261,7 @@ namespace First_MVVM.ViewModels
                     DoorCheckTimer.Close();
                     SelectedStepTabName = "操作逾時";
 
-                    _IO.Write(_checkInModel.LockerSelectedIndex, _IO.Lock);
+                    IO.Write(_checkInModel.LockerSelectedIndex, IO.Lock);
                 }
             }
             else
@@ -269,7 +270,7 @@ namespace First_MVVM.ViewModels
                 DoorCheckTimer.Elapsed -= OnTimedDoorCheckEvent;
                 DoorCheckTimer.Close();
 
-                _IO.Write(_checkInModel.LockerSelectedIndex, _IO.Lock);
+                IO.Write(_checkInModel.LockerSelectedIndex, IO.Lock);
 
                 //正常流程
                 SetDoorCheckWithRFIDVerifyTimer();
@@ -289,7 +290,7 @@ namespace First_MVVM.ViewModels
 
         private void OnTimedDoorCheckWithRFIDVerifyEvent(Object source, ElapsedEventArgs e)
         {
-            if (_IO.Read(_checkInModel.LockerSelectedIndex) == _IO.UnLock)
+            if (IO.Read(_checkInModel.LockerSelectedIndex) == IO.UnLock)
             {
                 Counter += 1;
                 if (Counter == 20)
@@ -304,7 +305,7 @@ namespace First_MVVM.ViewModels
             {
                 ///此處RFID檢查有無偵測到物件
                 bool _rfid = false;
-                if (_rfid == true && _IO.Read(_checkInModel.LockerSelectedIndex) == _IO.Lock)
+                if (_rfid == true && IO.Read(_checkInModel.LockerSelectedIndex) == IO.Lock)
                 {
                     Counter = 0;
                     DoorCheckTimer.Elapsed -= OnTimedDoorCheckEvent;

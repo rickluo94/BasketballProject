@@ -93,9 +93,47 @@ namespace DBModel
             return table;
         }
 
-        public async Task<DataTable> Verify_TheMember(string CardID)
+        public async Task<DataTable> RFID_Users(string CardID)
         {
             DataTable table = new DataTable();
+            DataColumn column;
+            DataRow row;
+            string[] _columnName = { "RFID_user_id","RFID_Card_ID","RFID_Last_Active","RFID_Ticket_Type","ModifyDate","RFID_Card_Purse_ID" };
+            foreach (string _name in _columnName)
+            {
+                column = new DataColumn();
+                column.DataType = Type.GetType("System.String");
+                column.ColumnName = _name;
+                table.Columns.Add(column);
+            }
+
+            string buffer = string.Empty;
+
+
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"SELECT * FROM ste_SBSCS.RFID_Users Where RFID_Card_ID = '{CardID}';";
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            row = table.NewRow();
+                            row["RFID_user_id"] = reader.GetString(0);
+                            row["RFID_Card_ID"] = reader.GetString(1);
+                            row["RFID_Last_Active"] = reader.GetDateTime(2);
+                            row["RFID_Ticket_Type"] = reader.GetString(3);
+                            row["ModifyDate"] = reader.GetDateTime(4);
+                            row["RFID_Card_Purse_ID"] = reader.GetString(5);
+                            table.Rows.Add(row);
+                        }
+                    }
+                }
+
+            }
             return table;
         }
 

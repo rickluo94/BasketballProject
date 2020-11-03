@@ -189,7 +189,6 @@ namespace First_MVVM.ViewModels
         public RegisterStepTabViewModel()
         {
             _registerModel = new RegisterModel();
-            _easyCard.SetDevicePort("COM6", 115200, 500); _easyCard.Open();
             RegisterStepTabLoadCmd = new DelegateCommand(RegisterStepTabLoad);
             AccountCmd = new DelegateCommand<TextBox>(_checkAccount);
             SMCmd = new DelegateCommand<TextBox>(SendMessageKey);
@@ -211,6 +210,7 @@ namespace First_MVVM.ViewModels
 
         private void RegisterStepTabLoad()
         {
+            _easyCard.SetDevicePort("COM6", 115200, 500); _easyCard.Open();
             SelectedCitiesIndex = -1;
             SelectedStepTabIndex = 0;
             AccountBoxIsEnabled = true;
@@ -419,11 +419,11 @@ namespace First_MVVM.ViewModels
         private async void ReadCard()
         {
             Card_ID = "請靠感應";
-            //string Data = await Task.Run<string>(() => { return _easyCard.Read_card_balance_request(); });
-            //Card_ID = (string)JObject.Parse(Data)["result"]["card_id"];
-            //Card_purse_id = (string)JObject.Parse(Data)["result"]["card_purse_id"];
-            Card_ID = "4334488813";
-            Card_purse_id = "4334488813";
+            string Data = await Task.Run<string>(() => { return _easyCard.Read_card_balance_request(); });
+            Card_ID = (string)JObject.Parse(Data)["result"]["card_id"];
+            Card_purse_id = (string)JObject.Parse(Data)["result"]["card_purse_id"];
+            //Card_ID = "4334488813";
+            //Card_purse_id = "4334488813";
             if (string.IsNullOrWhiteSpace(Card_ID) || string.IsNullOrWhiteSpace(Card_purse_id))
             {
                 NextStepIsEnabledBool = false;
@@ -495,6 +495,7 @@ namespace First_MVVM.ViewModels
             NameStr = null;
             EmailStr = null;
             Card_ID = null;
+            _easyCard.Close();
             FinishInteraction?.Invoke();
         }
 

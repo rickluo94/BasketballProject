@@ -7,6 +7,7 @@ using System.Data;
 using First_MVVM.Views;
 using Prism.Interactivity.InteractionRequest;
 using First_MVVM.Notifications;
+using IOModel;
 
 namespace First_MVVM.ViewModels
 {
@@ -55,6 +56,7 @@ namespace First_MVVM.ViewModels
 
         public MainWindowViewModel()
         {
+            IO.SetDevicePort("COM3", 57600); IO.SetIOParameter();
             LoginCommand = new DelegateCommand<object>(LoginExecute);
             RegisterAccountViewRequest = new InteractionRequest<ICustomNotification>();
             RegisterAccountViewCommand = new DelegateCommand(RaiseRegisterAccountView);

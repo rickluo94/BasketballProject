@@ -4,11 +4,14 @@ using System.Threading;
 
 namespace IOModel
 {
-    public class IO
+    public static class IO
     {
-        public Arduino _IO;
-        public readonly byte Lock = 1;
-        public readonly byte UnLock = 0;
+        public static Arduino _IO;
+        public static readonly byte Lock = 1;
+        public static readonly byte UnLock = 0;
+        public static readonly int DoorOpen = 1;
+        public static readonly int DoorLock = 0;
+        
 
         #region DoorCheck signal
         enum IN
@@ -41,7 +44,7 @@ namespace IOModel
         }
         #endregion
 
-        public bool SetDevicePort(string PortName,int BaudRate)
+        public static bool SetDevicePort(string PortName,int BaudRate)
         {
             try
             {
@@ -54,7 +57,7 @@ namespace IOModel
             }
         }
 
-        public bool SetIOParameter()
+        public static bool SetIOParameter()
         {
             try
             {
@@ -104,7 +107,7 @@ namespace IOModel
             }
         }
 
-        public int Read(string PinName)
+        public static int Read(string PinName)
         {
             try
             {
@@ -147,7 +150,7 @@ namespace IOModel
             }
         }
 
-        public bool Write(string PinName, byte Value)
+        public static bool Write(string PinName, byte Value)
         {
             try
             {
