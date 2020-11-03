@@ -62,42 +62,24 @@ namespace IOModel
             try
             {
                 #region digital INPUT
-                _IO.pinMode((int)IN.A1, Arduino.INPUT);
-                _IO.pinMode((int)IN.A2, Arduino.INPUT);
-                _IO.pinMode((int)IN.A3, Arduino.INPUT);
-                _IO.pinMode((int)IN.A4, Arduino.INPUT);
-                _IO.pinMode((int)IN.A5, Arduino.INPUT);
-                _IO.pinMode((int)IN.A6, Arduino.INPUT);
-                _IO.pinMode((int)IN.A7, Arduino.INPUT);
-                _IO.pinMode((int)IN.A8, Arduino.INPUT);
-                _IO.pinMode((int)IN.Pump, Arduino.INPUT);
+                foreach (int Value in Enum.GetValues(typeof(IN)))
+                {
+                    _IO.pinMode(Value, Arduino.INPUT);
+                }
                 #endregion
 
-                #region digital OUTPUT
-                _IO.pinMode((int)Out.A1, Arduino.OUTPUT);
-                _IO.pinMode((int)Out.A2, Arduino.OUTPUT);
-                _IO.pinMode((int)Out.A3, Arduino.OUTPUT);
-                _IO.pinMode((int)Out.A4, Arduino.OUTPUT);
-                _IO.pinMode((int)Out.A5, Arduino.OUTPUT);
-                _IO.pinMode((int)Out.A6, Arduino.OUTPUT);
-                _IO.pinMode((int)Out.A7, Arduino.OUTPUT);
-                _IO.pinMode((int)Out.A8, Arduino.OUTPUT);
-                _IO.pinMode((int)Out.Pump, Arduino.OUTPUT);
-                _IO.pinMode((int)Out.Buzz, Arduino.OUTPUT);
+                #region digital UTPUT
+                foreach (int Value in Enum.GetValues(typeof(Out)))
+                {
+                    _IO.pinMode(Value, Arduino.OUTPUT);
+                }
                 #endregion
 
-                #region OUTPUT 預設關
-
-                _IO.digitalWrite((int)Out.A1, Lock);
-                _IO.digitalWrite((int)Out.A2, Lock);
-                _IO.digitalWrite((int)Out.A3, Lock);
-                _IO.digitalWrite((int)Out.A4, Lock);
-                _IO.digitalWrite((int)Out.A5, Lock);
-                _IO.digitalWrite((int)Out.A6, Lock);
-                _IO.digitalWrite((int)Out.A7, Lock);
-                _IO.digitalWrite((int)Out.A8, Lock);
-                _IO.digitalWrite((int)Out.Pump, Lock);
-                _IO.digitalWrite((int)Out.Buzz, Lock);
+                #region SET digital OUTPUT
+                foreach (int Value in Enum.GetValues(typeof(Out)))
+                {
+                    _IO.digitalWrite(Value, Lock);
+                }
                 #endregion
                 return true;
             }
@@ -107,11 +89,11 @@ namespace IOModel
             }
         }
 
-        public static int Read(string PinName)
+        public static int? Read(string PinName)
         {
+            int? result = null;
             try
             {
-                int result = -1;
                 switch (PinName)
                 {
                     case "A1":

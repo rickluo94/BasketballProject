@@ -28,6 +28,7 @@ namespace First_MVVM.ViewModels
         private System.Timers.Timer OperationTimer = new System.Timers.Timer(1000);
         private System.Timers.Timer DoorCheckTimer = new System.Timers.Timer(1000);
         private System.Timers.Timer RFIDCheckTimer = new System.Timers.Timer(1000);
+
         #region Interface Property
 
         private int _doorCheckCounter;
