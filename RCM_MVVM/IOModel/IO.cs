@@ -89,7 +89,7 @@ namespace IOModel
         }
 
         /// <summary>
-        /// 必須符合規範內點位名稱
+        /// 必須符合<DoorCheck>規範內點位名稱
         /// </summary>
         /// <param name="PinName"></param>
         /// <returns></returns>
@@ -107,7 +107,7 @@ namespace IOModel
         }
 
         /// <summary>
-        /// 必須符合規範內點位名稱
+        /// 必須符合<DoorLocker>規範內點位名稱
         /// </summary>
         /// <param name="PinName"></param>
         /// <param name="Value"></param>
