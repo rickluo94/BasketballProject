@@ -88,6 +88,11 @@ namespace IOModel
             }
         }
 
+        /// <summary>
+        /// 必須符合規範內點位名稱
+        /// </summary>
+        /// <param name="PinName"></param>
+        /// <returns></returns>
         public static int Read(string PinName)
         {
             IN iN = (IN) Enum.Parse(typeof(IN), PinName, true);
@@ -101,6 +106,12 @@ namespace IOModel
             }
         }
 
+        /// <summary>
+        /// 必須符合規範內點位名稱
+        /// </summary>
+        /// <param name="PinName"></param>
+        /// <param name="Value"></param>
+        /// <returns></returns>
         public static bool Write(string PinName, byte Value)
         {
             Out _out = (Out) Enum.Parse(typeof(Out), PinName, true);

@@ -327,7 +327,6 @@ namespace First_MVVM.ViewModels
 
             NoticeText = $"剩餘操作時間 {(30 - Counter)} sec";
         }
-
         private void SetDebitCheckTimer()
         {
             Counter = 0;
