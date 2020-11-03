@@ -9,7 +9,8 @@ namespace First_MVVM.Models
         public string ID { get; set; }
         public string CardID { get; set; }
         public string Balance { get; set; }
-        public string Epc { get; set; }
+        public string EPC { get; set; }
+        public string TID { get; set; }
         public string LockerSelectedIndex { get; set; }
     }
 }

@@ -49,10 +49,12 @@ namespace First_MVVM.ViewModels
         public InteractionRequest<ICustomNotification> RegisterAccountViewRequest { get; set; }
         public InteractionRequest<ICustomNotification> RegisterStepTabRequest { get; set; }
         public InteractionRequest<ICustomNotification> CheckOutStepTabRequest { get; set; }
+        public InteractionRequest<ICustomNotification> CheckInStepTabRequest { get; set; }
 
         public DelegateCommand RegisterAccountViewCommand { get; set; }
         public DelegateCommand RegisterStepTabCommand { get; set; }
         public DelegateCommand CheckOutStepTabCommand { get; set; }
+        public DelegateCommand CheckInStepTabCommand { get; set; }
 
         public MainWindowViewModel()
         {
@@ -64,6 +66,8 @@ namespace First_MVVM.ViewModels
             RegisterStepTabCommand = new DelegateCommand(RegisterStepTabView);
             CheckOutStepTabRequest = new InteractionRequest<ICustomNotification>();
             CheckOutStepTabCommand = new DelegateCommand(CheckOutStepTabView);
+            CheckInStepTabRequest = new InteractionRequest<ICustomNotification>();
+            CheckInStepTabCommand = new DelegateCommand(CheckInStepTabView);
         }
 
         private void LoginExecute(object parameter) 
@@ -104,6 +108,11 @@ namespace First_MVVM.ViewModels
         private void CheckOutStepTabView()
         {
             CheckOutStepTabRequest.Raise(new CustomNotification { Title = " " });
+        }
+
+        private void CheckInStepTabView()
+        {
+            CheckInStepTabRequest.Raise(new CustomNotification { Title = " " });
         }
     }
 }

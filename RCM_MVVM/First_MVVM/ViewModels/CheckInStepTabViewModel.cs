@@ -14,7 +14,6 @@ using System.Data;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using System.Timers;
-using MySqlX.XDevAPI.Common;
 
 namespace First_MVVM.ViewModels
 {
@@ -137,6 +136,7 @@ namespace First_MVVM.ViewModels
 
         private void CheckInStepTabLoad()
         {
+            _checkInModel = new CheckInModel();
             _easyCard.SetDevicePort("COM6", 115200, 500); _easyCard.Open();
             NextStepIsEnabled = true;
             SelectedStepTabIndex = 0;
@@ -154,8 +154,8 @@ namespace First_MVVM.ViewModels
                 AccountStr = _rFID_UsersProfile.Rows[0]["RFID_user_id"].ToString();
                 BalanceStr = (string)JObject.Parse(Data)["result"]["balance"];
 
-                DataTable _outstanding_Amount = await _dBRead.Outstanding_Amount(AccountStr);
-                DataTable _checkOut_History = await _dBRead.CheckOut_History(AccountStr);
+                DataTable _outstanding_Amount = await _dBRead.Charge_History(AccountStr);
+                DataTable _checkOut_History = await _dBRead.Take_History(AccountStr);
                 if (_outstanding_Amount.Rows.Count > 0)
                 {
                     NoticeText = "尚有未付款";
@@ -165,8 +165,9 @@ namespace First_MVVM.ViewModels
                 {
                     if (_checkOut_History.Rows.Count >0)
                     {
-                        OutTimeStr = _checkOut_History.Rows[0]["OutTIme"].ToString();
-                        LockerSelectedIndex = _checkOut_History.Rows[0]["LockerSelectedIndex"].ToString();
+                        OutTimeStr = _checkOut_History.Rows[0]["Take_Date"].ToString();
+                        LockerSelectedIndex = _checkOut_History.Rows[0]["Take_BoxName"].ToString();
+                        _checkInModel.CardID = _card_id;
                         NoticeText = string.Empty;
                         NextStepIsEnabled = true;
                     }
@@ -219,8 +220,6 @@ namespace First_MVVM.ViewModels
 
                     IO.Write(_checkInModel.LockerSelectedIndex, IO.UnLock);
 
-                    SelectedStepTabName = "歸還";
-
                     SetDoorCheckTimer();
                     break;
                 case "歸還":
@@ -251,7 +250,7 @@ namespace First_MVVM.ViewModels
 
         private void OnTimedDoorCheckEvent(Object source, ElapsedEventArgs e)
         {
-            if (IO.Read(_checkInModel.LockerSelectedIndex) == IO.Lock)
+            if (IO.Read(_checkInModel.LockerSelectedIndex) == IO.DoorLock)
             {
                 Counter += 1;
                 if (Counter == 20)
@@ -288,12 +287,12 @@ namespace First_MVVM.ViewModels
             DoorCheckWithRFIDVerifyTimer.Enabled = true;
         }
 
-        private void OnTimedDoorCheckWithRFIDVerifyEvent(Object source, ElapsedEventArgs e)
+        private async void OnTimedDoorCheckWithRFIDVerifyEvent(Object source, ElapsedEventArgs e)
         {
-            if (IO.Read(_checkInModel.LockerSelectedIndex) == IO.UnLock)
+            if (IO.Read(_checkInModel.LockerSelectedIndex) == IO.DoorOpen)
             {
                 Counter += 1;
-                if (Counter == 20)
+                if (Counter == 30)
                 {
                     Counter = 0;
                     DoorCheckTimer.Elapsed -= OnTimedDoorCheckEvent;
@@ -304,12 +303,14 @@ namespace First_MVVM.ViewModels
             else
             {
                 ///此處RFID檢查有無偵測到物件
-                bool _rfid = false;
-                if (_rfid == true && IO.Read(_checkInModel.LockerSelectedIndex) == IO.Lock)
+                bool _rfid = true;
+                if (_rfid == true && IO.Read(_checkInModel.LockerSelectedIndex) == IO.DoorLock)
                 {
                     Counter = 0;
                     DoorCheckTimer.Elapsed -= OnTimedDoorCheckEvent;
                     DoorCheckTimer.Close();
+                    //建立Charge_History
+                    await _dBWrite.Charge_History(_checkInModel.ID, _checkInModel.Amount, _checkInModel.HoursUse, _checkInModel.CardID);
 
                     NoticeText = "歸還成功，請點擊付款";
                     NextStepIsEnabled = true;
@@ -324,7 +325,7 @@ namespace First_MVVM.ViewModels
                 }
             }
 
-            NoticeText = $"剩餘操作時間 {(20 - Counter)} sec";
+            NoticeText = $"剩餘操作時間 {(30 - Counter)} sec";
         }
 
         private void SetDebitCheckTimer()
@@ -364,12 +365,20 @@ namespace First_MVVM.ViewModels
 
         private async void Charge()
         {
+            DataTable _charge_History = await _dBRead.Charge_History(_checkInModel.ID);
             int _amount = _checkInModel.Amount;
-            string _chargeResult = await Task.Run<string>(() => { return _easyCard.Charge_request(_amount); });
-            string _isSuccess = (string)JObject.Parse(_chargeResult)["is_success"];
-            if (_isSuccess == "true")
+            
+            if (_charge_History.Rows.Count > 0)
             {
-                _checkInModel.DebitStatus = "成功";
+                string _charge_SN = _charge_History.Rows[0]["Charge_SN"].ToString();
+                string _chargeResult = await Task.Run<string>(() => { return _easyCard.Charge_request(_amount); });
+                string _isSuccess = (string)JObject.Parse(_chargeResult)["is_success"];
+               
+                if (_isSuccess == "true")
+                {
+                    await _dBWrite.Charge_History_UPDATE(_charge_SN);
+                    _checkInModel.DebitStatus = "成功";
+                }
             }
         }
 

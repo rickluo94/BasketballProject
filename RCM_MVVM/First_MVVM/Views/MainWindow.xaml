@@ -21,6 +21,13 @@
                 </prism:PopupWindowAction.WindowContent>
             </prism:PopupWindowAction>
         </prism:InteractionRequestTrigger>
+        <prism:InteractionRequestTrigger SourceObject="{Binding CheckInStepTabRequest}">
+            <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
+                <prism:PopupWindowAction.WindowContent>
+                    <View:CheckInStepTab/>
+                </prism:PopupWindowAction.WindowContent>
+            </prism:PopupWindowAction>
+        </prism:InteractionRequestTrigger>
     </i:Interaction.Triggers>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -68,7 +75,7 @@
         <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding UpdateText}" />
         <Button Grid.Row="6" Grid.Column="1" Content="註冊" Command="{Binding RegisterStepTabCommand}"/>
         <Button Grid.Row="6" Grid.Column="2" Content="租借" Command="{Binding CheckOutStepTabCommand}"/>
-        <Button Grid.Row="6" Grid.Column="3" Content="歸還" />
+        <Button Grid.Row="6" Grid.Column="3" Content="歸還" Command="{Binding CheckInStepTabCommand}"/>
 
     </Grid>
 </Window>

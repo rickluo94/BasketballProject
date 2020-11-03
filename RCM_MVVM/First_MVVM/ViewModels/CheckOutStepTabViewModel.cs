@@ -15,14 +15,13 @@ using System.Threading.Tasks;
 using DBModel;
 using System.Data;
 using System.Timers;
-using System.Diagnostics;
-using System.Dynamic;
 
 namespace First_MVVM.ViewModels
 {
     public class CheckOutStepTabViewModel : BindableBase, IInteractionRequestAware
     {
         private CheckOutModel _checkOutModel { get; set; }
+        private DataTable _inventoryModel { get; set; }
         private EasyCard _easyCard = new EasyCard();
         private DBRead _dBRead = new DBRead();
         private DBWrite _dBWrite = new DBWrite();
@@ -44,7 +43,6 @@ namespace First_MVVM.ViewModels
             get { return _counter; }
             set { _counter = value; }
         }
-
 
         private string _noticeText;
         public string NoticeText
@@ -127,11 +125,12 @@ namespace First_MVVM.ViewModels
 
         private void CheckOutStepTabLoad(Grid Lockers)
         {
+            _inventoryModel = new DataTable();
             _checkOutModel = new CheckOutModel();
             _easyCard.SetDevicePort("COM6", 115200, 500); _easyCard.Open();
             NextStepIsEnabled = true;
             SelectedStepTabIndex = 0;
-            if (CheckAvailableUse() == true) { FillCabinetBtns(Lockers); } else { MessageBox.Show("目前沒有可租借籃球"); ExitInteraction(); }
+            if (CheckAvailableUse() == true) { FillCabinetBtns(Lockers);} else { MessageBox.Show("目前沒有可租借籃球"); ExitInteraction(); }
         }
 
         private bool CheckAvailableUse()
@@ -194,7 +193,7 @@ namespace First_MVVM.ViewModels
             SelectedStepTabIndex -= 1;
         }
 
-        private void FillProfile()
+        private async void FillProfile()
         {
             switch (_selectedStepTabName)
             {
@@ -206,6 +205,11 @@ namespace First_MVVM.ViewModels
                     break;
                 case "選擇櫃位":
                     _checkOutModel.LockerSelectedIndex = _lockerSelectedIndex;
+                    //寫入櫃位EPC TID資料
+                    _inventoryModel = await _dBRead.Inventory(_lockerSelectedIndex);
+                    _checkOutModel.EPC = _inventoryModel.Rows[0]["Inventory_Items_EPC"].ToString();
+                    _checkOutModel.TID = _inventoryModel.Rows[0]["Inventory_Items_TID"].ToString();
+
                     IO.Write(_checkOutModel.LockerSelectedIndex, IO.UnLock);
                     NoticeText = "提醒您球櫃開起後未關閉視同已借出";
                     
@@ -329,8 +333,7 @@ namespace First_MVVM.ViewModels
                 IO.Write(_checkOutModel.LockerSelectedIndex, IO.Lock);
 
                 ///資料庫新增會員借出紀錄依據_rentalModel內資料寫入//
-
-                //SelectedStepTabName = "租借完成";
+                
                 SetRFIDCheckTimer();
             }
             NoticeText = $"剩餘操作時間 {(15 - Counter)} sec";
@@ -344,7 +347,7 @@ namespace First_MVVM.ViewModels
             RFIDCheckTimer.Enabled = true;
         }
 
-        private void OnTimedRFIDCheckEvent(Object source, ElapsedEventArgs e)
+        private async void OnTimedRFIDCheckEvent(Object source, ElapsedEventArgs e)
         {
             if (IO.Read(_checkOutModel.LockerSelectedIndex) == IO.DoorOpen)
             {
@@ -354,6 +357,9 @@ namespace First_MVVM.ViewModels
                     Counter = 0;
                     RFIDCheckTimer.Elapsed -= OnTimedRFIDCheckEvent;
                     RFIDCheckTimer.Close();
+                    //寫入借出紀錄
+                    await _dBWrite.Inventory(_checkOutModel.LockerSelectedIndex, 0);
+                    await _dBWrite.Take_History(_checkOutModel.ID, _checkOutModel.LockerSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
 
                     SelectedStepTabName = "租借完成";
                 }
@@ -361,12 +367,15 @@ namespace First_MVVM.ViewModels
             else
             {
                 //此處需要引用RFID模組
-                bool _rfid = true;
+                bool _rfid = false;
                 if (_rfid == false || DoorCheckCounter >= 3)
                 {
                     Counter = 0;
                     RFIDCheckTimer.Elapsed -= OnTimedRFIDCheckEvent;
                     RFIDCheckTimer.Close();
+                    //寫入借出紀錄
+                    await _dBWrite.Inventory(_checkOutModel.LockerSelectedIndex, 0);
+                    await _dBWrite.Take_History(_checkOutModel.ID, _checkOutModel.LockerSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
 
                     SelectedStepTabName = "租借完成";
                 }
