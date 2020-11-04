@@ -8,4 +8,10 @@
     <PackageReference Include="System.IO.Ports" Version="4.7.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="GReaderApi">
+      <HintPath>GReaderApi.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

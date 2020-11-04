@@ -1,92 +1,251 @@
 ﻿using System;
 using System.IO.Ports;
 using System.Threading;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+
+#region RFID API
+using GDotnet.Reader.Api.DAL;
+using GDotnet.Reader.Api.Protocol.Gx;
+using GDotnet.Reader.Api.Utils;
+#endregion
 
 namespace RfidModel
 {
     public class RFID
     {
-        private SerialPort _serialPort;
-        private int _timeOut, _timeOutDefault;
-        private AutoResetEvent _receiveNow;
-        public void SetDevicePort(string portName, int baudRate, int timeOut)
-        {
-            try
-            {
-                _timeOut = timeOut;
-                _timeOutDefault = timeOut;
-                _serialPort = new SerialPort(portName, baudRate);
-                _serialPort.Parity = Parity.None;
-                _serialPort.Handshake = Handshake.None;
-                _serialPort.DataBits = 8;
-                _serialPort.StopBits = StopBits.One;
-                _serialPort.RtsEnable = true;
-                _serialPort.DtrEnable = true;
-                _serialPort.WriteTimeout = _timeOut;
-                _serialPort.ReadTimeout = _timeOut;
-            }
-            catch (Exception ex)
-            {
+        bool connected = false;
+        private GClient clientConn;
+        private static eConnectionAttemptEventStatusType status;
+        private static object waitReadSingle = new object();
+        private static EncapedLogBaseEpcInfo waitTag = null;
 
-            }
+        public enum RSSI
+        {
+            A1 = 15,
+            A2 = 15,
+            A3 = 15,
+            A4 = 15,
+            A5 = 15,
+            A6 = 15,
+            A7 = 15
         }
 
-        public bool Open()
+        public enum TargetReader
         {
-            try
+            A1 = 1,
+            A2 = 2,
+            A3 = 3,
+            A4 = 4,
+            A5 = 5,
+            A6 = 6,
+            A7 = 7,
+            All = 0
+        }
+
+        #region RFID連線相關
+        public bool Connect()
+        {
+            clientConn = new GClient();
+            if (clientConn.OpenSerial("COM16:115200", 1000, out status))
             {
-                if (_serialPort != null && !_serialPort.IsOpen)
+                MsgBaseSetPower msgBaseSetPower = new MsgBaseSetPower();
+                msgBaseSetPower.DicPower = new Dictionary<byte, byte>()
                 {
-                    _receiveNow = new System.Threading.AutoResetEvent(false);
-                    _serialPort.Open();
-                    _serialPort.DataReceived += new SerialDataReceivedEventHandler(_serialPort_DataReceived);
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                    {1, (int)RSSI.A1},
+                    {2, (int)RSSI.A2},
+                    {3, (int)RSSI.A3},
+                    {4, (int)RSSI.A4},
+                    {5, (int)RSSI.A5},
+                    {6, (int)RSSI.A6},
+                    {7, (int)RSSI.A7}
+                };
+                clientConn.SendSynMsg(msgBaseSetPower);
+                if (0 == msgBaseSetPower.RtCode)
+                { }
+                else { }
+                connected = true;
+                return true;
             }
-            catch
+            else
             {
+                connected = false;
                 return false;
             }
         }
+        public void Disconnect()
+        {
+            clientConn.Close();
+        }
+        #endregion
 
-        private void _serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        #region RFID掃描&&取值
+        /// <summary>
+        /// Item1.bool Item2.Epc Item3.Tid
+        /// </summary>
+        /// <param name="antEnable"></param>
+        /// <returns></returns>
+        public Tuple<bool, string, string> scanning(string TargetReader, string MatchEpc)
+        {
+            TargetReader targetReader = (TargetReader)Enum.Parse(typeof(TargetReader), TargetReader, true);
+
+            if (connected == true)
+            {
+                // subscribe to event
+                clientConn.OnEncapedTagEpcLog += new delegateEncapedTagEpcLog(OnEncapedTagEpcLog);
+                clientConn.OnEncapedTagEpcOver += new delegateEncapedTagEpcOver(OnEncapedTagEpcOver);
+
+                // 2 antenna read Inventory, EPC & TID
+                EncapedLogBaseEpcInfo tag = ReadSingleTag(clientConn, (int)targetReader, 100, MatchEpc);
+                if (null != tag)
+                {
+                    tag.logBaseEpcInfo.ToString();
+                    return Tuple.Create(true, tag.logBaseEpcInfo.Epc, tag.logBaseEpcInfo.Tid);
+                }
+                else
+                {
+                    return Tuple.Create(false, "", "");
+                }
+                // do sth.
+            }
+            else
+            {
+                return Tuple.Create(false, "", "");
+            }
+        }
+
+
+        public EncapedLogBaseEpcInfo ReadSingleTag(GClient clientConn, int TargetReader, int timeout, string MatchEpc)
+        {
+            uint antEnable = (uint)(eAntennaNo._1 | eAntennaNo._7 | eAntennaNo._6 | eAntennaNo._5 | eAntennaNo._4 | eAntennaNo._3 | eAntennaNo._2);
+            switch (TargetReader)
+            {
+                case 1:
+                    antEnable = (uint)(eAntennaNo._1);
+                    break;
+                case 2:
+                    antEnable = (uint)(eAntennaNo._2);
+                    break;
+                case 3:
+                    antEnable = (uint)(eAntennaNo._3);
+                    break;
+                case 4:
+                    antEnable = (uint)(eAntennaNo._4);
+                    break;
+                case 5:
+                    antEnable = (uint)(eAntennaNo._5);
+                    break;
+                case 6:
+                    antEnable = (uint)(eAntennaNo._6);
+                    break;
+                case 7:
+                    antEnable = (uint)(eAntennaNo._7);
+                    break;
+                case 0:
+                    antEnable = (uint)(eAntennaNo._1 | eAntennaNo._7 | eAntennaNo._6 | eAntennaNo._5 | eAntennaNo._4 | eAntennaNo._3 | eAntennaNo._2);
+                    break;
+            }
+            waitTag = null;
+            MsgBaseStop msgBaseStop = new MsgBaseStop();
+            clientConn.SendUnsynMsg(msgBaseStop);
+            MsgBaseInventoryEpc msgBaseInventoryEpc = new MsgBaseInventoryEpc();
+            msgBaseInventoryEpc.AntennaEnable = antEnable;
+            msgBaseInventoryEpc.InventoryMode = (byte)eInventoryMode.Single;
+
+            if (!String.IsNullOrWhiteSpace(MatchEpc))
+            {
+                ///* match epc */
+                msgBaseInventoryEpc.Filter = new ParamEpcFilter();
+                msgBaseInventoryEpc.Filter.Area = (byte)eParamFilterArea.EPC;
+                msgBaseInventoryEpc.Filter.BitStart = 32;
+                msgBaseInventoryEpc.Filter.HexData = MatchEpc;
+                msgBaseInventoryEpc.Filter.BData = Util.ConvertHexStringToByteArray(msgBaseInventoryEpc.Filter.HexData);
+                msgBaseInventoryEpc.Filter.BitLength = (byte)(msgBaseInventoryEpc.Filter.BData.Length * 8);
+            }
+            else
+            {
+                ///* search epc tid/
+                msgBaseInventoryEpc.ReadTid = new ParamEpcReadTid();                // tid参数
+                msgBaseInventoryEpc.ReadTid.Mode = (byte)eParamTidMode.Auto;
+                msgBaseInventoryEpc.ReadTid.Len = 6;
+            }
+            clientConn.SendUnsynMsg(msgBaseInventoryEpc);
+            try
+            {
+                lock (waitReadSingle)
+                {
+                    if (null == waitTag)
+                    {
+                        Monitor.Wait(waitReadSingle, timeout);
+                    }
+                }
+            }
+            catch { }
+            msgBaseStop = new MsgBaseStop();
+            clientConn.SendUnsynMsg(msgBaseStop);
+
+            return waitTag;
+        }
+        #endregion
+
+        #region RFID EVENT
+        public void OnEncapedTagEpcLog(EncapedLogBaseEpcInfo msg)
+        {
+            // Any blocking inside the callback will affect the normal use of the API !
+            if (null != msg && 0 == msg.logBaseEpcInfo.Result)
+            {
+                waitTag = msg;
+                try
+                {
+                    lock (waitReadSingle)
+                    {
+                        Monitor.Pulse(waitReadSingle);
+                    }
+                }
+                catch { }
+            }
+        }
+
+        public void OnEncapedTagEpcOver(EncapedLogBaseEpcOver msg)
+        {
+            if (null != msg)
+            {
+
+            }
+        }
+        #endregion
+
+        #region 掃描&&取值
+        /// <summary>
+        /// Item1.bool Item2.Epc Item3.Tid
+        /// </summary>
+        /// <param name="TargetReader"></param>
+        /// <param name="MatchEpc"></param>
+        /// <returns></returns>
+        public Tuple<bool, string, string> ScannAndRead(string TargetReader, string MatchEpc)
         {
             try
             {
-                if (e.EventType == SerialData.Chars)
+                Task.Delay(1000).Wait();
+                Connect();
+                var tag = scanning(TargetReader, MatchEpc);
+                Disconnect();
+                Task.Delay(1000).Wait();
+                if (tag.Item1 == true)
                 {
-                    _receiveNow.Set();
+                    return Tuple.Create(true, tag.Item2, tag.Item3);
+                }
+                else
+                {
+                    return Tuple.Create(false, "", "");
                 }
             }
             catch (Exception ex)
             {
-                throw ex;
+                return Tuple.Create(false, "", "");
             }
         }
-
-        public bool Close()
-        {
-            try
-            {
-                if (_serialPort != null && _serialPort.IsOpen)
-                {
-                    _serialPort.Close();
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
+        #endregion
     }
 }
