@@ -6,6 +6,7 @@ namespace First_MVVM.Models
 {
     public class CheckInModel
     {
+        public string SN { get; set; }
         public string ID { get; set; }
         public string CardID { get; set; }
         public string Balance { get; set; }

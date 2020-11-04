@@ -476,6 +476,29 @@ namespace DBModel
             }
         }
 
+        public async Task<bool> Take_History_UPDATE(string SN,string CheckInStatus)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"UPDATE `ste_SBSCS`.`Take_History` SET `Take_CheckIn` = '{CheckInStatus}' WHERE (`Take_SN` = '{SN}');";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
         public async Task<bool> Charge_History(string ID,int Amount,string HoursUse,string Card_ID)
         {
             using (var conn = new MySqlConnection(builder.ConnectionString))
