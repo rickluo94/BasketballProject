@@ -4,12 +4,48 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:prism="http://prismlibrary.com/"  
              prism:ViewModelLocator.AutoWireViewModel="True"
-             Height="1024" Width="600" FontSize="20" >
+             Height="1024" Width="600" FontSize="20" Background="#FF303030" >
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding RegisterStepTabLoadCmd}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
+    <UserControl.Resources>
+        <Thickness x:Key="ControlMargin">10 10 10 10</Thickness>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="#FFF44336"/>
+            <Setter Property="BorderBrush" Value="#FFF44336"/>
+            <Setter Property="Foreground" Value="#DDFFFFFF"/>
+        </Style>
+        <Style TargetType="{x:Type TabItem}">
+            <Setter Property="Width" Value="Auto"/>
+            <Setter Property="Height" Value="Auto"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Foreground" Value="#FF7D7D7D"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border Name="Border" Background="#FF303030" BorderBrush="#FFF44336" BorderThickness="2">
+                            <ContentPresenter x:Name="ContentSite"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Left"
+                                ContentSource="Header"
+                                Margin="10,2"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True" SourceName="Border">
+                                <Setter TargetName="Border" Property="Background" Value="#FFF44336" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#FFF44336"/>
+                                <Setter Property="Foreground" Value="#DDFFFFFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5"/>
@@ -21,7 +57,116 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="5"/>
         </Grid.RowDefinitions>
-        <TabControl SelectedIndex="{Binding SelectedStepTabIndex}" SelectedValue="{Binding SelectedStepTabName}" SelectedValuePath="Header" Grid.Row="1" Grid.Column="1">
+        <TabControl SelectedIndex="{Binding SelectedStepTabIndex}" SelectedValue="{Binding SelectedStepTabName}" Background="#FF303030" SelectedValuePath="Header" Grid.Row="1" Grid.Column="1">
+            <TabItem Header="權益須知">
+                <Grid>
+                    <StackPanel>
+                        <RichTextBox HorizontalScrollBarVisibility="Auto" BorderBrush="#FF303030"
+                             Margin="{StaticResource ControlMargin}"
+                             Padding="5" Background="#FF303030" Foreground="#DDFFFFFF"
+                             IsDocumentEnabled="False"
+                             IsReadOnly="True" Height="680" Width="500">
+                            <FlowDocument PageWidth="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RichTextBox}}, Path=ActualWidth}">
+                                <Paragraph>
+                                    <Hyperlink Foreground="#DDFFFFFF">
+                                        <Run Text="請詳閱以下內容" FontSize="26" Foreground="#DDFFFFFF"/>
+                                    </Hyperlink>
+                                    <LineBreak />
+                                    <Run>一、註冊須知
+
+1.當您使用本系統服務時，即表示您已閱讀、瞭解並同意接受本註冊同意書之所有內容及其後修改變更規定。若您未滿二十歲，應於您的法定代理人或監護人閱讀、瞭解並同意本同意書之所有內容及其後修改變更規定後，方得使用本系統服務，但若您已使用本系統服務，視為您已取得法定代理人或監護人之同意。
+2.本系統所提供之各項服務，請註冊、更新個人資料時應提供本系統正確、最新及完整之資料。若您提供任何錯誤、不實、過時或不完整或具誤導性的資料，本系統有權暫停或終止您的帳號使用，並拒絕您於現在和未來使用本服務之全部或任何部分。
+
+二、帳號密碼
+
+1.當您申請完後請自行維護帳號及密碼的安全，進入系統後，即要為您所從事的活動負完全責任。
+2.為維護您使用的權益，請勿將帳號借於他人或轉讓為他人使用。
+3.如果您欲更改密碼，您可以直接於網站上更改。
+4.若您忘記密碼，請使用本系統「忘記帳號密碼查詢系統」，或逕洽本系統的承辦人員為您查詢。
+5.如有發現帳號或密碼遭人非法使用或有任何破壞使用安全之情形時，應立即通知本系統的承辦人員。
+
+三、保護義務與例外
+
+1.「智能櫃」將會維護您個人基本資料的安全及正確性（本系統會定期檢核您的資料）。
+2.「智能櫃」不會任意監看、增刪或修改使用者之個人相關資料及內容。
+3.「智能櫃」之資料，悉依「個人資料保護法」之規定，提供予教育部及教育行政主管機關，作為教育決策制定之參考，並審慎合法使用本系統相關資料，且嚴守保密原則，保障相關人員權益。
+4.保護例外：當有下列情形之一時，本系統有權查看、刪除或修改使用者之相關資料內容。
+(1)基於法律之規定或發生法律上之爭議與糾紛。
+(2)為保護「智能櫃」之技術系統與權益。
+(3)有其他使用者或第三者的資料遭受侵害其名譽、隱私權、智慧財產權或其他權利時。
+(4)使用者有任何違反本同意書之情形時。
+
+四、行為規範與限制
+
+「智能櫃」是提供給教師教學與學生學習等目的使用，所以嚴禁任何未經授權之商業行為，即使用者務必要遵守網路慣例與現行相關法令的規定，所以您不可利用本系統來進行以下的行為，否則我們將暫停您的使用權。
+
+1.任何違反中華民國法律相關法令行為。
+2.利用此一帳號散佈由「智能櫃」取得涉及當事人重大利益之資料。
+3.將因任何法律或契約關係知悉但無權傳送之任何內容加以上載、張貼、發送電子郵件或以其他方式傳送。
+4.將侵害他人著作權、專利權、商標權、營業秘密、或其他專屬權利之內容加以上載、張貼、發送電子郵件或以其他方式傳送。
+5.將含有猥褻之文字、圖畫、聲音、影像之內容加以上載、張貼、發送電子郵件或以其他方式傳送。
+6.將設計目的在於干擾、破壞或限制任何電腦軟體、硬體或通訊設備功能之電腦病毒以上載、張貼或以其他方式傳送至本站。
+7.干擾或破壞本系統或與本系統相關連之伺服器和網路，或違反任何關於本服務連結網路之規定、程式、政策或規範。
+8.未經合法授權而截獲、篡改、收集、儲存或刪除他人個人資訊、電子郵件或其他資料，或將此類資料用於任何非法或不正當目的。
+9.利用不正當管道竊取他人在「智能櫃」帳號密碼，以及擅自修改他人權限之行為。
+10.違反網路禮節及所有法律規範，冒犯他人或影響他人使用本系統，例如：大量張貼重複訊息、連鎖信、不實言論等。
+11.沒有經過合法授權，即擅自進行重製、改作之行為。
+12.進行任何侵犯他人智慧財產權之行為。
+13.帳號借用或轉讓他人使用。
+14.偽造身分使用本系統，企圖誤導並收集他人隱私資料之行為。
+15.其它任何不符合或違反「智能櫃」使用目的之行為。
+
+違反上述規定時，本系統即有權停止您帳號的使用權，或清除帳號。若違反法律規定時，應自行負法律責任。
+
+五、服務說明
+
+1.本系統保留因營運策略之調整，隨時更改或停止各項服務內容，且毋須事先通知使用者，並對任何使用者或第三人均不負任何責任。
+2.於發生下列任一情形時，本系統有權停止或中斷服務：
+(1)電子通信設備進行必要之保養及施工時。
+(2)發生突發性之通信設備故障或電子通信服務，無法提供服務時。
+(3)天災等不可抗力之因素，致使無法提供服務時。
+(4)使用者有任何違反法令或本同意書之行為，本系統即會隨時終止使用者權益。
+3.本系統不保證以下事項：
+(1)服務將符合您的要求。
+(2)服務將不受干擾、及時提供、安全可靠或不會出錯。
+(3)使用服務取得之結果正確可靠。
+(4)您經由服務取得之任何資訊符合您的期望。
+
+六、契約效力
+
+1.當您申請註冊為本系統的會員，即表示您已閱讀、瞭解並同意本註冊同意書之所有內容，您如違反下列條款時，本系統得隨時終止對您提供之一切服務。
+2.本系統有保留隨時更改本同意書之權利，若有修改同意書規範時，將以公告修改之最新規定事項，將不會逐一另行通知。修改後的條款將於公告所載之日期生效，並於生效日有效代替先前與您的服務條款或協議。如您不同意修改或變更，您得選擇停止使用本系統服務，並終止本註冊同意書。如您於修改或變更生效後繼續使用本系統服務者，視為您已同意該等修改或變更。
+3.您自本系統取得的任何建議或資訊，無論是書面或口頭形式，除非本註冊同意書有明確規定，均不構成本註冊同意書以外之任何保證。
+4.本註冊同意書及您與本系統之關係，均受到中華民國法律管轄。您與本系統發生的爭議，均應依照中華民國法律予以處理，除法律另有限制規定外，雙方並合意以臺灣臺中地方法院為第一審管轄法院。
+5.本系統未行使或執行本條款任何權利或規定，不被視為對權利之放棄。
+6.本註冊同意書部份條款因牴觸中華民國法律而無效時，其他條款仍為有效。
+7.本註冊同意書各條款之標題僅供方便而設，不具任何法律或契約效果。
+
+七、責任規範
+
+1.任何經由本系統以上載、張貼、發送電子郵件或任何其他方式傳送的資訊、資料、文字、軟體、音樂、音訊、照片、圖形、視訊、資訊等內容，均由內容提供者自行承擔責任。
+2.您認知並了解本系統內容含有多數人的貢獻，可能存在部分錯誤或未符合使用時最新資訊之情形，本系統儘量維護更新其教育資源。您同意有使用本系統上之教育資源時，乃是依您個人判斷決定是否使用，本系統及相關人員不對您使用其資源所產生之任何損失或時間成本之浪費，而負任何責任。
+3.如您有違反本註冊同意書條款，本系統得暫停您使用本系統全部或部分服務，如經本系統通知後仍未改善，或違反情節重大者，本系統得終止您的帳號，無須對您先行通知。但您得透過本系統提供之機制進行申訴。若本系統因您違反本註冊同意書之行為，而受有損害，本系統得對您請求損害賠償，包括但不限於訴訟費用、合理律師費用等。
+4.您同意如因本系統出現中斷或故障等現象，而造成使用者使用上的不便、資料喪失、錯誤、或其他損害時，本系統及其管理者毋須負任何法律責任。
+
+八、服務建議
+
+若您發現本系統有任何錯誤或其他未及時更新、維護之情形，請您儘速通知本系統，以促進本系統之服務品質；若有任何對本系統使用或功能上之建議，亦請不吝告知。
+
+九、其他
+
+其他未竟之事宜，均依照現行之法令規定及網路規範辦理。</Run>
+                                </Paragraph>
+                            </FlowDocument>
+                        </RichTextBox>
+                        <StackPanel Margin="{StaticResource ControlMargin}" Orientation="Horizontal" Height="auto" Width="auto" HorizontalAlignment="Center">
+                            <CheckBox  Command="{Binding CheckReadRulesCmd}" Foreground="#401E01" Margin="{StaticResource ControlMargin}" IsChecked="{Binding ReadRulesIsChecked}" IsEnabled="True" Width="auto" Height="26" HorizontalAlignment="Center" />
+                            <Label Foreground="#F2F2F2" Content="我以閱讀以上條款，並同意此同意書內容" FontSize="20" />
+                        </StackPanel>
+                        <Button Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Content="確認" Margin="{StaticResource ControlMargin}" FontSize="26" Width="80" Height="auto" Background="#FFF44336" BorderBrush="#FFF44336" Foreground="#DDFFFFFF"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
             <TabItem Header="帳號">
                 <Grid>
                     <Grid.ColumnDefinitions>

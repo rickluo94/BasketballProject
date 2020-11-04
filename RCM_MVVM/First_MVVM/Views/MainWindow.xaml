@@ -5,7 +5,7 @@
         xmlns:prism="http://prismlibrary.com/" FontSize="28"
         xmlns:View="clr-namespace:First_MVVM.Views"
         prism:ViewModelLocator.AutoWireViewModel="True"
-        Title="{Binding Title}" Height="1024" Width="600" WindowStartupLocation="CenterScreen" >
+        Title="{Binding Title}" Height="1024" Width="600" Background="#FF303030" WindowStartupLocation="CenterScreen" >
     <i:Interaction.Triggers>
         <prism:InteractionRequestTrigger SourceObject="{Binding RegisterStepTabRequest}">
             <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
@@ -29,39 +29,46 @@
             </prism:PopupWindowAction>
         </prism:InteractionRequestTrigger>
     </i:Interaction.Triggers>
+    <Window.Resources>
+        <Thickness x:Key="ControlMargin">10 10 10 10</Thickness>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="#F27405"/>
+            <Setter Property="BorderBrush" Value="#401E01"/>
+            <Setter Property="Foreground" Value="#F2F2F2"/>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="20" />
-            <ColumnDefinition Width="auto" />
-            <ColumnDefinition Width="20" />
+            <ColumnDefinition Width="100" />
+            <ColumnDefinition />
+            <ColumnDefinition Width="100"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="20" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
             <RowDefinition Height="20" />
         </Grid.RowDefinitions>
         <!-- Row 1 -->
-        <ContentControl Grid.Row="1" Grid.Column="1" prism:RegionManager.RegionName="ContentRegion" />
-        
+        <ContentControl Grid.Row="0" Grid.Column="1" prism:RegionManager.RegionName="ContentRegion"/>
+
         <!-- Row 2 -->
-        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding UpdateText}" />
-        
+        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding UpdateText}" />
+
         <!-- Row 3 -->
-        <Button Grid.Row="3" Grid.Column="1" Content="租借" Width="530" Height="150" Command="{Binding CheckOutStepTabCommand}" Margin="10,10,10,10"/>
+        <Button Grid.Row="1" Grid.Column="1" Content="Check Out 我要借球" Command="{Binding CheckOutStepTabCommand}" Margin="{StaticResource ControlMargin}"/>
 
         <!-- Row 4 -->
-        <Button Grid.Row="4" Grid.Column="1" Content="歸還" Width="530" Height="150" Command="{Binding CheckInStepTabCommand}" Margin="10,10,10,10"/>
-        
-        <!-- Row 5 -->
-        <Button Grid.Row="5" Grid.Column="1" Content="註冊" Width="530" Height="150" Command="{Binding RegisterStepTabCommand}" Margin="10,10,10,10"/>
+        <Button Grid.Row="2" Grid.Column="1" Content="Check In 我要還球" Command="{Binding CheckInStepTabCommand}" Margin="{StaticResource ControlMargin}"/>
 
         <!-- Row 5 -->
-        <Button Grid.Row="6" Grid.Column="1" Content="會員服務" Width="530" Height="150"  Margin="10,10,10,10"/>
+        <Button Grid.Row="3" Grid.Column="1" Content="New Members 新會員" Command="{Binding RegisterStepTabCommand}" Margin="{StaticResource ControlMargin}"/>
+
+        <!-- Row 5 -->
+        <Button Grid.Row="4" Grid.Column="1" Content="Service 會員服務"  Margin="{StaticResource ControlMargin}"/>
 
     </Grid>
 </Window>

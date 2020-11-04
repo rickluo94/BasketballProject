@@ -36,7 +36,7 @@ namespace First_MVVM.ViewModels
 
         public MainWindowViewModel()
         {
-            IO.SetDevicePort("COM3", 57600); IO.SetIOParameter();
+            //IO.SetDevicePort("COM3", 57600); IO.SetIOParameter();
             RegisterStepTabRequest = new InteractionRequest<ICustomNotification>();
             RegisterStepTabCommand = new DelegateCommand(RegisterStepTabView);
             CheckOutStepTabRequest = new InteractionRequest<ICustomNotification>();

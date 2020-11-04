@@ -28,6 +28,13 @@ namespace First_MVVM.ViewModels
         private DBWrite _dBWrite = new DBWrite();
 
         #region 資料容器
+        private bool _readRulesIsChecked;
+        public bool ReadRulesIsChecked
+        {
+            get { return _readRulesIsChecked; }
+            set { SetProperty(ref _readRulesIsChecked, value); }
+        }
+
         private int _selectedStepTabIndex;
         public int SelectedStepTabIndex
         {
@@ -166,6 +173,7 @@ namespace First_MVVM.ViewModels
         #endregion 資料流 資料
 
         #region 命令物件
+        public DelegateCommand CheckReadRulesCmd { get; private set; }
         public DelegateCommand RegisterStepTabLoadCmd { get; private set; }
         public DelegateCommand<TextBox> AccountCmd { get; private set; }
         public DelegateCommand<TextBox> SMCmd { get; private set; }
@@ -189,6 +197,7 @@ namespace First_MVVM.ViewModels
         public RegisterStepTabViewModel()
         {
             _registerModel = new RegisterModel();
+            CheckReadRulesCmd = new DelegateCommand(CheckReadRules);
             RegisterStepTabLoadCmd = new DelegateCommand(RegisterStepTabLoad);
             AccountCmd = new DelegateCommand<TextBox>(_checkAccount);
             SMCmd = new DelegateCommand<TextBox>(SendMessageKey);
@@ -207,10 +216,22 @@ namespace First_MVVM.ViewModels
             ExitCommand = new DelegateCommand(ExitInteraction);
             Cities = _nationalCities.FillCitiesData(_nationalCities.FillDefaultData());
         }
+        private void CheckReadRules()
+        {
+            if (_readRulesIsChecked == true)
+            {
+                NextStepIsEnabledBool = true;
+            }
+            else
+            {
+                NextStepIsEnabledBool = false;
+            }
+        }
 
         private void RegisterStepTabLoad()
         {
             _easyCard.SetDevicePort("COM6", 115200, 500); _easyCard.Open();
+            ReadRulesIsChecked = false;
             SelectedCitiesIndex = -1;
             SelectedStepTabIndex = 0;
             AccountBoxIsEnabled = true;
