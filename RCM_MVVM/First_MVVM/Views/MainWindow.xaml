@@ -33,15 +33,10 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20" />
             <ColumnDefinition Width="auto" />
-            <ColumnDefinition Width="auto" />
-            <ColumnDefinition Width="auto" />
-            <ColumnDefinition Width="auto" />
-            <ColumnDefinition Width="*" />
             <ColumnDefinition Width="20" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="20" />
-            <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
@@ -54,28 +49,19 @@
         <ContentControl Grid.Row="1" Grid.Column="1" prism:RegionManager.RegionName="ContentRegion" />
         
         <!-- Row 2 -->
-        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding UserName}"/>
-       
+        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding UpdateText}" />
         
         <!-- Row 3 -->
-        <PasswordBox Grid.Row="3" Grid.Column="1" Name="txtPassword" />
-        
-        <!-- Row 4 -->
-        <Button  Grid.Row="4" Grid.Column="1"
-                 Content="Login" Margin="10">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="Click">
-                    <i:InvokeCommandAction Command="{Binding LoginCommand}" 
-                                CommandParameter="{Binding ElementName=txtPassword}" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
+        <Button Grid.Row="3" Grid.Column="1" Content="租借" Width="530" Height="150" Command="{Binding CheckOutStepTabCommand}" Margin="10,10,10,10"/>
 
-        </Button>
-            <!-- Row 5 -->
-        <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding UpdateText}" />
-        <Button Grid.Row="6" Grid.Column="1" Content="註冊" Command="{Binding RegisterStepTabCommand}"/>
-        <Button Grid.Row="6" Grid.Column="2" Content="租借" Command="{Binding CheckOutStepTabCommand}"/>
-        <Button Grid.Row="6" Grid.Column="3" Content="歸還" Command="{Binding CheckInStepTabCommand}"/>
+        <!-- Row 4 -->
+        <Button Grid.Row="4" Grid.Column="1" Content="歸還" Width="530" Height="150" Command="{Binding CheckInStepTabCommand}" Margin="10,10,10,10"/>
+        
+        <!-- Row 5 -->
+        <Button Grid.Row="5" Grid.Column="1" Content="註冊" Width="530" Height="150" Command="{Binding RegisterStepTabCommand}" Margin="10,10,10,10"/>
+
+        <!-- Row 5 -->
+        <Button Grid.Row="6" Grid.Column="1" Content="會員服務" Width="530" Height="150"  Margin="10,10,10,10"/>
 
     </Grid>
 </Window>
