@@ -23,13 +23,13 @@ namespace RfidModel
 
         public enum RSSI
         {
-            A1 = 15,
-            A2 = 15,
-            A3 = 15,
-            A4 = 15,
-            A5 = 15,
-            A6 = 15,
-            A7 = 15
+            A1 = 17,
+            A2 = 17,
+            A3 = 17,
+            A4 = 17,
+            A5 = 17,
+            A6 = 17,
+            A7 = 17
         }
 
         public enum TargetReader
@@ -48,7 +48,7 @@ namespace RfidModel
         public bool Connect()
         {
             clientConn = new GClient();
-            if (clientConn.OpenSerial("COM16:115200", 1000, out status))
+            if (clientConn.OpenSerial("COM7:115200", 1000, out status))
             {
                 MsgBaseSetPower msgBaseSetPower = new MsgBaseSetPower();
                 msgBaseSetPower.DicPower = new Dictionary<byte, byte>()
@@ -227,11 +227,9 @@ namespace RfidModel
         {
             try
             {
-                Task.Delay(1000).Wait();
-                Connect();
+                Task.Delay(500).Wait();
                 var tag = scanning(TargetReader, MatchEpc);
-                Disconnect();
-                Task.Delay(1000).Wait();
+                Task.Delay(500).Wait();
                 if (tag.Item1 == true)
                 {
                     return Tuple.Create(true, tag.Item2, tag.Item3);

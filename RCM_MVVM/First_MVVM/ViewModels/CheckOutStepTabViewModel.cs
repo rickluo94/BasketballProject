@@ -15,6 +15,8 @@ using System.Threading.Tasks;
 using DBModel;
 using System.Data;
 using System.Timers;
+using RfidModel;
+using System.Diagnostics;
 
 namespace First_MVVM.ViewModels
 {
@@ -23,13 +25,23 @@ namespace First_MVVM.ViewModels
         private CheckOutModel _checkOutModel { get; set; }
         private DataTable _inventoryModel { get; set; }
         private EasyCard _easyCard = new EasyCard();
+        private RFID _RFID = new RFID();
+        private RFID_ReaderModel _rReaderModel { get; set; }
         private DBRead _dBRead = new DBRead();
         private DBWrite _dBWrite = new DBWrite();
         private System.Timers.Timer OperationTimer = new System.Timers.Timer(1000);
         private System.Timers.Timer DoorCheckTimer = new System.Timers.Timer(1000);
         private System.Timers.Timer RFIDCheckTimer = new System.Timers.Timer(1000);
+        private System.Timers.Timer ReaderTimer = new System.Timers.Timer(1000);
 
         #region Interface Property
+
+        private string _readerStatusStr;
+        public string ReaderStatusStr
+        {
+            get { return _readerStatusStr; }
+            set { SetProperty(ref _readerStatusStr, value); }
+        }
 
         private int _doorCheckCounter;
         public int DoorCheckCounter
@@ -128,7 +140,10 @@ namespace First_MVVM.ViewModels
         {
             _inventoryModel = new DataTable();
             _checkOutModel = new CheckOutModel();
-            _easyCard.SetDevicePort("COM6", 115200, 500); _easyCard.Open();
+            _RFID.Connect();
+            _rReaderModel = new RFID_ReaderModel();
+            _rReaderModel.Status = true;
+            _easyCard.SetDevicePort("COM8", 115200, 500); _easyCard.Open();
             NextStepIsEnabled = true;
             SelectedStepTabIndex = 0;
             if (CheckAvailableUse() == true) { FillCabinetBtns(Lockers);} else { MessageBox.Show("目前沒有可租借籃球"); ExitInteraction(); }
@@ -213,8 +228,9 @@ namespace First_MVVM.ViewModels
 
                     IO.Write(_checkOutModel.LockerSelectedIndex, IO.UnLock);
                     NoticeText = "提醒您球櫃開起後未關閉視同已借出";
-                    
+
                     //在此函式判斷是否開始計費 or 操作逾時
+                    SetReaderTimer();
                     SetDoorCheckTimer();
                     break;
                 default:
@@ -271,6 +287,7 @@ namespace First_MVVM.ViewModels
             NoticeText = null;
             DoorCheckCounter = 0;
             _easyCard.Close();
+            _RFID.Disconnect();
             FinishInteraction?.Invoke();
         }
 
@@ -324,6 +341,9 @@ namespace First_MVVM.ViewModels
                     DoorCheckTimer.Close();
                     SelectedStepTabName = "操作逾時";
                     IO.Write(_checkOutModel.LockerSelectedIndex, IO.Lock);
+
+                    ReaderTimer.Elapsed -= OnTimedReaderEvent;
+                    ReaderTimer.Close();
                 }
             }
             else
@@ -348,19 +368,21 @@ namespace First_MVVM.ViewModels
             RFIDCheckTimer.Enabled = true;
         }
 
-        private async void OnTimedRFIDCheckEvent(Object source, ElapsedEventArgs e)
+        private void OnTimedRFIDCheckEvent(Object source, ElapsedEventArgs e)
         {
             if (IO.Read(_checkOutModel.LockerSelectedIndex) == IO.DoorOpen)
             {
                 Counter += 1;
-                if (Counter == 20)
+                if (Counter == 50)
                 {
                     Counter = 0;
                     RFIDCheckTimer.Elapsed -= OnTimedRFIDCheckEvent;
                     RFIDCheckTimer.Close();
                     //寫入借出紀錄
-                    await _dBWrite.Inventory(_checkOutModel.LockerSelectedIndex, 0);
-                    await _dBWrite.Take_History(_checkOutModel.ID, _checkOutModel.LockerSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
+                    //await _dBWrite.Inventory(_checkOutModel.LockerSelectedIndex, 0);
+                    //await _dBWrite.Take_History(_checkOutModel.ID, _checkOutModel.LockerSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
+                    ReaderTimer.Elapsed -= OnTimedReaderEvent;
+                    ReaderTimer.Close();
 
                     SelectedStepTabName = "租借完成";
                 }
@@ -368,16 +390,17 @@ namespace First_MVVM.ViewModels
             else
             {
                 //此處需要引用RFID模組
-                bool _rfid = false;
-                if (_rfid == false || DoorCheckCounter >= 3)
+                if (_rReaderModel.Status == false || DoorCheckCounter >= 3)
                 {
                     Counter = 0;
                     RFIDCheckTimer.Elapsed -= OnTimedRFIDCheckEvent;
                     RFIDCheckTimer.Close();
                     //寫入借出紀錄
-                    await _dBWrite.Inventory(_checkOutModel.LockerSelectedIndex, 0);
-                    await _dBWrite.Take_History(_checkOutModel.ID, _checkOutModel.LockerSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
-
+                    //await _dBWrite.Inventory(_checkOutModel.LockerSelectedIndex, 0);
+                    //await _dBWrite.Take_History(_checkOutModel.ID, _checkOutModel.LockerSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
+                    ReaderTimer.Elapsed -= OnTimedReaderEvent;
+                    ReaderTimer.Close();
+                    
                     SelectedStepTabName = "租借完成";
                 }
                 else
@@ -391,7 +414,22 @@ namespace First_MVVM.ViewModels
                     SelectedStepTabName = "請取球";
                 }
             }
-            NoticeText = $"剩餘操作時間 {(20 - Counter)} sec";
+            NoticeText = $"剩餘操作時間 {(50 - Counter)} sec";
+        }
+
+        private void SetReaderTimer()
+        {
+            ReaderTimer.Elapsed += OnTimedReaderEvent;
+            ReaderTimer.AutoReset = true;
+            ReaderTimer.Enabled = true;
+        }
+        private void OnTimedReaderEvent(Object source, ElapsedEventArgs e)
+        {
+            Tuple<bool,string,string> result = _RFID.ScannAndRead(_checkOutModel.LockerSelectedIndex, _checkOutModel.EPC);
+            _rReaderModel.Status = result.Item1;
+            _rReaderModel.EPC = result.Item2;
+            _rReaderModel.TID = result.Item3;
+            ReaderStatusStr = _rReaderModel.Status.ToString();
         }
 
         public Action FinishInteraction { get; set; }

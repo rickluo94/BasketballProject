@@ -137,7 +137,7 @@ namespace First_MVVM.ViewModels
         private void CheckInStepTabLoad()
         {
             _checkInModel = new CheckInModel();
-            _easyCard.SetDevicePort("COM6", 115200, 500); _easyCard.Open();
+            _easyCard.SetDevicePort("COM8", 115200, 500); _easyCard.Open();
             NextStepIsEnabled = true;
             SelectedStepTabIndex = 0;
         }
