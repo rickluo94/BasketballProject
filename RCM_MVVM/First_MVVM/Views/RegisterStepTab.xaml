@@ -8,9 +8,15 @@
              Background="#FF303030"
              >
     <UserControl.Resources>
+        <Style TargetType="{x:Type Grid}">
+            <Setter Property="Height" Value="900"/>
+            <Setter Property="Width" Value="580"/>
+        </Style>
         <Thickness x:Key="ControlMargin">10 10 10 10</Thickness>
         <Style TargetType="{x:Type TabControl}">
             <Setter Property="Background" Value="#FF303030"/>
+            <Setter Property="Height" Value="Auto"/>
+            <Setter Property="Width" Value="Auto"/>
         </Style>
         <Style TargetType="{x:Type Button}">
             <Setter Property="Background" Value="#FFF44336"/>
@@ -52,7 +58,7 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Viewbox Stretch="Uniform">
-        <Grid Width="600" Height="1024">
+        <Grid Name="HWbody" Width="600" Height="1024">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="5"/>
                 <ColumnDefinition Width="auto"/>
@@ -67,9 +73,9 @@
                 <TabItem Header="權益須知">
                     <Grid>
                         <StackPanel>
-                            <RichTextBox HorizontalScrollBarVisibility="Auto" BorderBrush="#FF303030"
+                            <RichTextBox HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" IsHitTestVisible="True" SelectionOpacity="0" Focusable="False"
                              Margin="{StaticResource ControlMargin}"
-                             Padding="5" Background="#FF303030" Foreground="#DDFFFFFF"
+                             Padding="5" Background="#FF303030" Foreground="#DDFFFFFF" BorderBrush="#FF303030"
                              IsDocumentEnabled="False"
                              IsReadOnly="True" Height="680" Width="500">
                                 <FlowDocument PageWidth="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RichTextBox}}, Path=ActualWidth}">
@@ -175,38 +181,42 @@
                 </TabItem>
                 <TabItem Header="帳號">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20"/>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto" MinWidth="200"/>
-                            <ColumnDefinition Width="Auto" MinWidth="200"/>
-                            <ColumnDefinition Width="20"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="20"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="88*"/>
-                            <RowDefinition Height="20"/>
-                        </Grid.RowDefinitions>
-                        <Button Content="X" Command="{Binding ExitCommand}" Grid.Column="1" Grid.Row="1"/>
-                        <TextBlock Text="帳號:" Grid.Column="2" Margin="10,10,10,10" Grid.Row="2" />
-                        <TextBlock Text="簡訊驗證碼" Grid.Column="2" Margin="10,10,10,10" Grid.Row="3"/>
-                        <TextBox x:Name="AccountBox" Text="{Binding AccountStr}" IsEnabled="{Binding AccountBoxIsEnabled}" Grid.Column="3" Margin="10,10,10,10" Grid.Row="2" >
+
+                        <Button  Content="X" Command="{Binding ExitCommand}" Margin="492,10,10,817" />
+
+                        <TextBlock Margin="95,145,366,702" >
+                                <Viewbox>
+                                    <TextBlock>帳號:</TextBlock>
+                                </Viewbox>
+                        </TextBlock>
+
+                        <TextBox x:Name="AccountBox" FontSize="50" Text="{Binding AccountStr}" IsEnabled="{Binding AccountBoxIsEnabled}"  Margin="95,203,95,637" >
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="LostFocus">
                                     <i:InvokeCommandAction Command="{Binding AccountCmd}" CommandParameter="{Binding ElementName=AccountBox}"/>
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </TextBox>
-                        <TextBox x:Name="VerifySMBox" Text="{Binding VerifySMStr}" Grid.Column="3" Margin="10,10,10,10" Grid.Row="3" />
-                        <Button Content="發送驗證碼" Command="{Binding SMCmd}" IsEnabled="{Binding SMCmdIsEnabledBool}" CommandParameter="{Binding ElementName=AccountBox}" Grid.Column="4" Margin="10,10,10,10" Grid.Row="3"/>
-                        <TextBlock Width="auto" Text="{Binding NoticeText}" Grid.Column="4" Margin="10,10,10,10" Grid.Row="2"/>
-                        <Button Content="驗證" Command="{Binding VerifySMCommand}" CommandParameter="{Binding ElementName=VerifySMBox}" Grid.Column="3" Margin="10,10,10,10" Grid.Row="4"/>
-                        <Button Content="下一步" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Grid.Column="4" Margin="10,10,10,10" Grid.Row="5"/>
+
+                        <TextBlock Margin="95,268,95,572" >
+                                <Viewbox>
+                                    <TextBlock>簡訊驗證碼:</TextBlock>
+                                </Viewbox>
+                        </TextBlock>
+
+                        <TextBox x:Name="VerifySMBox" FontSize="50" Text="{Binding VerifySMStr}" Margin="95,333,233,507" />
+
+                        <TextBlock Margin="95,398,95,442" >
+                            <Viewbox>
+                                <TextBlock  Text="{Binding NoticeText}"/>
+                            </Viewbox>
+                        </TextBlock>
+
+                        <Button Content="驗證" Command="{Binding VerifySMCommand}" CommandParameter="{Binding ElementName=VerifySMBox}" Margin="95,463,95,377" />
+
+                        <Button Content="發送驗證碼" Command="{Binding SMCmd}" IsEnabled="{Binding SMCmdIsEnabledBool}" CommandParameter="{Binding ElementName=AccountBox}" Margin="352,333,95,507"/>
+
+                        <Button Content="下一步" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="95,813,95,27"/>
                     </Grid>
                 </TabItem>
                 <TabItem Header="密碼">
