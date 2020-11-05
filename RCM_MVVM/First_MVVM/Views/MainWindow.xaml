@@ -21,6 +21,12 @@
     <i:Interaction.Triggers>
         <prism:InteractionRequestTrigger SourceObject="{Binding RegisterStepTabRequest}">
             <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
+                <prism:PopupWindowAction.WindowStyle>
+                    <Style TargetType="Window">
+                        <Setter Property="WindowState" Value="Maximized"/>
+                        <Setter Property="WindowStyle" Value="None"/>
+                    </Style>
+                </prism:PopupWindowAction.WindowStyle>
                 <prism:PopupWindowAction.WindowContent>
                     <View:RegisterStepTab />
                 </prism:PopupWindowAction.WindowContent>
@@ -28,6 +34,12 @@
         </prism:InteractionRequestTrigger>
         <prism:InteractionRequestTrigger SourceObject="{Binding CheckOutStepTabRequest}">
             <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
+                <prism:PopupWindowAction.WindowStyle>
+                    <Style TargetType="Window">
+                        <Setter Property="WindowState" Value="Maximized"/>
+                        <Setter Property="WindowStyle" Value="None"/>
+                    </Style>
+                </prism:PopupWindowAction.WindowStyle>
                 <prism:PopupWindowAction.WindowContent>
                     <View:CheckOutStepTab/>
                 </prism:PopupWindowAction.WindowContent>
@@ -35,6 +47,12 @@
         </prism:InteractionRequestTrigger>
         <prism:InteractionRequestTrigger SourceObject="{Binding CheckInStepTabRequest}">
             <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
+                <prism:PopupWindowAction.WindowStyle>
+                    <Style TargetType="Window">
+                        <Setter Property="WindowState" Value="Maximized"/>
+                        <Setter Property="WindowStyle" Value="None"/>
+                    </Style>
+                </prism:PopupWindowAction.WindowStyle>
                 <prism:PopupWindowAction.WindowContent>
                     <View:CheckInStepTab/>
                 </prism:PopupWindowAction.WindowContent>
