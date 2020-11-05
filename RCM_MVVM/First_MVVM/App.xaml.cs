@@ -1,5 +1,6 @@
 ﻿using Prism.Ioc;
 using Prism.Unity;
+using System;
 using System.Windows;
 using First_MVVM.Views;
 using Prism.Modularity;

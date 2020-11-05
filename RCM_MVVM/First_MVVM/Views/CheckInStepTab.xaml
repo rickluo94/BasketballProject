@@ -4,223 +4,266 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:prism="http://prismlibrary.com/"             
              prism:ViewModelLocator.AutoWireViewModel="True"
-             Height="1024" Width="600" FontSize="20" >
+             FontSize="20"
+             Background="#FF303030"
+             >
+    <UserControl.Resources>
+        <Thickness x:Key="ControlMargin">10 10 10 10</Thickness>
+        <Style TargetType="{x:Type TabControl}">
+            <Setter Property="Background" Value="#FF303030"/>
+        </Style>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="#FFF44336"/>
+            <Setter Property="BorderBrush" Value="#FFF44336"/>
+            <Setter Property="Foreground" Value="#DDFFFFFF"/>
+        </Style>
+        <Style TargetType="{x:Type TabItem}">
+            <Setter Property="Width" Value="Auto"/>
+            <Setter Property="Height" Value="Auto"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Foreground" Value="#FF7D7D7D"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border Name="Border" Background="#FF303030" BorderBrush="#FFF44336" BorderThickness="2">
+                            <ContentPresenter x:Name="ContentSite"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Left"
+                                ContentSource="Header"
+                                Margin="10,2"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True" SourceName="Border">
+                                <Setter TargetName="Border" Property="Background" Value="#FFF44336" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#FFF44336"/>
+                                <Setter Property="Foreground" Value="#DDFFFFFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding CheckInStepTabLoadCmd}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="5"/>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="5"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="5"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="5"/>
-        </Grid.RowDefinitions>
-        <TabControl SelectedIndex="{Binding SelectedStepTabIndex}" SelectedValue="{Binding SelectedStepTabName}" SelectedValuePath="Header" Grid.Row="1" Grid.Column="1">
-            <TabItem Header="登入">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto" MinWidth="200"/>
-                        <ColumnDefinition Width="Auto" MinWidth="200"/>
-                        <ColumnDefinition Width="20"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="88*"/>
-                        <RowDefinition Height="20"/>
-                    </Grid.RowDefinitions>
-                    <Button Grid.Row="1" Grid.Column="1" Content="X" Command="{Binding ExitCmd}" Margin="10,10,10,10" />
-                    <TextBlock Grid.Row="2" Grid.Column="2" Text="會員:" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding AccountStr}" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="3" Grid.Column="2" Text="即時餘額:" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="3" Grid.Column="3" Text="{Binding BalanceStr}" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="2" Grid.Column="4" Text="{Binding NoticeText}" Width="auto" Margin="10,10,10,10" />
-                    <Button Grid.Row="4" Grid.Column="3" Content="靠卡感應" Command="{Binding ReadCardCmd}" Margin="10,10,10,10" />
-                    <Button Grid.Row="5" Grid.Column="4" Content="下一步" Command="{Binding NextTabCmd}"  IsEnabled="{Binding NextStepIsEnabled}" Width="auto" Margin="10,10,10,10" />
-                </Grid>
-            </TabItem>
-            <TabItem Header="借出紀錄">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto" MinWidth="200"/>
-                        <ColumnDefinition Width="Auto" MinWidth="200"/>
-                        <ColumnDefinition Width="20"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="88*"/>
-                        <RowDefinition Height="20"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="2" Grid.Column="2" Text="會員:" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding AccountStr}" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="3" Grid.Column="2" Text="即時餘額:" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="3" Grid.Column="3" Text="{Binding BalanceStr}" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="4" Grid.Column="2" Text="借出時間:" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="4" Grid.Column="3" Text="{Binding OutTimeStr}" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="5" Grid.Column="2" Text="借出櫃位:" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="5" Grid.Column="3" Text="{Binding LockerSelectedIndex}" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="5" Grid.Column="4" Text="{Binding NoticeText}" Width="auto" Margin="10,10,10,10" />
-                    <Button Grid.Row="6" Grid.Column="4" Content="歸還" Command="{Binding NextTabCmd}"  IsEnabled="True" Width="auto" Margin="10,10,10,10" />
-                </Grid>
-            </TabItem>
-            <TabItem Header="歸還">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto" MinWidth="200"/>
-                        <ColumnDefinition Width="Auto" MinWidth="200"/>
-                        <ColumnDefinition Width="20"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="88*"/>
-                        <RowDefinition Height="20"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding NoticeText}" Width="auto" Margin="10,10,10,10" />
-                    <TextBlock Grid.Row="2" Grid.Column="2" Text="請歸還至球櫃：" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding LockerSelectedIndex}" Margin="10,10,10,10"/>
-                    <Button Grid.Row="3" Grid.Column="4" Content="付款" Command="{Binding NextTabCmd}"  IsEnabled="{Binding NextStepIsEnabled}" Width="auto" Margin="10,10,10,10" />
-                </Grid>
-            </TabItem>
-            <TabItem Header="付款">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto" MinWidth="200"/>
-                        <ColumnDefinition Width="Auto" MinWidth="200"/>
-                        <ColumnDefinition Width="20"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="88*"/>
-                        <RowDefinition Height="20"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="2" Grid.Column="2" Text="會員:" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding AccountStr}" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="3" Grid.Column="2" Text="即時餘額:" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="3" Grid.Column="3" Text="{Binding BalanceStr}" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="4" Grid.Column="2" Text="借出時間:" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="4" Grid.Column="3" Text="{Binding OutTimeStr}" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="6" Grid.Column="2" Text="借出櫃位:" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="6" Grid.Column="3" Text="{Binding OutTimeStr}" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="7" Grid.Column="2" Text="歸還時間:" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="7" Grid.Column="3" Text="{Binding InTimeStr}" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="8" Grid.Column="2" Text="本次扣款:" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="8" Grid.Column="3" Text="{Binding AmountStr}" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="8" Grid.Column="4" Text="{Binding NoticeText}" Width="auto" Margin="10,10,10,10" />
-                    <Button Grid.Row="9" Grid.Column="4" Content="靠卡感應扣款" Command="{Binding DebitCmd}" Margin="10,10,10,10" />
-                </Grid>
-            </TabItem>
-            <TabItem Header="歸還完成">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="20"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="20"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="1" Grid.Column="1" Text="感謝您的使用" Width="auto" Margin="10,10,10,10" />
-                    <Button Grid.Row="2" Grid.Column="1" Content="回主頁" Command="{Binding ExitCmd}" Margin="10,10,10,10" />
-                </Grid>
-            </TabItem>
-            <TabItem Header="操作逾時">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="20"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="20"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="1" Grid.Column="1" Text="操作逾時" Width="auto" Margin="10,10,10,10" />
-                    <Button Grid.Row="2" Grid.Column="1" Content="確定" Command="{Binding ExitCmd}" Margin="10,10,10,10" />
-                </Grid>
-            </TabItem>
-            <TabItem Header="歸還失敗">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="20"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="20"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="1" Grid.Column="1" Text="歸還失敗" Width="auto" Margin="10,10,10,10" />
-                    <Button Grid.Row="2" Grid.Column="1" Content="確定" Command="{Binding ExitCmd}" Margin="10,10,10,10" />
-                </Grid>
-            </TabItem>
-            <TabItem Header="付款失敗">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="20"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="20"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="1" Grid.Column="1" Text="付款失敗" Width="auto" Margin="10,10,10,10" />
-                    <Button Grid.Row="2" Grid.Column="1" Content="確定" Command="{Binding ExitCmd}" Margin="10,10,10,10" />
-                </Grid>
-            </TabItem>
-        </TabControl>
-    </Grid>
+    <Viewbox Stretch="Uniform">
+        <Grid Width="600" Height="1024">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="5"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="5"/>
+            </Grid.RowDefinitions>
+            <TabControl SelectedIndex="{Binding SelectedStepTabIndex}" SelectedValue="{Binding SelectedStepTabName}" SelectedValuePath="Header" Grid.Row="1" Grid.Column="1">
+                <TabItem Header="登入">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto" MinWidth="200"/>
+                            <ColumnDefinition Width="Auto" MinWidth="200"/>
+                            <ColumnDefinition Width="20"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="88*"/>
+                            <RowDefinition Height="20"/>
+                        </Grid.RowDefinitions>
+                        <Button Grid.Row="1" Grid.Column="1" Content="X" Command="{Binding ExitCmd}" Margin="10,10,10,10" />
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="會員:" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding AccountStr}" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="3" Grid.Column="2" Text="即時餘額:" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="3" Grid.Column="3" Text="{Binding BalanceStr}" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="2" Grid.Column="4" Text="{Binding NoticeText}" Width="auto" Margin="10,10,10,10" />
+                        <Button Grid.Row="4" Grid.Column="3" Content="靠卡感應" Command="{Binding ReadCardCmd}" Margin="10,10,10,10" />
+                        <Button Grid.Row="5" Grid.Column="4" Content="下一步" Command="{Binding NextTabCmd}"  IsEnabled="{Binding NextStepIsEnabled}" Width="auto" Margin="10,10,10,10" />
+                    </Grid>
+                </TabItem>
+                <TabItem Header="借出紀錄">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto" MinWidth="200"/>
+                            <ColumnDefinition Width="Auto" MinWidth="200"/>
+                            <ColumnDefinition Width="20"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="88*"/>
+                            <RowDefinition Height="20"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="會員:" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding AccountStr}" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="3" Grid.Column="2" Text="即時餘額:" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="3" Grid.Column="3" Text="{Binding BalanceStr}" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="4" Grid.Column="2" Text="借出時間:" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="4" Grid.Column="3" Text="{Binding OutTimeStr}" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="5" Grid.Column="2" Text="借出櫃位:" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="5" Grid.Column="3" Text="{Binding LockerSelectedIndex}" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="5" Grid.Column="4" Text="{Binding NoticeText}" Width="auto" Margin="10,10,10,10" />
+                        <Button Grid.Row="6" Grid.Column="4" Content="歸還" Command="{Binding NextTabCmd}"  IsEnabled="True" Width="auto" Margin="10,10,10,10" />
+                    </Grid>
+                </TabItem>
+                <TabItem Header="歸還">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto" MinWidth="200"/>
+                            <ColumnDefinition Width="Auto" MinWidth="200"/>
+                            <ColumnDefinition Width="20"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="88*"/>
+                            <RowDefinition Height="20"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding NoticeText}" Width="auto" Margin="10,10,10,10" />
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="請歸還至球櫃：" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding LockerSelectedIndex}" Margin="10,10,10,10"/>
+                        <Button Grid.Row="3" Grid.Column="4" Content="付款" Command="{Binding NextTabCmd}"  IsEnabled="{Binding NextStepIsEnabled}" Width="auto" Margin="10,10,10,10" />
+                    </Grid>
+                </TabItem>
+                <TabItem Header="付款">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto" MinWidth="200"/>
+                            <ColumnDefinition Width="Auto" MinWidth="200"/>
+                            <ColumnDefinition Width="20"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="88*"/>
+                            <RowDefinition Height="20"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="會員:" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding AccountStr}" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="3" Grid.Column="2" Text="即時餘額:" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="3" Grid.Column="3" Text="{Binding BalanceStr}" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="4" Grid.Column="2" Text="借出時間:" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="4" Grid.Column="3" Text="{Binding OutTimeStr}" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="6" Grid.Column="2" Text="借出櫃位:" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="6" Grid.Column="3" Text="{Binding OutTimeStr}" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="7" Grid.Column="2" Text="歸還時間:" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="7" Grid.Column="3" Text="{Binding InTimeStr}" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="8" Grid.Column="2" Text="本次扣款:" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="8" Grid.Column="3" Text="{Binding AmountStr}" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="8" Grid.Column="4" Text="{Binding NoticeText}" Width="auto" Margin="10,10,10,10" />
+                        <Button Grid.Row="9" Grid.Column="4" Content="靠卡感應扣款" Command="{Binding DebitCmd}" Margin="10,10,10,10" />
+                    </Grid>
+                </TabItem>
+                <TabItem Header="歸還完成">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="20"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="20"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="感謝您的使用" Width="auto" Margin="10,10,10,10" />
+                        <Button Grid.Row="2" Grid.Column="1" Content="回主頁" Command="{Binding ExitCmd}" Margin="10,10,10,10" />
+                    </Grid>
+                </TabItem>
+                <TabItem Header="操作逾時">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="20"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="20"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="操作逾時" Width="auto" Margin="10,10,10,10" />
+                        <Button Grid.Row="2" Grid.Column="1" Content="確定" Command="{Binding ExitCmd}" Margin="10,10,10,10" />
+                    </Grid>
+                </TabItem>
+                <TabItem Header="歸還失敗">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="20"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="20"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="歸還失敗" Width="auto" Margin="10,10,10,10" />
+                        <Button Grid.Row="2" Grid.Column="1" Content="確定" Command="{Binding ExitCmd}" Margin="10,10,10,10" />
+                    </Grid>
+                </TabItem>
+                <TabItem Header="付款失敗">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="20"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="20"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="付款失敗" Width="auto" Margin="10,10,10,10" />
+                        <Button Grid.Row="2" Grid.Column="1" Content="確定" Command="{Binding ExitCmd}" Margin="10,10,10,10" />
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </Viewbox>
 </UserControl>

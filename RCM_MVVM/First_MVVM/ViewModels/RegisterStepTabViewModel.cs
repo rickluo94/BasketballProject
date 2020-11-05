@@ -333,7 +333,6 @@ namespace First_MVVM.ViewModels
             }
         }
 
-
         private void CheckPassword(object parameter)
         {
             var passwordBox = parameter as PasswordBox;

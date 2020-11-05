@@ -5,7 +5,19 @@
         xmlns:prism="http://prismlibrary.com/" FontSize="28"
         xmlns:View="clr-namespace:First_MVVM.Views"
         prism:ViewModelLocator.AutoWireViewModel="True"
-        Title="{Binding Title}" Height="1024" Width="600" Background="#FF303030" WindowStartupLocation="CenterScreen" >
+        Title="{Binding Title}" Background="#FF303030"
+        WindowState="Maximized"
+        WindowStartupLocation="CenterScreen" 
+        WindowStyle="None"
+        >
+    <Window.Resources>
+        <Thickness x:Key="ControlMargin">10 10 10 10</Thickness>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="#FFF44336"/>
+            <Setter Property="BorderBrush" Value="#FFF44336"/>
+            <Setter Property="Foreground" Value="#F2F2F2"/>
+        </Style>
+    </Window.Resources>
     <i:Interaction.Triggers>
         <prism:InteractionRequestTrigger SourceObject="{Binding RegisterStepTabRequest}">
             <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
@@ -29,46 +41,40 @@
             </prism:PopupWindowAction>
         </prism:InteractionRequestTrigger>
     </i:Interaction.Triggers>
-    <Window.Resources>
-        <Thickness x:Key="ControlMargin">10 10 10 10</Thickness>
-        <Style TargetType="{x:Type Button}">
-            <Setter Property="Background" Value="#F27405"/>
-            <Setter Property="BorderBrush" Value="#401E01"/>
-            <Setter Property="Foreground" Value="#F2F2F2"/>
-        </Style>
-    </Window.Resources>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100" />
-            <ColumnDefinition />
-            <ColumnDefinition Width="100"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="20" />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition Height="20" />
-        </Grid.RowDefinitions>
-        <!-- Row 1 -->
-        <ContentControl Grid.Row="0" Grid.Column="1" prism:RegionManager.RegionName="ContentRegion"/>
+    <Viewbox Stretch="Uniform">
+        <Grid Height="1024" Width="600">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="100"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20" />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition Height="20" />
+            </Grid.RowDefinitions>
+            <!-- Row 1 -->
+            <ContentControl Grid.Row="0" Grid.Column="1" prism:RegionManager.RegionName="ContentRegion"/>
 
-        <!-- Row 2 -->
-        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding UpdateText}" />
+            <!-- Row 2 -->
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding UpdateText}" />
 
-        <!-- Row 3 -->
-        <Button Grid.Row="1" Grid.Column="1" Content="Check Out 我要借球" Command="{Binding CheckOutStepTabCommand}" Margin="{StaticResource ControlMargin}"/>
+            <!-- Row 3 -->
+            <Button Grid.Row="1" Grid.Column="1" Content="Check Out 我要借球" Command="{Binding CheckOutStepTabCommand}" Margin="{StaticResource ControlMargin}"/>
 
-        <!-- Row 4 -->
-        <Button Grid.Row="2" Grid.Column="1" Content="Check In 我要還球" Command="{Binding CheckInStepTabCommand}" Margin="{StaticResource ControlMargin}"/>
+            <!-- Row 4 -->
+            <Button Grid.Row="2" Grid.Column="1" Content="Check In 我要還球" Command="{Binding CheckInStepTabCommand}" Margin="{StaticResource ControlMargin}"/>
 
-        <!-- Row 5 -->
-        <Button Grid.Row="3" Grid.Column="1" Content="New Members 新會員" Command="{Binding RegisterStepTabCommand}" Margin="{StaticResource ControlMargin}"/>
+            <!-- Row 5 -->
+            <Button Grid.Row="3" Grid.Column="1" Content="New Members 新會員" Command="{Binding RegisterStepTabCommand}" Margin="{StaticResource ControlMargin}"/>
 
-        <!-- Row 5 -->
-        <Button Grid.Row="4" Grid.Column="1" Content="Service 會員服務"  Margin="{StaticResource ControlMargin}"/>
+            <!-- Row 5 -->
+            <Button Grid.Row="4" Grid.Column="1" Content="Service 會員服務"  Margin="{StaticResource ControlMargin}"/>
 
-    </Grid>
+        </Grid>
+    </Viewbox>
 </Window>

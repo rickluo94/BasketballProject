@@ -4,14 +4,14 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:prism="http://prismlibrary.com/"  
              prism:ViewModelLocator.AutoWireViewModel="True"
-             Height="1024" Width="600" FontSize="20" Background="#FF303030" >
-    <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding RegisterStepTabLoadCmd}"/>
-        </i:EventTrigger>
-    </i:Interaction.Triggers>
+             FontSize="20"
+             Background="#FF303030"
+             >
     <UserControl.Resources>
         <Thickness x:Key="ControlMargin">10 10 10 10</Thickness>
+        <Style TargetType="{x:Type TabControl}">
+            <Setter Property="Background" Value="#FF303030"/>
+        </Style>
         <Style TargetType="{x:Type Button}">
             <Setter Property="Background" Value="#FFF44336"/>
             <Setter Property="BorderBrush" Value="#FFF44336"/>
@@ -46,33 +46,39 @@
             </Setter>
         </Style>
     </UserControl.Resources>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="5"/>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="5"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="5"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="5"/>
-        </Grid.RowDefinitions>
-        <TabControl SelectedIndex="{Binding SelectedStepTabIndex}" SelectedValue="{Binding SelectedStepTabName}" Background="#FF303030" SelectedValuePath="Header" Grid.Row="1" Grid.Column="1">
-            <TabItem Header="權益須知">
-                <Grid>
-                    <StackPanel>
-                        <RichTextBox HorizontalScrollBarVisibility="Auto" BorderBrush="#FF303030"
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding RegisterStepTabLoadCmd}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Viewbox Stretch="Uniform">
+        <Grid Width="600" Height="1024">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="5"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="5"/>
+            </Grid.RowDefinitions>
+            <TabControl SelectedIndex="{Binding SelectedStepTabIndex}" SelectedValue="{Binding SelectedStepTabName}" SelectedValuePath="Header" Grid.Row="1" Grid.Column="1">
+                <TabItem Header="權益須知">
+                    <Grid>
+                        <StackPanel>
+                            <RichTextBox HorizontalScrollBarVisibility="Auto" BorderBrush="#FF303030"
                              Margin="{StaticResource ControlMargin}"
                              Padding="5" Background="#FF303030" Foreground="#DDFFFFFF"
                              IsDocumentEnabled="False"
                              IsReadOnly="True" Height="680" Width="500">
-                            <FlowDocument PageWidth="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RichTextBox}}, Path=ActualWidth}">
-                                <Paragraph>
-                                    <Hyperlink Foreground="#DDFFFFFF">
-                                        <Run Text="請詳閱以下內容" FontSize="26" Foreground="#DDFFFFFF"/>
-                                    </Hyperlink>
-                                    <LineBreak />
-                                    <Run>一、註冊須知
+                                <FlowDocument PageWidth="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type RichTextBox}}, Path=ActualWidth}">
+                                    <Paragraph>
+                                        <Hyperlink Foreground="#DDFFFFFF">
+                                            <Run Text="請詳閱以下內容" FontSize="26" Foreground="#DDFFFFFF"/>
+                                        </Hyperlink>
+                                        <LineBreak />
+                                        <Run>一、註冊須知
 
 1.當您使用本系統服務時，即表示您已閱讀、瞭解並同意接受本註冊同意書之所有內容及其後修改變更規定。若您未滿二十歲，應於您的法定代理人或監護人閱讀、瞭解並同意本同意書之所有內容及其後修改變更規定後，方得使用本系統服務，但若您已使用本系統服務，視為您已取得法定代理人或監護人之同意。
 2.本系統所提供之各項服務，請註冊、更新個人資料時應提供本系統正確、最新及完整之資料。若您提供任何錯誤、不實、過時或不完整或具誤導性的資料，本系統有權暫停或終止您的帳號使用，並拒絕您於現在和未來使用本服務之全部或任何部分。
@@ -156,73 +162,73 @@
 九、其他
 
 其他未竟之事宜，均依照現行之法令規定及網路規範辦理。</Run>
-                                </Paragraph>
-                            </FlowDocument>
-                        </RichTextBox>
-                        <StackPanel Margin="{StaticResource ControlMargin}" Orientation="Horizontal" Height="auto" Width="auto" HorizontalAlignment="Center">
-                            <CheckBox  Command="{Binding CheckReadRulesCmd}" Foreground="#401E01" Margin="{StaticResource ControlMargin}" IsChecked="{Binding ReadRulesIsChecked}" IsEnabled="True" Width="auto" Height="26" HorizontalAlignment="Center" />
-                            <Label Foreground="#F2F2F2" Content="我以閱讀以上條款，並同意此同意書內容" FontSize="20" />
+                                    </Paragraph>
+                                </FlowDocument>
+                            </RichTextBox>
+                            <StackPanel Margin="{StaticResource ControlMargin}" Orientation="Horizontal" Height="auto" Width="auto" HorizontalAlignment="Center">
+                                <CheckBox  Command="{Binding CheckReadRulesCmd}" Foreground="#401E01" Margin="{StaticResource ControlMargin}" IsChecked="{Binding ReadRulesIsChecked}" IsEnabled="True" Width="auto" Height="26" HorizontalAlignment="Center" />
+                                <Label Foreground="#F2F2F2" Content="我以閱讀以上條款，並同意此同意書內容" FontSize="20" />
+                            </StackPanel>
+                            <Button Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Content="確認" Margin="{StaticResource ControlMargin}" FontSize="26" Width="80" Height="auto" Background="#FFF44336" BorderBrush="#FFF44336" Foreground="#DDFFFFFF"/>
                         </StackPanel>
-                        <Button Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Content="確認" Margin="{StaticResource ControlMargin}" FontSize="26" Width="80" Height="auto" Background="#FFF44336" BorderBrush="#FFF44336" Foreground="#DDFFFFFF"/>
-                    </StackPanel>
-                </Grid>
-            </TabItem>
-            <TabItem Header="帳號">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto" MinWidth="200"/>
-                        <ColumnDefinition Width="Auto" MinWidth="200"/>
-                        <ColumnDefinition Width="20"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="88*"/>
-                        <RowDefinition Height="20"/>
-                    </Grid.RowDefinitions>
-                    <Button Content="X" Command="{Binding ExitCommand}" Grid.Column="1" Grid.Row="1"/>
-                    <TextBlock Text="帳號:" Grid.Column="2" Margin="10,10,10,10" Grid.Row="2" />
-                    <TextBlock Text="簡訊驗證碼" Grid.Column="2" Margin="10,10,10,10" Grid.Row="3"/>
-                    <TextBox x:Name="AccountBox" Text="{Binding AccountStr}" IsEnabled="{Binding AccountBoxIsEnabled}" Grid.Column="3" Margin="10,10,10,10" Grid.Row="2" >
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="LostFocus">
-                                <i:InvokeCommandAction Command="{Binding AccountCmd}" CommandParameter="{Binding ElementName=AccountBox}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </TextBox>
-                    <TextBox x:Name="VerifySMBox" Text="{Binding VerifySMStr}" Grid.Column="3" Margin="10,10,10,10" Grid.Row="3" />
-                    <Button Content="發送驗證碼" Command="{Binding SMCmd}" IsEnabled="{Binding SMCmdIsEnabledBool}" CommandParameter="{Binding ElementName=AccountBox}" Grid.Column="4" Margin="10,10,10,10" Grid.Row="3"/>
-                    <TextBlock Width="auto" Text="{Binding NoticeText}" Grid.Column="4" Margin="10,10,10,10" Grid.Row="2"/>
-                    <Button Content="驗證" Command="{Binding VerifySMCommand}" CommandParameter="{Binding ElementName=VerifySMBox}" Grid.Column="3" Margin="10,10,10,10" Grid.Row="4"/>
-                    <Button Content="下一步" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Grid.Column="4" Margin="10,10,10,10" Grid.Row="5"/>
-                </Grid>
-            </TabItem>
-            <TabItem Header="密碼">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="20" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" MinWidth="200"/>
-                        <ColumnDefinition Width="auto" MinWidth="200"/>
-                        <ColumnDefinition Width="20" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="20" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="20" />
-                    </Grid.RowDefinitions>
-                    <Button  Content="↩" Command="{Binding PreviousTabCommand}" Grid.Column="1" Grid.Row="1" Margin="10,10,10,10"/>
-                    <PasswordBox Width="auto" x:Name="txtPassword" Grid.Column="3" Grid.Row="2" Margin="10,10,10,10">
+                    </Grid>
+                </TabItem>
+                <TabItem Header="帳號">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto" MinWidth="200"/>
+                            <ColumnDefinition Width="Auto" MinWidth="200"/>
+                            <ColumnDefinition Width="20"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="88*"/>
+                            <RowDefinition Height="20"/>
+                        </Grid.RowDefinitions>
+                        <Button Content="X" Command="{Binding ExitCommand}" Grid.Column="1" Grid.Row="1"/>
+                        <TextBlock Text="帳號:" Grid.Column="2" Margin="10,10,10,10" Grid.Row="2" />
+                        <TextBlock Text="簡訊驗證碼" Grid.Column="2" Margin="10,10,10,10" Grid.Row="3"/>
+                        <TextBox x:Name="AccountBox" Text="{Binding AccountStr}" IsEnabled="{Binding AccountBoxIsEnabled}" Grid.Column="3" Margin="10,10,10,10" Grid.Row="2" >
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="LostFocus">
+                                    <i:InvokeCommandAction Command="{Binding AccountCmd}" CommandParameter="{Binding ElementName=AccountBox}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBox>
+                        <TextBox x:Name="VerifySMBox" Text="{Binding VerifySMStr}" Grid.Column="3" Margin="10,10,10,10" Grid.Row="3" />
+                        <Button Content="發送驗證碼" Command="{Binding SMCmd}" IsEnabled="{Binding SMCmdIsEnabledBool}" CommandParameter="{Binding ElementName=AccountBox}" Grid.Column="4" Margin="10,10,10,10" Grid.Row="3"/>
+                        <TextBlock Width="auto" Text="{Binding NoticeText}" Grid.Column="4" Margin="10,10,10,10" Grid.Row="2"/>
+                        <Button Content="驗證" Command="{Binding VerifySMCommand}" CommandParameter="{Binding ElementName=VerifySMBox}" Grid.Column="3" Margin="10,10,10,10" Grid.Row="4"/>
+                        <Button Content="下一步" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Grid.Column="4" Margin="10,10,10,10" Grid.Row="5"/>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="密碼">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" MinWidth="200"/>
+                            <ColumnDefinition Width="auto" MinWidth="200"/>
+                            <ColumnDefinition Width="20" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="20" />
+                        </Grid.RowDefinitions>
+                        <Button  Content="↩" Command="{Binding PreviousTabCommand}" Grid.Column="1" Grid.Row="1" Margin="10,10,10,10"/>
+                        <PasswordBox Width="auto" x:Name="txtPassword" Grid.Column="3" Grid.Row="2" Margin="10,10,10,10">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="PasswordChanged">
                                     <i:InvokeCommandAction Command="{Binding PasswordCommand}" CommandParameter="{Binding ElementName=txtPassword}"/>
@@ -233,7 +239,7 @@
                             </i:Interaction.Triggers>
                         </PasswordBox>
                         <TextBlock Text="設定密碼:" Grid.Column="2" Grid.Row="2" Margin="10,10,10,10"/>
-                    <TextBlock Text="{Binding NoticeText}" Grid.Column="4" Grid.Row="2" Margin="10,10,10,10"/>
+                        <TextBlock Text="{Binding NoticeText}" Grid.Column="4" Grid.Row="2" Margin="10,10,10,10"/>
                         <TextBlock Text="確認密碼:" Grid.Column="2" Grid.Row="3" Margin="10,10,10,10" />
                         <PasswordBox Name="ConfirmPassword" Grid.Column="3" Grid.Row="3" Margin="10,10,10,10">
                             <i:Interaction.Triggers>
@@ -245,167 +251,168 @@
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </PasswordBox>
-                    <Button Content="下一步" Width="auto" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Grid.Column="4" Grid.Row="4" Margin="10,10,10,10"/>
-                </Grid>
-            </TabItem>
-            <TabItem Header="個人資料">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="20" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" MinWidth="200"/>
-                        <ColumnDefinition Width="auto" MinWidth="200"/>
-                        <ColumnDefinition Width="20" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="20" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="20" />
-                    </Grid.RowDefinitions>
-                    <Button Grid.Row="1" Grid.Column="1" Content="↩" Command="{Binding PreviousTabCommand}" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="2" Grid.Column="2" Text="姓名:" Margin="10,10,10,10"/>
-                    <TextBox Grid.Row="2" Grid.Column="3" Width="auto" Name="NameBox" Text="{Binding NameStr}" Margin="10,10,10,10">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="TextChanged">
-                                <i:InvokeCommandAction Command="{Binding NameCommand}" CommandParameter="{Binding ElementName=NameBox}"/>
-                            </i:EventTrigger>
-                            <i:EventTrigger EventName="Loaded">
-                                <i:InvokeCommandAction />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </TextBox>
-                    <TextBlock Grid.Row="2" Grid.Column="4" Width="auto" Text="{Binding NoticeText}"/>
-                    <Button Grid.Row="3" Grid.Column="4" Content="下一步" Width="auto" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="10,10,10,10" />
-                </Grid>
-            </TabItem>
-            <TabItem Header="地區">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="20" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" MinWidth="200"/>
-                        <ColumnDefinition Width="auto" MinWidth="200"/>
-                        <ColumnDefinition Width="20" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="20" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="20" />
-                    </Grid.RowDefinitions>
-                    <Button Grid.Row="1" Grid.Column="1" Content="↩" Command="{Binding PreviousTabCommand}" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="2" Grid.Column="2" Text="縣市:" Margin="10,10,10,10"/>
-                    <ComboBox Grid.Row="2" Grid.Column="3" SelectedValue="{Binding SelectedCities}" SelectedIndex="{Binding SelectedCitiesIndex}" ItemsSource="{Binding Cities}" Margin="10,10,10,10">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding CitiesIsChangeCmd}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
-                    <TextBlock Grid.Row="3" Grid.Column="2" Text="鄉鎮區:" Margin="10,10,10,10"/>
-                    <ComboBox Grid.Row="3" Grid.Column="3" SelectedValue="{Binding SelectedTownship}" ItemsSource="{Binding Township}" Margin="10,10,10,10">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding TownshipIsChangeCmd}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
-                    <TextBlock Grid.Row="2" Grid.Column="4" Width="auto" Text="{Binding NoticeText}"/>
-                    <Button Grid.Row="4" Grid.Column="4" Content="下一步" Width="auto" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="10,10,10,10" />
-                </Grid>
-            </TabItem>
-            <TabItem Header="信箱">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="20" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" MinWidth="200"/>
-                        <ColumnDefinition Width="auto" MinWidth="200"/>
-                        <ColumnDefinition Width="20" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="20" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="20" />
-                    </Grid.RowDefinitions>
-                    <Button Grid.Row="1" Grid.Column="1" Content="↩" Command="{Binding PreviousTabCommand}" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="2" Grid.Column="2" Text="信箱:" Margin="10,10,10,10"/>
-                    <TextBox Grid.Row="2" Grid.Column="3" Width="auto" Name="EmailBox" Text="{Binding EmailStr}" Margin="10,10,10,10">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="TextChanged">
-                                <i:InvokeCommandAction Command="{Binding EmailCommand}" CommandParameter="{Binding ElementName=EmailBox}"/>
-                            </i:EventTrigger>
-                            <i:EventTrigger EventName="Loaded">
-                                <i:InvokeCommandAction />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </TextBox>
-                    <TextBlock Grid.Row="2" Grid.Column="4" Width="auto" Text="{Binding NoticeText}"/>
-                    <Button Grid.Row="3" Grid.Column="4" Content="下一步" Width="auto" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="10,10,10,10" />
-                </Grid>
-            </TabItem>
-            <TabItem Header="設定悠遊卡">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="20" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" MinWidth="200"/>
-                        <ColumnDefinition Width="auto" MinWidth="200"/>
-                        <ColumnDefinition Width="20" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="20" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="20" />
-                    </Grid.RowDefinitions>
-                    <Button Grid.Row="1" Grid.Column="1" Content="↩" Command="{Binding PreviousTabCommand}" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="2" Grid.Column="2" Text="卡號:" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding Card_ID}" Margin="10,10,10,10" />
-                    <TextBlock Grid.Row="3" Grid.Column="2" Text="卡號內碼:" Margin="10,10,10,10"/>
-                    <TextBlock Grid.Row="3" Grid.Column="3" Text="{Binding Card_purse_id}" Margin="10,10,10,10" />
-                    <Button Grid.Row="4" Grid.Column="3" Content="靠卡感應" Command="{Binding ReadCardCommand}" Margin="10,10,10,10"/>
-                    <Button Grid.Row="5" Grid.Column="4" Content="下一步" Width="auto" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="10,10,10,10"/>
-                </Grid>
-            </TabItem>
-            <TabItem Header="完成註冊">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="20" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" MinWidth="200"/>
-                        <ColumnDefinition Width="auto" MinWidth="200"/>
-                        <ColumnDefinition Width="20" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="20" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="20" />
-                    </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="1" Grid.Column="1">
-                        <Button Content="完成" Width="auto" Command="{Binding RegisterSuccess}" />
-                    </StackPanel>
-                </Grid>
-            </TabItem>
-        </TabControl>
-    </Grid>
+                        <Button Content="下一步" Width="auto" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Grid.Column="4" Grid.Row="4" Margin="10,10,10,10"/>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="個人資料">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" MinWidth="200"/>
+                            <ColumnDefinition Width="auto" MinWidth="200"/>
+                            <ColumnDefinition Width="20" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="20" />
+                        </Grid.RowDefinitions>
+                        <Button Grid.Row="1" Grid.Column="1" Content="↩" Command="{Binding PreviousTabCommand}" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="姓名:" Margin="10,10,10,10"/>
+                        <TextBox Grid.Row="2" Grid.Column="3" Width="auto" Name="NameBox" Text="{Binding NameStr}" Margin="10,10,10,10">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="TextChanged">
+                                    <i:InvokeCommandAction Command="{Binding NameCommand}" CommandParameter="{Binding ElementName=NameBox}"/>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="Loaded">
+                                    <i:InvokeCommandAction />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBox>
+                        <TextBlock Grid.Row="2" Grid.Column="4" Width="auto" Text="{Binding NoticeText}"/>
+                        <Button Grid.Row="3" Grid.Column="4" Content="下一步" Width="auto" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="10,10,10,10" />
+                    </Grid>
+                </TabItem>
+                <TabItem Header="地區">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" MinWidth="200"/>
+                            <ColumnDefinition Width="auto" MinWidth="200"/>
+                            <ColumnDefinition Width="20" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="20" />
+                        </Grid.RowDefinitions>
+                        <Button Grid.Row="1" Grid.Column="1" Content="↩" Command="{Binding PreviousTabCommand}" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="縣市:" Margin="10,10,10,10"/>
+                        <ComboBox Grid.Row="2" Grid.Column="3" SelectedValue="{Binding SelectedCities}" SelectedIndex="{Binding SelectedCitiesIndex}" ItemsSource="{Binding Cities}" Margin="10,10,10,10">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction Command="{Binding CitiesIsChangeCmd}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
+                        <TextBlock Grid.Row="3" Grid.Column="2" Text="鄉鎮區:" Margin="10,10,10,10"/>
+                        <ComboBox Grid.Row="3" Grid.Column="3" SelectedValue="{Binding SelectedTownship}" ItemsSource="{Binding Township}" Margin="10,10,10,10">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction Command="{Binding TownshipIsChangeCmd}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
+                        <TextBlock Grid.Row="2" Grid.Column="4" Width="auto" Text="{Binding NoticeText}"/>
+                        <Button Grid.Row="4" Grid.Column="4" Content="下一步" Width="auto" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="10,10,10,10" />
+                    </Grid>
+                </TabItem>
+                <TabItem Header="信箱">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" MinWidth="200"/>
+                            <ColumnDefinition Width="auto" MinWidth="200"/>
+                            <ColumnDefinition Width="20" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="20" />
+                        </Grid.RowDefinitions>
+                        <Button Grid.Row="1" Grid.Column="1" Content="↩" Command="{Binding PreviousTabCommand}" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="信箱:" Margin="10,10,10,10"/>
+                        <TextBox Grid.Row="2" Grid.Column="3" Width="auto" Name="EmailBox" Text="{Binding EmailStr}" Margin="10,10,10,10">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="TextChanged">
+                                    <i:InvokeCommandAction Command="{Binding EmailCommand}" CommandParameter="{Binding ElementName=EmailBox}"/>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="Loaded">
+                                    <i:InvokeCommandAction />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBox>
+                        <TextBlock Grid.Row="2" Grid.Column="4" Width="auto" Text="{Binding NoticeText}"/>
+                        <Button Grid.Row="3" Grid.Column="4" Content="下一步" Width="auto" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="10,10,10,10" />
+                    </Grid>
+                </TabItem>
+                <TabItem Header="設定悠遊卡">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" MinWidth="200"/>
+                            <ColumnDefinition Width="auto" MinWidth="200"/>
+                            <ColumnDefinition Width="20" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="20" />
+                        </Grid.RowDefinitions>
+                        <Button Grid.Row="1" Grid.Column="1" Content="↩" Command="{Binding PreviousTabCommand}" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="卡號:" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding Card_ID}" Margin="10,10,10,10" />
+                        <TextBlock Grid.Row="3" Grid.Column="2" Text="卡號內碼:" Margin="10,10,10,10"/>
+                        <TextBlock Grid.Row="3" Grid.Column="3" Text="{Binding Card_purse_id}" Margin="10,10,10,10" />
+                        <Button Grid.Row="4" Grid.Column="3" Content="靠卡感應" Command="{Binding ReadCardCommand}" Margin="10,10,10,10"/>
+                        <Button Grid.Row="5" Grid.Column="4" Content="下一步" Width="auto" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="10,10,10,10"/>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="完成註冊">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" MinWidth="200"/>
+                            <ColumnDefinition Width="auto" MinWidth="200"/>
+                            <ColumnDefinition Width="20" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="20" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="1" Grid.Column="1">
+                            <Button Content="完成" Width="auto" Command="{Binding RegisterSuccess}" />
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </Viewbox>
 </UserControl>
