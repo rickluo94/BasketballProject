@@ -255,6 +255,27 @@ namespace First_MVVM.ViewModels
             }
         }
 
+        private async void Charge()
+        {
+            DataTable _charge_History = await _dBRead.Charge_History(_checkInModel.ID);
+            int _amount = _checkInModel.Amount;
+
+            if (_charge_History.Rows.Count > 0)
+            {
+                string _charge_SN = _charge_History.Rows[0]["Charge_SN"].ToString();
+                string _chargeResult = await Task.Run<string>(() => { return _easyCard.Charge_request(_amount); });
+                string _isSuccess = (string)JObject.Parse(_chargeResult)["is_success"];
+
+                if (_isSuccess == "True")
+                {
+                    _dBWrite.Charge_History_UPDATE(_charge_SN);
+                    _checkInModel.DebitStatus = "成功";
+                }
+            }
+        }
+
+        #region 設定輪尋事件
+
         private void SetDoorCheckTimer()
         {
             Counter = 0;
@@ -262,37 +283,6 @@ namespace First_MVVM.ViewModels
             DoorCheckTimer.Elapsed += OnTimedDoorCheckEvent;
             DoorCheckTimer.AutoReset = true;
             DoorCheckTimer.Enabled = true;
-        }
-
-        private void OnTimedDoorCheckEvent(Object source, ElapsedEventArgs e)
-        {
-            if (IO.Read(_checkInModel.LockerBoxSelectedIndex) == IO.DoorLock)
-            {
-                Counter += 1;
-                if (Counter == 20)
-                {
-                    Counter = 0;
-                    DoorCheckTimer.Elapsed -= OnTimedDoorCheckEvent;
-                    DoorCheckTimer.Close();
-                    SelectedStepTabName = "操作逾時";
-
-                    IO.Write(_checkInModel.LockerBoxSelectedIndex, IO.Lock);
-                }
-            }
-            else
-            {
-                Counter = 0;
-                DoorCheckTimer.Elapsed -= OnTimedDoorCheckEvent;
-                DoorCheckTimer.Close();
-
-                IO.Write(_checkInModel.LockerBoxSelectedIndex, IO.Lock);
-
-                //正常流程
-                SetReaderTimer();
-                SetDoorCheckWithRFIDVerifyTimer();
-            }
-
-            NoticeText = $"剩餘操作時間 {(20 - Counter)} sec";
         }
 
         private void SetDoorCheckWithRFIDVerifyTimer()
@@ -304,6 +294,88 @@ namespace First_MVVM.ViewModels
             DoorCheckWithRFIDVerifyTimer.Enabled = true;
         }
 
+        private void SetReaderTimer()
+        {
+            ReaderTimer = new System.Timers.Timer(1000);
+            ReaderTimer.Elapsed += OnTimedReaderEvent;
+            ReaderTimer.AutoReset = true;
+            ReaderTimer.Enabled = true;
+        }
+
+        private void SetDebitCheckTimer()
+        {
+            Counter = 0;
+            DebitCheckTimer = new System.Timers.Timer(1000);
+            DebitCheckTimer.Elapsed += OnTimedDebitCheckTimerEvent;
+            DebitCheckTimer.AutoReset = true;
+            DebitCheckTimer.Enabled = true;
+        }
+
+        #endregion
+
+
+        #region 取消訂閱事件
+
+        private void UnsubscribeDoorCheckEvent()
+        {
+            DoorCheckTimer.Elapsed -= OnTimedDoorCheckEvent;
+            DoorCheckTimer.Close();
+        }
+
+        private void UnsubscribeDoorCheckWithRFIDVerify()
+        {
+            DoorCheckWithRFIDVerifyTimer.Elapsed -= OnTimedDoorCheckWithRFIDVerifyEvent;
+            DoorCheckWithRFIDVerifyTimer.Close();
+        }
+
+        private void UnsubscribeReaderEvent()
+        {
+            ReaderTimer.Elapsed -= OnTimedReaderEvent;
+            ReaderTimer.Close();
+        }
+
+        public void UnsubscribeDebitCheckTimerEvent()
+        {
+            DebitCheckTimer.Elapsed -= OnTimedDebitCheckTimerEvent;
+            DebitCheckTimer.Close();
+        }
+
+        #endregion
+
+        #region 觸發事件
+
+        private void OnTimedDoorCheckEvent(Object source, ElapsedEventArgs e)
+        {
+            if (IO.Read(_checkInModel.LockerBoxSelectedIndex) == IO.DoorLock)
+            {
+                Counter += 1;
+                if (Counter == 20)
+                {
+                    Counter = 0;
+
+                    UnsubscribeDoorCheckEvent();
+
+                    SelectedStepTabName = "操作逾時";
+
+                    IO.Write(_checkInModel.LockerBoxSelectedIndex, IO.Lock);
+                }
+            }
+            else
+            {
+                Counter = 0;
+
+                UnsubscribeDoorCheckEvent();
+
+                IO.Write(_checkInModel.LockerBoxSelectedIndex, IO.Lock);
+
+                //正常流程
+                SetReaderTimer();
+                SetDoorCheckWithRFIDVerifyTimer();
+            }
+
+            NoticeText = $"剩餘操作時間 {(20 - Counter)} sec";
+        }
+
         private void OnTimedDoorCheckWithRFIDVerifyEvent(Object source, ElapsedEventArgs e)
         {
             if (IO.Read(_checkInModel.LockerBoxSelectedIndex) == IO.DoorOpen)
@@ -312,8 +384,8 @@ namespace First_MVVM.ViewModels
                 if (Counter == 30)
                 {
                     Counter = 0;
-                    DoorCheckWithRFIDVerifyTimer.Elapsed -= OnTimedDoorCheckWithRFIDVerifyEvent;
-                    DoorCheckWithRFIDVerifyTimer.Close();
+
+                    UnsubscribeDoorCheckWithRFIDVerify();
 
                     UnsubscribeReaderEvent();
 
@@ -326,8 +398,8 @@ namespace First_MVVM.ViewModels
                 if (_rReaderModel.Status == true && IO.Read(_checkInModel.LockerBoxSelectedIndex) == IO.DoorLock)
                 {
                     Counter = 0;
-                    DoorCheckWithRFIDVerifyTimer.Elapsed -= OnTimedDoorCheckWithRFIDVerifyEvent;
-                    DoorCheckWithRFIDVerifyTimer.Close();
+
+                    UnsubscribeDoorCheckWithRFIDVerify();
 
                     UnsubscribeReaderEvent();
 
@@ -343,8 +415,8 @@ namespace First_MVVM.ViewModels
                 else
                 {
                     Counter = 0;
-                    DoorCheckWithRFIDVerifyTimer.Elapsed -= OnTimedDoorCheckWithRFIDVerifyEvent;
-                    DoorCheckWithRFIDVerifyTimer.Close();
+
+                    UnsubscribeDoorCheckWithRFIDVerify();
 
                     UnsubscribeReaderEvent();
 
@@ -353,19 +425,6 @@ namespace First_MVVM.ViewModels
             }
 
             NoticeText = $"剩餘操作時間 {(30 - Counter)} sec";
-        }
-        private void UnsubscribeReaderEvent()
-        {
-            ReaderTimer.Elapsed -= OnTimedReaderEvent;
-            ReaderTimer.Close();
-        }
-
-        private void SetReaderTimer()
-        {
-            ReaderTimer = new System.Timers.Timer(1000);
-            ReaderTimer.Elapsed += OnTimedReaderEvent;
-            ReaderTimer.AutoReset = true;
-            ReaderTimer.Enabled = true;
         }
 
         private void OnTimedReaderEvent(Object source, ElapsedEventArgs e)
@@ -384,23 +443,14 @@ namespace First_MVVM.ViewModels
             }
         }
 
-        private void SetDebitCheckTimer()
-        {
-            Counter = 0;
-            DebitCheckTimer = new System.Timers.Timer(1000);
-            DebitCheckTimer.Elapsed += OnTimedDebitCheckTimerEvent;
-            DebitCheckTimer.AutoReset = true;
-            DebitCheckTimer.Enabled = true;
-        }
-
         private void OnTimedDebitCheckTimerEvent(Object source, ElapsedEventArgs e)
         {
             Counter += 1;
             if (Counter == 50)
             {
                 Counter = 0;
-                DebitCheckTimer = new System.Timers.Timer(1000);
-                DebitCheckTimer.Elapsed -= OnTimedDebitCheckTimerEvent;
+
+                UnsubscribeDebitCheckTimerEvent();
 
                 SelectedStepTabName = "付款失敗";
             }
@@ -409,8 +459,7 @@ namespace First_MVVM.ViewModels
                 if (_checkInModel.DebitStatus == "成功")
                 {
                     Counter = 0;
-                    DebitCheckTimer = new System.Timers.Timer(1000);
-                    DebitCheckTimer.Elapsed -= OnTimedDebitCheckTimerEvent;
+                    UnsubscribeDebitCheckTimerEvent();
 
                     SelectedStepTabName = "歸還完成";
                 }
@@ -419,24 +468,11 @@ namespace First_MVVM.ViewModels
             NoticeText = $"剩餘操作時間 {(50 - Counter)} sec";
         }
 
-        private async void Charge()
-        {
-            DataTable _charge_History = await _dBRead.Charge_History(_checkInModel.ID);
-            int _amount = _checkInModel.Amount;
-            
-            if (_charge_History.Rows.Count > 0)
-            {
-                string _charge_SN = _charge_History.Rows[0]["Charge_SN"].ToString();
-                string _chargeResult = await Task.Run<string>(() => { return _easyCard.Charge_request(_amount); });
-                string _isSuccess = (string)JObject.Parse(_chargeResult)["is_success"];
-               
-                if (_isSuccess == "True")
-                {
-                    _dBWrite.Charge_History_UPDATE(_charge_SN);
-                    _checkInModel.DebitStatus = "成功";
-                }
-            }
-        }
+        #endregion
+
+
+
+        #region 主頁互動
 
         public Action FinishInteraction { get; set; }
 
@@ -447,5 +483,7 @@ namespace First_MVVM.ViewModels
             get { return _notification; }
             set { SetProperty(ref _notification, (ICustomNotification)value); }
         }
+
+        #endregion
     }
 }
