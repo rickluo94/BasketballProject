@@ -243,7 +243,6 @@ namespace First_MVVM.ViewModels
                     //計算付款金額填入amount
                     _checkInModel.Amount = 0;
 
-
                     SetDebitCheckTimer();
                     break;
                 case "付款":
@@ -289,6 +288,7 @@ namespace First_MVVM.ViewModels
                 IO.Write(_checkInModel.LockerBoxSelectedIndex, IO.Lock);
 
                 //正常流程
+                SetReaderTimer();
                 SetDoorCheckWithRFIDVerifyTimer();
             }
 
@@ -314,6 +314,10 @@ namespace First_MVVM.ViewModels
                     Counter = 0;
                     DoorCheckWithRFIDVerifyTimer.Elapsed -= OnTimedDoorCheckWithRFIDVerifyEvent;
                     DoorCheckWithRFIDVerifyTimer.Close();
+
+                    ReaderTimer.Elapsed -= OnTimedReaderEvent;
+                    ReaderTimer.Close();
+
                     SelectedStepTabName = "操作逾時";
                 }
             }
@@ -325,11 +329,15 @@ namespace First_MVVM.ViewModels
                     Counter = 0;
                     DoorCheckWithRFIDVerifyTimer.Elapsed -= OnTimedDoorCheckWithRFIDVerifyEvent;
                     DoorCheckWithRFIDVerifyTimer.Close();
+
+                    ReaderTimer.Elapsed -= OnTimedReaderEvent;
+                    ReaderTimer.Close();
+
                     //建立Charge_History
                     //await _dBWrite.Inventory(_checkInModel.LockerBoxSelectedIndex, 1);
                     //await _dBWrite.Take_History_UPDATE(_checkInModel.SN, "已歸還");
                     ////存入歷史紀錄
-                    //await _dBWrite.Charge_History(_checkInModel.ID, _checkInModel.Amount, _checkInModel.HoursUse, _checkInModel.CardID);
+                    _dBWrite.Charge_History(_checkInModel.ID, _checkInModel.Amount, _checkInModel.HoursUse, _checkInModel.CardID);
 
                     NoticeText = "歸還成功，請點擊付款";
                     NextStepIsEnabled = true;
@@ -339,6 +347,9 @@ namespace First_MVVM.ViewModels
                     Counter = 0;
                     DoorCheckWithRFIDVerifyTimer.Elapsed -= OnTimedDoorCheckWithRFIDVerifyEvent;
                     DoorCheckWithRFIDVerifyTimer.Close();
+
+                    ReaderTimer.Elapsed -= OnTimedReaderEvent;
+                    ReaderTimer.Close();
 
                     SelectedStepTabName = "歸還失敗";
                 }
@@ -363,11 +374,11 @@ namespace First_MVVM.ViewModels
             _rReaderModel.TID = result.Item3;
             if (_rReaderModel.Status == true)
             {
-                ReaderStatusStr = "放置完成";
+                ReaderStatusStr = "請關門";
             }
             else
             {
-                ReaderStatusStr = "尚未完成";
+                ReaderStatusStr = "請將球置入";
             }
         }
 
@@ -419,7 +430,7 @@ namespace First_MVVM.ViewModels
                
                 if (_isSuccess == "True")
                 {
-                    await _dBWrite.Charge_History_UPDATE(_charge_SN);
+                    _dBWrite.Charge_History_UPDATE(_charge_SN);
                     _checkInModel.DebitStatus = "成功";
                 }
             }

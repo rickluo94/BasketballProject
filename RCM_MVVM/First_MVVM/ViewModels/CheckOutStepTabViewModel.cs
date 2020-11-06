@@ -370,9 +370,11 @@ namespace First_MVVM.ViewModels
                     Counter = 0;
                     RFIDCheckTimer.Elapsed -= OnTimedRFIDCheckEvent;
                     RFIDCheckTimer.Close();
+
                     //寫入借出紀錄
-                    //await _dBWrite.Inventory(_checkOutModel.LockerSelectedIndex, 0);
-                    //await _dBWrite.Take_History(_checkOutModel.ID, _checkOutModel.LockerSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
+                    _dBWrite.Inventory(_checkOutModel.LockerBosSelectedIndex, 0);
+                    _dBWrite.Take_History(_checkOutModel.ID, _checkOutModel.LockerBosSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
+
                     ReaderTimer.Elapsed -= OnTimedReaderEvent;
                     ReaderTimer.Close();
 
@@ -387,9 +389,11 @@ namespace First_MVVM.ViewModels
                     Counter = 0;
                     RFIDCheckTimer.Elapsed -= OnTimedRFIDCheckEvent;
                     RFIDCheckTimer.Close();
+
                     //寫入借出紀錄
-                    //await _dBWrite.Inventory(_checkOutModel.LockerSelectedIndex, 0);
-                    //await _dBWrite.Take_History(_checkOutModel.ID, _checkOutModel.LockerSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
+                    _dBWrite.Inventory(_checkOutModel.LockerBosSelectedIndex, 0);
+                    _dBWrite.Take_History(_checkOutModel.ID, _checkOutModel.LockerBosSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
+
                     ReaderTimer.Elapsed -= OnTimedReaderEvent;
                     ReaderTimer.Close();
                     
@@ -426,11 +430,11 @@ namespace First_MVVM.ViewModels
             ReaderStatusStr = _rReaderModel.Status.ToString();
             if (_rReaderModel.Status == true)
             {
-                ReaderStatusStr = "取球請關門";
+                ReaderStatusStr = "等待取球";
             }
             else
             {
-                ReaderStatusStr = "等待取球";
+                ReaderStatusStr = "請關門";
             }
         }
 

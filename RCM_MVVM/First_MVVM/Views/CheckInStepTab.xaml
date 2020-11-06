@@ -155,7 +155,7 @@
 
                         <TextBlock Margin="95,593,95,247">
                             <Viewbox>
-                                <TextBlock Text="{Binding LockerSelectedIndex}" />
+                                <TextBlock Text="{Binding LockerBoxSelectedIndex}" />
                             </Viewbox>
                         </TextBlock>
 
@@ -179,7 +179,7 @@
 
                         <TextBlock Margin="95,203,95,637">
                             <Viewbox>
-                                <TextBlock Text="{Binding LockerSelectedIndex}" />
+                                <TextBlock Text="{Binding LockerBoxSelectedIndex}" />
                             </Viewbox>
                         </TextBlock>
 
