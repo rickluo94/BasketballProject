@@ -58,7 +58,7 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Viewbox Stretch="Uniform">
-        <Grid Name="HWbody" Width="600" Height="1024">
+        <Grid Width="600" Height="1024">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="5"/>
                 <ColumnDefinition Width="auto"/>
