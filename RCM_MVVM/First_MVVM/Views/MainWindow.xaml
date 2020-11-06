@@ -58,6 +58,19 @@
                 </prism:PopupWindowAction.WindowContent>
             </prism:PopupWindowAction>
         </prism:InteractionRequestTrigger>
+        <prism:InteractionRequestTrigger SourceObject="{Binding MemberServicePageRequest}">
+            <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
+                <prism:PopupWindowAction.WindowStyle>
+                    <Style TargetType="Window">
+                        <Setter Property="WindowState" Value="Maximized"/>
+                        <Setter Property="WindowStyle" Value="None"/>
+                    </Style>
+                </prism:PopupWindowAction.WindowStyle>
+                <prism:PopupWindowAction.WindowContent>
+                    <View:MemberServicePage/>
+                </prism:PopupWindowAction.WindowContent>
+            </prism:PopupWindowAction>
+        </prism:InteractionRequestTrigger>
     </i:Interaction.Triggers>
     <Viewbox Stretch="Uniform">
         <Grid Height="1024" Width="600">
@@ -91,7 +104,7 @@
             <Button Grid.Row="3" Grid.Column="1" Content="New Members 新會員" Command="{Binding RegisterStepTabCommand}" Margin="{StaticResource ControlMargin}"/>
 
             <!-- Row 5 -->
-            <Button Grid.Row="4" Grid.Column="1" Content="Service 會員服務"  Margin="{StaticResource ControlMargin}"/>
+            <Button Grid.Row="4" Grid.Column="1" Content="Service 會員服務" Command="{Binding MemberServicePageCommand}" Margin="{StaticResource ControlMargin}"/>
 
         </Grid>
     </Viewbox>

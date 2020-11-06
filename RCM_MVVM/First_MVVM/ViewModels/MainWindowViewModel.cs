@@ -13,7 +13,7 @@ namespace First_MVVM.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
-        private string _title = "Prism Application";
+        private string _title = "Smart Locker";
         public string Title
         {
             get { return _title; }
@@ -29,20 +29,28 @@ namespace First_MVVM.ViewModels
         public InteractionRequest<ICustomNotification> RegisterStepTabRequest { get; set; }
         public InteractionRequest<ICustomNotification> CheckOutStepTabRequest { get; set; }
         public InteractionRequest<ICustomNotification> CheckInStepTabRequest { get; set; }
+        public InteractionRequest<ICustomNotification> MemberServicePageRequest { get; set; }
 
         public DelegateCommand RegisterStepTabCommand { get; set; }
         public DelegateCommand CheckOutStepTabCommand { get; set; }
         public DelegateCommand CheckInStepTabCommand { get; set; }
+        public DelegateCommand MemberServicePageCommand { get; set; }
 
         public MainWindowViewModel()
         {
             IO.SetDevicePort("COM3", 57600); IO.SetIOParameter();
+
             RegisterStepTabRequest = new InteractionRequest<ICustomNotification>();
             RegisterStepTabCommand = new DelegateCommand(RegisterStepTabView);
+
             CheckOutStepTabRequest = new InteractionRequest<ICustomNotification>();
             CheckOutStepTabCommand = new DelegateCommand(CheckOutStepTabView);
+
             CheckInStepTabRequest = new InteractionRequest<ICustomNotification>();
             CheckInStepTabCommand = new DelegateCommand(CheckInStepTabView);
+
+            MemberServicePageRequest = new InteractionRequest<ICustomNotification>();
+            MemberServicePageCommand = new DelegateCommand(MemberServicePageView);
         }
 
         private void RegisterStepTabView()
@@ -52,12 +60,18 @@ namespace First_MVVM.ViewModels
 
         private void CheckOutStepTabView()
         {
-            CheckOutStepTabRequest.Raise(new CustomNotification { Title = " " });
+            CheckOutStepTabRequest.Raise(new CustomNotification { Title = "Check Out" });
         }
 
         private void CheckInStepTabView()
         {
-            CheckInStepTabRequest.Raise(new CustomNotification { Title = " " });
+            CheckInStepTabRequest.Raise(new CustomNotification { Title = "Check In" });
         }
+
+        private void MemberServicePageView()
+        {
+            MemberServicePageRequest.Raise(new CustomNotification { Title = "Member Service" });
+        }
+
     }
 }
