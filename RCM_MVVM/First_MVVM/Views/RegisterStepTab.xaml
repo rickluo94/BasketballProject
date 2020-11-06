@@ -343,25 +343,16 @@
                 </TabItem>
                 <TabItem Header="信箱">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20" />
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="auto" MinWidth="200"/>
-                            <ColumnDefinition Width="auto" MinWidth="200"/>
-                            <ColumnDefinition Width="20" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="20" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="20" />
-                        </Grid.RowDefinitions>
-                        <Button Grid.Row="1" Grid.Column="1" Content="↩" Command="{Binding PreviousTabCommand}" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="2" Grid.Column="2" Text="信箱:" Margin="10,10,10,10"/>
-                        <TextBox Grid.Row="2" Grid.Column="3" Width="auto" Name="EmailBox" Text="{Binding EmailStr}" Margin="10,10,10,10">
+
+                        <Button  Content="↩" Command="{Binding PreviousTabCommand}" Margin="492,10,10,817"/>
+
+                        <TextBlock  Margin="95,145,95,702">
+                            <Viewbox>
+                                <TextBlock Text="信箱:"/>
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBox Name="EmailBox" Text="{Binding EmailStr}" Margin="95,203,95,644" FontSize="50">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="TextChanged">
                                     <i:InvokeCommandAction Command="{Binding EmailCommand}" CommandParameter="{Binding ElementName=EmailBox}"/>
@@ -371,59 +362,57 @@
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </TextBox>
-                        <TextBlock Grid.Row="2" Grid.Column="4" Width="auto" Text="{Binding NoticeText}"/>
-                        <Button Grid.Row="3" Grid.Column="4" Content="下一步" Width="auto" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="10,10,10,10" />
+
+                        <TextBlock Margin="95,261,95,579">
+                            <Viewbox>
+                                <TextBlock Text="{Binding NoticeText}" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <Button Content="下一步" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="95,813,95,27" />
+                        
                     </Grid>
                 </TabItem>
                 <TabItem Header="設定悠遊卡">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20" />
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="auto" MinWidth="200"/>
-                            <ColumnDefinition Width="auto" MinWidth="200"/>
-                            <ColumnDefinition Width="20" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="20" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="20" />
-                        </Grid.RowDefinitions>
-                        <Button Grid.Row="1" Grid.Column="1" Content="↩" Command="{Binding PreviousTabCommand}" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="2" Grid.Column="2" Text="卡號:" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding Card_ID}" Margin="10,10,10,10" />
-                        <TextBlock Grid.Row="3" Grid.Column="2" Text="卡號內碼:" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="3" Grid.Column="3" Text="{Binding Card_purse_id}" Margin="10,10,10,10" />
-                        <Button Grid.Row="4" Grid.Column="3" Content="靠卡感應" Command="{Binding ReadCardCommand}" Margin="10,10,10,10"/>
-                        <Button Grid.Row="5" Grid.Column="4" Content="下一步" Width="auto" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="10,10,10,10"/>
+
+                        <Button  Content="↩" Command="{Binding PreviousTabCommand}" Margin="492,10,10,817"/>
+
+                        <TextBlock  Margin="95,145,95,702">
+                            <Viewbox>
+                                <TextBlock Text="卡號:"/>
+                            </Viewbox>
+                        </TextBlock>
+                        
+                        <TextBlock  Margin="95,203,95,644">
+                            <Viewbox>
+                                <TextBlock Text="{Binding Card_ID}"/>
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock  Margin="95,261,95,586">
+                            <Viewbox>
+                                <TextBlock Text="卡號內碼:"/>
+                            </Viewbox>
+                        </TextBlock>
+                        
+                        <TextBlock  Margin="95,319,95,528">
+                            <Viewbox>
+                                <TextBlock Text="{Binding Card_purse_id}"/>
+                            </Viewbox>
+                        </TextBlock>
+
+                        <Button Content="靠卡感應" Command="{Binding ReadCardCommand}" Margin="95,424,95,424"/>
+
+                        <Button Content="下一步" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="95,813,95,27" />
+
                     </Grid>
                 </TabItem>
                 <TabItem Header="完成註冊">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20" />
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="auto" MinWidth="200"/>
-                            <ColumnDefinition Width="auto" MinWidth="200"/>
-                            <ColumnDefinition Width="20" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="20" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="20" />
-                        </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="1" Grid.Column="1">
-                            <Button Content="完成" Width="auto" Command="{Binding RegisterSuccess}" />
-                        </StackPanel>
+                        
+                        <Button Content="完成" Command="{Binding RegisterSuccess}" Margin="95,813,95,27"/>
+                        
                     </Grid>
                 </TabItem>
             </TabControl>
