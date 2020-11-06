@@ -184,7 +184,7 @@
 
                         <Button  Content="X" Command="{Binding ExitCommand}" Margin="492,10,10,817" />
 
-                        <TextBlock Margin="95,145,366,702" >
+                        <TextBlock Margin="95,145,366,702">
                                 <Viewbox>
                                     <TextBlock>帳號:</TextBlock>
                                 </Viewbox>
@@ -221,24 +221,16 @@
                 </TabItem>
                 <TabItem Header="密碼">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20" />
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="auto" MinWidth="200"/>
-                            <ColumnDefinition Width="auto" MinWidth="200"/>
-                            <ColumnDefinition Width="20" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="20" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="20" />
-                        </Grid.RowDefinitions>
-                        <Button  Content="↩" Command="{Binding PreviousTabCommand}" Grid.Column="1" Grid.Row="1" Margin="10,10,10,10"/>
-                        <PasswordBox Width="auto" x:Name="txtPassword" Grid.Column="3" Grid.Row="2" Margin="10,10,10,10">
+
+                        <Button  Content="↩" Command="{Binding PreviousTabCommand}" Margin="492,10,10,817" />
+
+                        <TextBlock Margin="95,145,95,702">
+                            <Viewbox >
+                                <TextBlock Text="設定密碼:" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <PasswordBox Width="auto" x:Name="txtPassword" Margin="95,203,95,637" FontSize="50" >
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="PasswordChanged">
                                     <i:InvokeCommandAction Command="{Binding PasswordCommand}" CommandParameter="{Binding ElementName=txtPassword}"/>
@@ -248,10 +240,14 @@
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </PasswordBox>
-                        <TextBlock Text="設定密碼:" Grid.Column="2" Grid.Row="2" Margin="10,10,10,10"/>
-                        <TextBlock Text="{Binding NoticeText}" Grid.Column="4" Grid.Row="2" Margin="10,10,10,10"/>
-                        <TextBlock Text="確認密碼:" Grid.Column="2" Grid.Row="3" Margin="10,10,10,10" />
-                        <PasswordBox Name="ConfirmPassword" Grid.Column="3" Grid.Row="3" Margin="10,10,10,10">
+
+                        <TextBlock Margin="95,268,95,572" >
+                            <Viewbox>
+                                <TextBlock Text="確認密碼:" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <PasswordBox Name="ConfirmPassword" Margin="95,333,95,507" FontSize="50" >
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="PasswordChanged">
                                     <i:InvokeCommandAction Command="{Binding PasswordConfirmCommand}" CommandParameter="{Binding ElementName=ConfirmPassword}"/>
@@ -261,7 +257,15 @@
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </PasswordBox>
-                        <Button Content="下一步" Width="auto" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Grid.Column="4" Grid.Row="4" Margin="10,10,10,10"/>
+
+                        <TextBlock Margin="95,398,95,442">
+                            <Viewbox>
+                                <TextBlock Text="{Binding NoticeText}" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <Button Content="下一步" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="95,813,95,27" />
+                        
                     </Grid>
                 </TabItem>
                 <TabItem Header="個人資料">
