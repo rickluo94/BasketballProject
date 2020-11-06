@@ -361,7 +361,14 @@ namespace First_MVVM.ViewModels
             _rReaderModel.Status = result.Item1;
             _rReaderModel.EPC = result.Item2;
             _rReaderModel.TID = result.Item3;
-            ReaderStatusStr = _rReaderModel.Status.ToString();
+            if (_rReaderModel.Status == true)
+            {
+                ReaderStatusStr = "放置完成";
+            }
+            else
+            {
+                ReaderStatusStr = "尚未完成";
+            }
         }
 
         private void SetDebitCheckTimer()

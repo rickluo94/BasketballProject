@@ -185,9 +185,17 @@
 
                         <TextBlock Margin="95,268,95,572">
                             <Viewbox>
+                                <TextBlock Text="{Binding ReaderStatusStr}" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,333,95,507">
+                            <Viewbox>
                                 <TextBlock Text="{Binding NoticeText}" />
                             </Viewbox>
                         </TextBlock>
+                        
+                        
 
                         <Button Content="下一步" Command="{Binding NextTabCmd}" IsEnabled="{Binding NextStepIsEnabled}" Margin="95,813,95,27" />
 

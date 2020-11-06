@@ -112,11 +112,11 @@
                 <TabItem Header="選擇櫃位">
                     <Grid>
 
-                        <WrapPanel x:Name="LockerBoxList" Orientation="Vertical"  Margin="100,10,10,10"/>
+                        <WrapPanel x:Name="LockerBoxList" Orientation="Vertical"  Margin="98,6,12,14"/>
                         
                         <Button Content="↩" Command="{Binding PreviousTabCmd}" Margin="492,10,10,817" />
 
-                        <TextBlock Margin="95,748,95,92">
+                        <TextBlock Margin="95,750,95,90">
                             <Viewbox>
                                 <TextBlock Text="{Binding NoticeText}" />
                             </Viewbox>

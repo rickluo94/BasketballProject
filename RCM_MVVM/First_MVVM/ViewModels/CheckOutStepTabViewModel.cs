@@ -424,6 +424,14 @@ namespace First_MVVM.ViewModels
             _rReaderModel.EPC = result.Item2;
             _rReaderModel.TID = result.Item3;
             ReaderStatusStr = _rReaderModel.Status.ToString();
+            if (_rReaderModel.Status == true)
+            {
+                ReaderStatusStr = "取球請關門";
+            }
+            else
+            {
+                ReaderStatusStr = "等待取球";
+            }
         }
 
         public Action FinishInteraction { get; set; }
