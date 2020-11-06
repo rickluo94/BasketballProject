@@ -52,7 +52,7 @@
     </UserControl.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding CheckOutStepTabLoadCmd}" CommandParameter="{Binding ElementName=LockersList}"/>
+            <i:InvokeCommandAction Command="{Binding CheckOutStepTabLoadCmd}" CommandParameter="{Binding ElementName=LockerBoxList}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Viewbox Stretch="Uniform">
@@ -111,30 +111,8 @@
                 </TabItem>
                 <TabItem Header="選擇櫃位">
                     <Grid>
-                        <Grid x:Name="LockersList" >
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="">
-                                    <i:InvokeCommandAction Command="" CommandParameter="{Binding ElementName=LockersList}"/>
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                        </Grid>
+
+                        <WrapPanel x:Name="LockerBoxList" Orientation="Vertical"  Margin="100,10,10,10"/>
                         
                         <Button Content="↩" Command="{Binding PreviousTabCmd}" Margin="492,10,10,817" />
 
@@ -150,18 +128,19 @@
                 </TabItem>
                 <TabItem Header="請取球">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ReaderStatusStr}" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding NoticeText}" Width="auto" Margin="10,10,10,10" />
+
+                        <TextBlock Margin="95,355,95,485">
+                            <Viewbox>
+                                <TextBlock Text="{Binding NoticeText}" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,420,95,420" >
+                            <Viewbox>
+                                <TextBlock Text="{Binding ReaderStatusStr}" />
+                            </Viewbox>
+                        </TextBlock>
+
                     </Grid>
                 </TabItem>
                 <TabItem Header="租借完成">

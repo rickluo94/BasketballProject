@@ -118,7 +118,7 @@ namespace First_MVVM.ViewModels
         #endregion
 
         #region Interface Command 
-        public DelegateCommand<Grid> CheckOutStepTabLoadCmd { get; private set; }
+        public DelegateCommand<WrapPanel> CheckOutStepTabLoadCmd { get; private set; }
         public DelegateCommand ExitCmd { get; private set; }
         public DelegateCommand PreviousTabCmd { get; private set; }
         public DelegateCommand NextTabCmd { get; private set; }
@@ -129,14 +129,14 @@ namespace First_MVVM.ViewModels
         public CheckOutStepTabViewModel(Business.ResStatus resStatusGroup)
         {
             _resStatusGroup = resStatusGroup;
-            CheckOutStepTabLoadCmd = new DelegateCommand<Grid>(CheckOutStepTabLoad);
+            CheckOutStepTabLoadCmd = new DelegateCommand<WrapPanel>(CheckOutStepTabLoad);
             ExitCmd = new DelegateCommand(ExitInteraction);
             PreviousTabCmd = new DelegateCommand(PreviousTab);
             NextTabCmd = new DelegateCommand(NextTab);
             ReadCardCmd = new DelegateCommand(ReadCard);
         }
 
-        private void CheckOutStepTabLoad(Grid Lockers)
+        private void CheckOutStepTabLoad(WrapPanel LockerBox)
         {
             _inventoryModel = new DataTable();
             _checkOutModel = new CheckOutModel();
@@ -146,7 +146,7 @@ namespace First_MVVM.ViewModels
             _easyCard.SetDevicePort("COM8", 115200, 500); _easyCard.Open();
             NextStepIsEnabled = true;
             SelectedStepTabIndex = 0;
-            if (CheckAvailableUse() == true) { FillCabinetBtns(Lockers);} else { MessageBox.Show("目前沒有可租借籃球"); ExitInteraction(); }
+            if (CheckAvailableUse() == true) { FillCabinetBtns(LockerBox);} else { MessageBox.Show("目前沒有可租借籃球"); ExitInteraction(); }
         }
 
         private bool CheckAvailableUse()
@@ -238,9 +238,9 @@ namespace First_MVVM.ViewModels
             }
         }
 
-        private void FillCabinetBtns(Grid Lockers)
+        private void FillCabinetBtns(WrapPanel LockerBox)
         {
-            Lockers.Children.Clear();
+            LockerBox.Children.Clear();
             List<Button> CabinetButton = new List<Button>
             {
                 new Button(),
@@ -258,18 +258,8 @@ namespace First_MVVM.ViewModels
                 CabinetButton[i].Height = 170;
                 CabinetButton[i].IsEnabled = _resStatuslist[i];
                 CabinetButton[i].Margin = new Thickness() { Bottom = 10, Left = 10, Right = 10, Top = 10 };
-                if (i < 4)
-                {
-                    Grid.SetColumn(CabinetButton[i], 1);
-                    Grid.SetRow(CabinetButton[i], i);
-                }
-                else
-                {
-                    Grid.SetColumn(CabinetButton[i], 2);
-                    Grid.SetRow(CabinetButton[i], i - 4);
-                }
                 CabinetButton[i].Click += new System.Windows.RoutedEventHandler(CabinetBtns_Click);
-                Lockers.Children.Add(CabinetButton[i]);
+                LockerBox.Children.Add(CabinetButton[i]);
             }
         }
 
