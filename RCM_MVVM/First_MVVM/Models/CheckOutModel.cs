@@ -11,6 +11,6 @@ namespace First_MVVM.Models
         public string Balance { get; set; }
         public string EPC { get; set; }
         public string TID { get; set; }
-        public string LockerSelectedIndex { get; set; }
+        public string LockerBosSelectedIndex { get; set; }
     }
 }

@@ -4,9 +4,6 @@ using First_MVVM.Models;
 using First_MVVM.Notifications;
 using Prism.Interactivity.InteractionRequest;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Diagnostics;
 using IOModel;
 using DBModel;
 using EasyCardModel;
@@ -14,6 +11,7 @@ using System.Data;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using System.Timers;
+using RfidModel;
 
 namespace First_MVVM.ViewModels
 {
@@ -21,14 +19,25 @@ namespace First_MVVM.ViewModels
     {
         private CheckInModel _checkInModel { get; set; }
         private EasyCard _easyCard = new EasyCard();
+
+        private RFID _RFID = new RFID();
+        private RFID_ReaderModel _rReaderModel { get; set; }
+
         private DBRead _dBRead = new DBRead();
         private DBWrite _dBWrite = new DBWrite();
-        //private System.Timers.Timer OperationTimer;
+        private System.Timers.Timer ReaderTimer;
         private System.Timers.Timer DoorCheckTimer;
         private System.Timers.Timer DoorCheckWithRFIDVerifyTimer;
         private System.Timers.Timer DebitCheckTimer;
 
         #region Interface Property
+
+        private string _readerStatusStr;
+        public string ReaderStatusStr
+        {
+            get { return _readerStatusStr; }
+            set { SetProperty(ref _readerStatusStr, value); }
+        }
 
         private int _counter;
         public int Counter
@@ -137,7 +146,13 @@ namespace First_MVVM.ViewModels
         private void CheckInStepTabLoad()
         {
             _checkInModel = new CheckInModel();
+
+            _RFID.Connect();
+            _rReaderModel = new RFID_ReaderModel();
+            _rReaderModel.Status = false;
+
             _easyCard.SetDevicePort("COM8", 115200, 500); _easyCard.Open();
+
             NextStepIsEnabled = true;
             SelectedStepTabIndex = 0;
         }
@@ -202,6 +217,7 @@ namespace First_MVVM.ViewModels
             BalanceStr = null;
             NoticeText = null;
             _easyCard.Close();
+            _RFID.Disconnect();
             FinishInteraction?.Invoke();
         }
 
@@ -288,7 +304,7 @@ namespace First_MVVM.ViewModels
             DoorCheckWithRFIDVerifyTimer.Enabled = true;
         }
 
-        private async void OnTimedDoorCheckWithRFIDVerifyEvent(Object source, ElapsedEventArgs e)
+        private void OnTimedDoorCheckWithRFIDVerifyEvent(Object source, ElapsedEventArgs e)
         {
             if (IO.Read(_checkInModel.LockerBoxSelectedIndex) == IO.DoorOpen)
             {
@@ -303,18 +319,17 @@ namespace First_MVVM.ViewModels
             }
             else
             {
-                ///此處RFID檢查有無偵測到物件
-                bool _rfid = true;
-                if (_rfid == true && IO.Read(_checkInModel.LockerBoxSelectedIndex) == IO.DoorLock)
+                //此處需要引用RFID模組
+                if (_rReaderModel.Status == true && IO.Read(_checkInModel.LockerBoxSelectedIndex) == IO.DoorLock)
                 {
                     Counter = 0;
                     DoorCheckWithRFIDVerifyTimer.Elapsed -= OnTimedDoorCheckWithRFIDVerifyEvent;
                     DoorCheckWithRFIDVerifyTimer.Close();
                     //建立Charge_History
-                    await _dBWrite.Inventory(_checkInModel.LockerBoxSelectedIndex, 1);
-                    await _dBWrite.Take_History_UPDATE(_checkInModel.SN, "已歸還");
-                    //存入歷史紀錄
-                    await _dBWrite.Charge_History(_checkInModel.ID, _checkInModel.Amount, _checkInModel.HoursUse, _checkInModel.CardID);
+                    //await _dBWrite.Inventory(_checkInModel.LockerBoxSelectedIndex, 1);
+                    //await _dBWrite.Take_History_UPDATE(_checkInModel.SN, "已歸還");
+                    ////存入歷史紀錄
+                    //await _dBWrite.Charge_History(_checkInModel.ID, _checkInModel.Amount, _checkInModel.HoursUse, _checkInModel.CardID);
 
                     NoticeText = "歸還成功，請點擊付款";
                     NextStepIsEnabled = true;
@@ -330,6 +345,23 @@ namespace First_MVVM.ViewModels
             }
 
             NoticeText = $"剩餘操作時間 {(30 - Counter)} sec";
+        }
+
+        private void SetReaderTimer()
+        {
+            ReaderTimer = new System.Timers.Timer(1000);
+            ReaderTimer.Elapsed += OnTimedReaderEvent;
+            ReaderTimer.AutoReset = true;
+            ReaderTimer.Enabled = true;
+        }
+
+        private void OnTimedReaderEvent(Object source, ElapsedEventArgs e)
+        {
+            Tuple<bool, string, string> result = _RFID.ScannAndRead(_checkInModel.LockerBoxSelectedIndex, _checkInModel.EPC);
+            _rReaderModel.Status = result.Item1;
+            _rReaderModel.EPC = result.Item2;
+            _rReaderModel.TID = result.Item3;
+            ReaderStatusStr = _rReaderModel.Status.ToString();
         }
 
         private void SetDebitCheckTimer()

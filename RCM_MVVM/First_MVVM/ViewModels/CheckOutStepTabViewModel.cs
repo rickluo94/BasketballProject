@@ -16,7 +16,6 @@ using DBModel;
 using System.Data;
 using System.Timers;
 using RfidModel;
-using System.Diagnostics;
 
 namespace First_MVVM.ViewModels
 {
@@ -29,10 +28,10 @@ namespace First_MVVM.ViewModels
         private RFID_ReaderModel _rReaderModel { get; set; }
         private DBRead _dBRead = new DBRead();
         private DBWrite _dBWrite = new DBWrite();
-        private System.Timers.Timer OperationTimer = new System.Timers.Timer(1000);
-        private System.Timers.Timer DoorCheckTimer = new System.Timers.Timer(1000);
-        private System.Timers.Timer RFIDCheckTimer = new System.Timers.Timer(1000);
-        private System.Timers.Timer ReaderTimer = new System.Timers.Timer(1000);
+        private System.Timers.Timer OperationTimer;
+        private System.Timers.Timer DoorCheckTimer;
+        private System.Timers.Timer RFIDCheckTimer;
+        private System.Timers.Timer ReaderTimer;
 
         #region Interface Property
 
@@ -220,13 +219,13 @@ namespace First_MVVM.ViewModels
                     SetOperationTimer();
                     break;
                 case "選擇櫃位":
-                    _checkOutModel.LockerSelectedIndex = _lockerSelectedIndex;
+                    _checkOutModel.LockerBosSelectedIndex = _lockerSelectedIndex;
                     //寫入櫃位EPC TID資料
                     _inventoryModel = await _dBRead.Inventory(_lockerSelectedIndex);
                     _checkOutModel.EPC = _inventoryModel.Rows[0]["Inventory_Items_EPC"].ToString();
                     _checkOutModel.TID = _inventoryModel.Rows[0]["Inventory_Items_TID"].ToString();
 
-                    IO.Write(_checkOutModel.LockerSelectedIndex, IO.UnLock);
+                    IO.Write(_checkOutModel.LockerBosSelectedIndex, IO.UnLock);
                     NoticeText = "提醒您球櫃開起後未關閉視同已借出";
 
                     //在此函式判斷是否開始計費 or 操作逾時
@@ -284,6 +283,7 @@ namespace First_MVVM.ViewModels
         private void SetOperationTimer()
         {
             Counter = 0;
+            OperationTimer = new System.Timers.Timer(1000);
             OperationTimer.Elapsed += OnTimedOperationEvent;
             OperationTimer.AutoReset = true;
             OperationTimer.Enabled = true;
@@ -291,7 +291,7 @@ namespace First_MVVM.ViewModels
 
         private void OnTimedOperationEvent(Object source, ElapsedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(_checkOutModel.LockerSelectedIndex))
+            if (string.IsNullOrWhiteSpace(_checkOutModel.LockerBosSelectedIndex))
             {
                 Counter += 1;
                 if (Counter == 20)
@@ -314,6 +314,7 @@ namespace First_MVVM.ViewModels
         private void SetDoorCheckTimer()
         {
             Counter = 0;
+            DoorCheckTimer = new System.Timers.Timer(1000);
             DoorCheckTimer.Elapsed += OnTimedDoorCheckEvent;
             DoorCheckTimer.AutoReset = true;
             DoorCheckTimer.Enabled = true;
@@ -321,7 +322,7 @@ namespace First_MVVM.ViewModels
 
         private void OnTimedDoorCheckEvent(Object source, ElapsedEventArgs e)
         {
-            if (IO.Read(_checkOutModel.LockerSelectedIndex) == IO.DoorLock)
+            if (IO.Read(_checkOutModel.LockerBosSelectedIndex) == IO.DoorLock)
             {
                 Counter += 1;
                 if (Counter == 15)
@@ -330,7 +331,7 @@ namespace First_MVVM.ViewModels
                     DoorCheckTimer.Elapsed -= OnTimedDoorCheckEvent;
                     DoorCheckTimer.Close();
                     SelectedStepTabName = "操作逾時";
-                    IO.Write(_checkOutModel.LockerSelectedIndex, IO.Lock);
+                    IO.Write(_checkOutModel.LockerBosSelectedIndex, IO.Lock);
 
                     ReaderTimer.Elapsed -= OnTimedReaderEvent;
                     ReaderTimer.Close();
@@ -341,7 +342,7 @@ namespace First_MVVM.ViewModels
                 Counter = 0;
                 DoorCheckTimer.Elapsed -= OnTimedDoorCheckEvent;
                 DoorCheckTimer.Close();
-                IO.Write(_checkOutModel.LockerSelectedIndex, IO.Lock);
+                IO.Write(_checkOutModel.LockerBosSelectedIndex, IO.Lock);
 
                 ///資料庫新增會員借出紀錄依據_rentalModel內資料寫入//
                 
@@ -353,6 +354,7 @@ namespace First_MVVM.ViewModels
         private void SetRFIDCheckTimer()
         {
             Counter = 0;
+            RFIDCheckTimer = new System.Timers.Timer(1000);
             RFIDCheckTimer.Elapsed += OnTimedRFIDCheckEvent;
             RFIDCheckTimer.AutoReset = true;
             RFIDCheckTimer.Enabled = true;
@@ -360,7 +362,7 @@ namespace First_MVVM.ViewModels
 
         private void OnTimedRFIDCheckEvent(Object source, ElapsedEventArgs e)
         {
-            if (IO.Read(_checkOutModel.LockerSelectedIndex) == IO.DoorOpen)
+            if (IO.Read(_checkOutModel.LockerBosSelectedIndex) == IO.DoorOpen)
             {
                 Counter += 1;
                 if (Counter == 50)
@@ -399,7 +401,7 @@ namespace First_MVVM.ViewModels
                     RFIDCheckTimer.Elapsed -= OnTimedRFIDCheckEvent;
                     RFIDCheckTimer.Close();
 
-                    IO.Write(_checkOutModel.LockerSelectedIndex, IO.UnLock);
+                    IO.Write(_checkOutModel.LockerBosSelectedIndex, IO.UnLock);
                     SetDoorCheckTimer(); DoorCheckCounter += 1;
                     SelectedStepTabName = "請取球";
                 }
@@ -409,13 +411,15 @@ namespace First_MVVM.ViewModels
 
         private void SetReaderTimer()
         {
+            ReaderTimer = new System.Timers.Timer(1000);
             ReaderTimer.Elapsed += OnTimedReaderEvent;
             ReaderTimer.AutoReset = true;
             ReaderTimer.Enabled = true;
         }
+
         private void OnTimedReaderEvent(Object source, ElapsedEventArgs e)
         {
-            Tuple<bool,string,string> result = _RFID.ScannAndRead(_checkOutModel.LockerSelectedIndex, _checkOutModel.EPC);
+            Tuple<bool,string,string> result = _RFID.ScannAndRead(_checkOutModel.LockerBosSelectedIndex, _checkOutModel.EPC);
             _rReaderModel.Status = result.Item1;
             _rReaderModel.EPC = result.Item2;
             _rReaderModel.TID = result.Item3;
