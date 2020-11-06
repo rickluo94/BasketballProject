@@ -8,6 +8,10 @@
              Background="#FF303030"
              >
     <UserControl.Resources>
+        <Style TargetType="{x:Type Grid}">
+            <Setter Property="Height" Value="900"/>
+            <Setter Property="Width" Value="580"/>
+        </Style>
         <Thickness x:Key="ControlMargin">10 10 10 10</Thickness>
         <Style TargetType="{x:Type TabControl}">
             <Setter Property="Background" Value="#FF303030"/>
@@ -66,63 +70,103 @@
             <TabControl SelectedIndex="{Binding SelectedStepTabIndex}" SelectedValue="{Binding SelectedStepTabName}" SelectedValuePath="Header" Grid.Row="1" Grid.Column="1">
                 <TabItem Header="登入">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20"/>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto" MinWidth="200"/>
-                            <ColumnDefinition Width="Auto" MinWidth="200"/>
-                            <ColumnDefinition Width="20"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="20"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="88*"/>
-                            <RowDefinition Height="20"/>
-                        </Grid.RowDefinitions>
-                        <Button Grid.Row="1" Grid.Column="1" Content="X" Command="{Binding ExitCmd}" Margin="10,10,10,10" />
-                        <TextBlock Grid.Row="2" Grid.Column="2" Text="會員:" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding AccountStr}" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="3" Grid.Column="2" Text="即時餘額:" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="3" Grid.Column="3" Text="{Binding BalanceStr}" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="2" Grid.Column="4" Text="{Binding NoticeText}" Width="auto" Margin="10,10,10,10" />
-                        <Button Grid.Row="4" Grid.Column="3" Content="靠卡感應" Command="{Binding ReadCardCmd}" Margin="10,10,10,10" />
-                        <Button Grid.Row="5" Grid.Column="4" Content="下一步" Command="{Binding NextTabCmd}"  IsEnabled="{Binding NextStepIsEnabled}" Width="auto" Margin="10,10,10,10" />
+                        <Button Content="X" Command="{Binding ExitCmd}" Margin="492,10,10,817" />
+
+                        <TextBlock Margin="95,145,95,702">
+                            <Viewbox>
+                                <TextBlock Text="會員:"/>
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,203,95,637">
+                            <Viewbox>
+                                <TextBlock Text="{Binding AccountStr}" />
+                            </Viewbox>
+                        </TextBlock>
+                        
+                        <TextBlock Margin="95,268,95,572">
+                            <Viewbox>
+                                <TextBlock Text="即時餘額:" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,333,95,507">
+                            <Viewbox>
+                                <TextBlock Text="{Binding BalanceStr}" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,398,95,442">
+                            <Viewbox>
+                                <TextBlock Text="{Binding NoticeText}" />
+                            </Viewbox>
+                        </TextBlock>
+                        
+                        <Button Content="靠卡感應" Command="{Binding ReadCardCmd}" Margin="95,463,95,377" />
+                        
+                        <Button Content="下一步" Command="{Binding NextTabCmd}" IsEnabled="{Binding NextStepIsEnabled}"/>
+                        
                     </Grid>
                 </TabItem>
                 <TabItem Header="借出紀錄">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto" MinWidth="200"/>
-                            <ColumnDefinition Width="Auto" MinWidth="200"/>
-                            <ColumnDefinition Width="20"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="20"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="88*"/>
-                            <RowDefinition Height="20"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="2" Grid.Column="2" Text="會員:" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding AccountStr}" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="3" Grid.Column="2" Text="即時餘額:" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="3" Grid.Column="3" Text="{Binding BalanceStr}" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="4" Grid.Column="2" Text="借出時間:" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="4" Grid.Column="3" Text="{Binding OutTimeStr}" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="5" Grid.Column="2" Text="借出櫃位:" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="5" Grid.Column="3" Text="{Binding LockerSelectedIndex}" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="5" Grid.Column="4" Text="{Binding NoticeText}" Width="auto" Margin="10,10,10,10" />
-                        <Button Grid.Row="6" Grid.Column="4" Content="歸還" Command="{Binding NextTabCmd}"  IsEnabled="True" Width="auto" Margin="10,10,10,10" />
+
+                        <TextBlock Margin="95,145,95,702">
+                            <Viewbox>
+                                <TextBlock Text="會員:"/>
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,203,95,637">
+                            <Viewbox>
+                                <TextBlock Text="{Binding AccountStr}" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,268,95,572">
+                            <Viewbox>
+                                <TextBlock Text="即時餘額:" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,333,95,507">
+                            <Viewbox>
+                                <TextBlock Text="{Binding BalanceStr}" />
+                            </Viewbox>
+                        </TextBlock>
+                        
+                        <TextBlock Margin="95,398,95,442">
+                            <Viewbox>
+                                <TextBlock Text="借出時間:"/>
+                            </Viewbox>
+                        </TextBlock>
+                        
+                        <TextBlock Margin="95,463,95,377">
+                            <Viewbox>
+                                <TextBlock Text="{Binding OutTimeStr}"/>
+                            </Viewbox>
+                        </TextBlock>
+                        
+                        <TextBlock Margin="95,528,95,312">
+                            <Viewbox>
+                                <TextBlock Text="櫃位:" />
+                            </Viewbox>
+                        </TextBlock>
+                        
+                        <TextBlock Margin="95,593,95,247">
+                            <Viewbox>
+                                <TextBlock Text="{Binding LockerSelectedIndex}" />
+                            </Viewbox>
+                        </TextBlock>
+                        
+                        <TextBlock Margin="95,658,95,182">
+                            <Viewbox>
+                                <TextBlock Text="{Binding NoticeText}" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <Button Content="歸還" Command="{Binding NextTabCmd}" IsEnabled="True" Margin="95,813,95,27" />
+                        
                     </Grid>
                 </TabItem>
                 <TabItem Header="歸還">
