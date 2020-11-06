@@ -280,74 +280,54 @@
                 </TabItem>
                 <TabItem Header="歸還完成">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="20"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="20"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="20"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text="感謝您的使用" Width="auto" Margin="10,10,10,10" />
-                        <Button Grid.Row="2" Grid.Column="1" Content="回主頁" Command="{Binding ExitCmd}" Margin="10,10,10,10" />
+
+                        <TextBlock Margin="95,356,95,491">
+                            <Viewbox>
+                                <TextBlock Text="感謝您的使用" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <Button Content="回主頁" Command="{Binding ExitCmd}" Margin="95,414,95,426" />
+
                     </Grid>
                 </TabItem>
                 <TabItem Header="操作逾時">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="20"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="20"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="20"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text="操作逾時" Width="auto" Margin="10,10,10,10" />
-                        <Button Grid.Row="2" Grid.Column="1" Content="確定" Command="{Binding ExitCmd}" Margin="10,10,10,10" />
+                        
+                        <TextBlock Margin="95,356,95,491">
+                            <Viewbox>
+                                <TextBlock Text="操作逾時" />
+                            </Viewbox>
+                        </TextBlock>
+                        
+                        <Button Content="確定" Command="{Binding ExitCmd}" Margin="95,414,95,426" />
+                        
                     </Grid>
                 </TabItem>
                 <TabItem Header="歸還失敗">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="20"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="20"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="20"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text="歸還失敗" Width="auto" Margin="10,10,10,10" />
-                        <Button Grid.Row="2" Grid.Column="1" Content="確定" Command="{Binding ExitCmd}" Margin="10,10,10,10" />
+                        
+                        <TextBlock Margin="95,356,95,491">
+                            <Viewbox>
+                                <TextBlock Text="歸還失敗" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <Button Content="確定" Command="{Binding ExitCmd}" Margin="95,414,95,426" />
+                        
                     </Grid>
                 </TabItem>
                 <TabItem Header="付款失敗">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="20"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="20"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="20"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text="付款失敗" Width="auto" Margin="10,10,10,10" />
-                        <Button Grid.Row="2" Grid.Column="1" Content="確定" Command="{Binding ExitCmd}" Margin="10,10,10,10" />
+
+                        <TextBlock Margin="95,356,95,491">
+                            <Viewbox>
+                                <TextBlock Text="付款失敗" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <Button Content="確定" Command="{Binding ExitCmd}" Margin="95,414,95,426" />
+
                     </Grid>
                 </TabItem>
             </TabControl>
