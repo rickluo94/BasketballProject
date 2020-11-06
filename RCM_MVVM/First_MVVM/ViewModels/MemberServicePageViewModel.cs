@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using First_MVVM.Models;
 using IOModel;
+using System.Timers;
 
 namespace First_MVVM.ViewModels
 {
@@ -21,8 +22,23 @@ namespace First_MVVM.ViewModels
         private DBRead _dBRead = new DBRead();
         private DBWrite _dBWrite = new DBWrite();
 
+        private System.Timers.Timer PumpStartTimer;
+
+        private int _counter;
+        public int Counter
+        {
+            get { return _counter; }
+            set { _counter = value; }
+        }
 
         #region Interface Property
+
+        private bool _pumpBoxStartIsEnable;
+        public bool PumpBoxStartIsEnable
+        {
+            get { return _pumpBoxStartIsEnable; }
+            set { SetProperty(ref _pumpBoxStartIsEnable, value); }
+        }
 
         private int _selectedStepTabIndex;
         public int SelectedStepTabIndex
@@ -123,6 +139,7 @@ namespace First_MVVM.ViewModels
 
         private void MemberServicePageLoad()
         {
+            PumpBoxStartIsEnable = true;
             NextStepIsEnabled = false;
             SelectedStepTabIndex = 0;
             _memberServiceModel = new MemberServiceModel();
@@ -146,6 +163,7 @@ namespace First_MVVM.ViewModels
         {
             if (!string.IsNullOrWhiteSpace(_memberServiceModel.Amount.ToString()))
             {
+                NoticeText = $"未結清款項 ${_memberServiceModel.Amount}";
                 SelectedStepTabName = "付款";
             }
             else
@@ -167,7 +185,8 @@ namespace First_MVVM.ViewModels
                     _memberServiceModel.ID = _accountStr;
                     _memberServiceModel.CardID = _card_id;
                     _memberServiceModel.Balance = _balanceStr;
-
+                    //測試金額
+                    _memberServiceModel.Amount = 0;
                     break;
                 case "服務選單":
 
@@ -232,6 +251,9 @@ namespace First_MVVM.ViewModels
 
         private async void Charge()
         {
+            //測試用
+            _memberServiceModel.Amount = 0;
+
             if (!string.IsNullOrWhiteSpace(_memberServiceModel.Amount.ToString()))
             {
                 string _chargeResult = await Task.Run<string>(() => { return _easyCard.Charge_request(_memberServiceModel.Amount); });
@@ -254,29 +276,52 @@ namespace First_MVVM.ViewModels
 
         private void PumpBoxStart()
         {
-            if (IO.Read("A8") == IO.DoorLock)
-            {
-                IO.Write("A8", IO.UnLock);
-            }
-            else
-            {
-                IO.Write("A8", IO.Lock);
-            }
+            IO.Write("A8", IO.UnLock);
+            SetPumpStartTimer();
+            PumpBoxStartIsEnable = false;
         }
 
         private void UnsubscribePumpStartEvent()
         {
-
+            PumpStartTimer.Elapsed -= OnTimePumpStartEvent;
+            PumpStartTimer.Close();
         }
 
         private void SetPumpStartTimer()
         {
-
+            Counter = 0;
+            PumpStartTimer = new System.Timers.Timer(1000);
+            PumpStartTimer.Elapsed += OnTimePumpStartEvent;
+            PumpStartTimer.AutoReset = true;
+            PumpStartTimer.Enabled = true;
         }
 
-        private void OnTimePumpStartEvent()
+        private void OnTimePumpStartEvent(Object source, ElapsedEventArgs e)
         {
+            _counter += 1;
+            if (IO.Read("A8") == IO.DoorOpen)
+            {
+                IO.Write("A8", IO.Lock);
+            }
 
+            if (IO.Read("Pump") == IO.DoorOpen)
+            {
+                IO.Write("Pump", IO.Lock);
+            }
+            else
+            {
+                IO.Write("Pump", IO.UnLock);
+            }
+
+            if (Counter == 20)
+            {
+                UnsubscribePumpStartEvent();
+                IO.Write("A8", IO.Lock);
+                IO.Write("Pump", IO.Lock);
+                
+                SelectedStepTabName = "完成";
+            }
+            NoticeText = $"剩餘操作時間 {(20 - Counter)} sec";
         }
 
 

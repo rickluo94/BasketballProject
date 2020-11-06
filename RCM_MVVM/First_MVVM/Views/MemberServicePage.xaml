@@ -200,7 +200,7 @@
                             </Viewbox>
                         </TextBlock>
                         
-                        <Button Command="{Binding PumpBoxStartCmd}" Margin="95,813,95,27">
+                        <Button Command="{Binding PumpBoxStartCmd}" IsEnabled="{Binding PumpBoxStartIsEnable}" Margin="95,813,95,27">
                             <Viewbox>
                                 <TextBlock Text="開啟打氣櫃" />
                             </Viewbox>
