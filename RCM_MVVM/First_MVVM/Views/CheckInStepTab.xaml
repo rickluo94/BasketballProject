@@ -83,7 +83,7 @@
                                 <TextBlock Text="{Binding AccountStr}" />
                             </Viewbox>
                         </TextBlock>
-                        
+
                         <TextBlock Margin="95,268,95,572">
                             <Viewbox>
                                 <TextBlock Text="即時餘額:" />
@@ -101,11 +101,11 @@
                                 <TextBlock Text="{Binding NoticeText}" />
                             </Viewbox>
                         </TextBlock>
-                        
+
                         <Button Content="靠卡感應" Command="{Binding ReadCardCmd}" Margin="95,463,95,377" />
-                        
-                        <Button Content="下一步" Command="{Binding NextTabCmd}" IsEnabled="{Binding NextStepIsEnabled}"/>
-                        
+
+                        <Button Content="下一步" Command="{Binding NextTabCmd}" IsEnabled="{Binding NextStepIsEnabled}" Margin="95,813,95,27" />
+
                     </Grid>
                 </TabItem>
                 <TabItem Header="借出紀錄">
@@ -134,31 +134,31 @@
                                 <TextBlock Text="{Binding BalanceStr}" />
                             </Viewbox>
                         </TextBlock>
-                        
+
                         <TextBlock Margin="95,398,95,442">
                             <Viewbox>
                                 <TextBlock Text="借出時間:"/>
                             </Viewbox>
                         </TextBlock>
-                        
+
                         <TextBlock Margin="95,463,95,377">
                             <Viewbox>
                                 <TextBlock Text="{Binding OutTimeStr}"/>
                             </Viewbox>
                         </TextBlock>
-                        
+
                         <TextBlock Margin="95,528,95,312">
                             <Viewbox>
                                 <TextBlock Text="櫃位:" />
                             </Viewbox>
                         </TextBlock>
-                        
+
                         <TextBlock Margin="95,593,95,247">
                             <Viewbox>
                                 <TextBlock Text="{Binding LockerSelectedIndex}" />
                             </Viewbox>
                         </TextBlock>
-                        
+
                         <TextBlock Margin="95,658,95,182">
                             <Viewbox>
                                 <TextBlock Text="{Binding NoticeText}" />
@@ -166,73 +166,116 @@
                         </TextBlock>
 
                         <Button Content="歸還" Command="{Binding NextTabCmd}" IsEnabled="True" Margin="95,813,95,27" />
-                        
+
                     </Grid>
                 </TabItem>
                 <TabItem Header="歸還">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20"/>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto" MinWidth="200"/>
-                            <ColumnDefinition Width="Auto" MinWidth="200"/>
-                            <ColumnDefinition Width="20"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="20"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="88*"/>
-                            <RowDefinition Height="20"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding NoticeText}" Width="auto" Margin="10,10,10,10" />
-                        <TextBlock Grid.Row="2" Grid.Column="2" Text="請歸還至球櫃：" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding LockerSelectedIndex}" Margin="10,10,10,10"/>
-                        <Button Grid.Row="3" Grid.Column="4" Content="付款" Command="{Binding NextTabCmd}"  IsEnabled="{Binding NextStepIsEnabled}" Width="auto" Margin="10,10,10,10" />
+                        <TextBlock Margin="95,145,95,702">
+                            <Viewbox>
+                                <TextBlock Text="請歸還至球櫃：" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,203,95,637">
+                            <Viewbox>
+                                <TextBlock Text="{Binding LockerSelectedIndex}" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,268,95,572">
+                            <Viewbox>
+                                <TextBlock Text="{Binding NoticeText}" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <Button Content="下一步" Command="{Binding NextTabCmd}" IsEnabled="{Binding NextStepIsEnabled}" Margin="95,813,95,27" />
+
                     </Grid>
                 </TabItem>
                 <TabItem Header="付款">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="20"/>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto" MinWidth="200"/>
-                            <ColumnDefinition Width="Auto" MinWidth="200"/>
-                            <ColumnDefinition Width="20"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="20"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="88*"/>
-                            <RowDefinition Height="20"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="2" Grid.Column="2" Text="會員:" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding AccountStr}" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="3" Grid.Column="2" Text="即時餘額:" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="3" Grid.Column="3" Text="{Binding BalanceStr}" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="4" Grid.Column="2" Text="借出時間:" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="4" Grid.Column="3" Text="{Binding OutTimeStr}" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="6" Grid.Column="2" Text="借出櫃位:" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="6" Grid.Column="3" Text="{Binding OutTimeStr}" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="7" Grid.Column="2" Text="歸還時間:" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="7" Grid.Column="3" Text="{Binding InTimeStr}" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="8" Grid.Column="2" Text="本次扣款:" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="8" Grid.Column="3" Text="{Binding AmountStr}" Margin="10,10,10,10"/>
-                        <TextBlock Grid.Row="8" Grid.Column="4" Text="{Binding NoticeText}" Width="auto" Margin="10,10,10,10" />
-                        <Button Grid.Row="9" Grid.Column="4" Content="靠卡感應扣款" Command="{Binding DebitCmd}" Margin="10,10,10,10" />
+
+                        <TextBlock Margin="95,69,95,778">
+                            <Viewbox>
+                                <TextBlock Text="會員:" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,127,95,720">
+                            <Viewbox>
+                                <TextBlock Text="{Binding AccountStr}" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,185,95,662">
+                            <Viewbox>
+                                <TextBlock Text="即時餘額:" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,243,95,604">
+                            <Viewbox>
+                                <TextBlock Text="{Binding BalanceStr}"/>
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,301,95,546">
+                            <Viewbox>
+                                <TextBlock Text="借出時間:"/>
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,359,95,488">
+                            <Viewbox>
+                                <TextBlock Text="{Binding OutTimeStr}" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,417,95,430">
+                            <Viewbox>
+                                <TextBlock Text="櫃位:" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,475,95,371">
+                            <Viewbox>
+                                <TextBlock Text="{Binding LockerBoxSelectedIndex}"/>
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,534,95,313">
+                            <Viewbox>
+                                <TextBlock Text="歸還時間:" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,592,95,255">
+                            <Viewbox>
+                                <TextBlock Text="{Binding InTimeStr}" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,650,95,197">
+                            <Viewbox>
+                                <TextBlock Text="本次扣款:" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,708,95,139">
+                            <Viewbox>
+                                <TextBlock Text="{Binding AmountStr}" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,10,95,837">
+                            <Viewbox>
+                                <TextBlock Text="{Binding NoticeText}" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <Button Content="靠卡感應扣款" Command="{Binding DebitCmd}" Margin="95,813,95,27" />
+
                     </Grid>
                 </TabItem>
                 <TabItem Header="歸還完成">

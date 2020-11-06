@@ -85,12 +85,12 @@ namespace First_MVVM.ViewModels
             set { SetProperty(ref _balanceStr, value); }
         }
 
-        private string _lockerSelectedIndex;
+        private string _lockerBoxSelectedIndex;
 
-        public string LockerSelectedIndex
+        public string LockerBoxSelectedIndex
         {
-            get { return _lockerSelectedIndex; }
-            set { SetProperty(ref _lockerSelectedIndex, value); }
+            get { return _lockerBoxSelectedIndex; }
+            set { SetProperty(ref _lockerBoxSelectedIndex, value); }
         }
 
         private string _outTimeStr;
@@ -166,7 +166,7 @@ namespace First_MVVM.ViewModels
                     if (_checkOut_History.Rows.Count >0)
                     {
                         OutTimeStr = _checkOut_History.Rows[0]["Take_Date"].ToString();
-                        LockerSelectedIndex = _checkOut_History.Rows[0]["Take_BoxName"].ToString();
+                        LockerBoxSelectedIndex = _checkOut_History.Rows[0]["Take_BoxName"].ToString();
                         _checkInModel.SN = _checkOut_History.Rows[0]["Take_SN"].ToString();
                         _checkInModel.CardID = _card_id;
                         NoticeText = string.Empty;
@@ -213,13 +213,13 @@ namespace First_MVVM.ViewModels
                     _checkInModel.ID = _accountStr;
                     _checkInModel.Balance = _balanceStr;
                     _checkInModel.OutTime = _outTimeStr;
-                    _checkInModel.LockerSelectedIndex = _lockerSelectedIndex;
+                    _checkInModel.LockerBoxSelectedIndex = _lockerBoxSelectedIndex;
 
                     break;
                 case "借出紀錄":
                     _checkInModel.InTime = "現在時間";
 
-                    IO.Write(_checkInModel.LockerSelectedIndex, IO.UnLock);
+                    IO.Write(_checkInModel.LockerBoxSelectedIndex, IO.UnLock);
 
                     SetDoorCheckTimer();
                     break;
@@ -251,7 +251,7 @@ namespace First_MVVM.ViewModels
 
         private void OnTimedDoorCheckEvent(Object source, ElapsedEventArgs e)
         {
-            if (IO.Read(_checkInModel.LockerSelectedIndex) == IO.DoorLock)
+            if (IO.Read(_checkInModel.LockerBoxSelectedIndex) == IO.DoorLock)
             {
                 Counter += 1;
                 if (Counter == 20)
@@ -261,7 +261,7 @@ namespace First_MVVM.ViewModels
                     DoorCheckTimer.Close();
                     SelectedStepTabName = "操作逾時";
 
-                    IO.Write(_checkInModel.LockerSelectedIndex, IO.Lock);
+                    IO.Write(_checkInModel.LockerBoxSelectedIndex, IO.Lock);
                 }
             }
             else
@@ -270,7 +270,7 @@ namespace First_MVVM.ViewModels
                 DoorCheckTimer.Elapsed -= OnTimedDoorCheckEvent;
                 DoorCheckTimer.Close();
 
-                IO.Write(_checkInModel.LockerSelectedIndex, IO.Lock);
+                IO.Write(_checkInModel.LockerBoxSelectedIndex, IO.Lock);
 
                 //正常流程
                 SetDoorCheckWithRFIDVerifyTimer();
@@ -290,7 +290,7 @@ namespace First_MVVM.ViewModels
 
         private async void OnTimedDoorCheckWithRFIDVerifyEvent(Object source, ElapsedEventArgs e)
         {
-            if (IO.Read(_checkInModel.LockerSelectedIndex) == IO.DoorOpen)
+            if (IO.Read(_checkInModel.LockerBoxSelectedIndex) == IO.DoorOpen)
             {
                 Counter += 1;
                 if (Counter == 30)
@@ -305,13 +305,13 @@ namespace First_MVVM.ViewModels
             {
                 ///此處RFID檢查有無偵測到物件
                 bool _rfid = true;
-                if (_rfid == true && IO.Read(_checkInModel.LockerSelectedIndex) == IO.DoorLock)
+                if (_rfid == true && IO.Read(_checkInModel.LockerBoxSelectedIndex) == IO.DoorLock)
                 {
                     Counter = 0;
                     DoorCheckWithRFIDVerifyTimer.Elapsed -= OnTimedDoorCheckWithRFIDVerifyEvent;
                     DoorCheckWithRFIDVerifyTimer.Close();
                     //建立Charge_History
-                    await _dBWrite.Inventory(_checkInModel.LockerSelectedIndex, 1);
+                    await _dBWrite.Inventory(_checkInModel.LockerBoxSelectedIndex, 1);
                     await _dBWrite.Take_History_UPDATE(_checkInModel.SN, "已歸還");
                     //存入歷史紀錄
                     await _dBWrite.Charge_History(_checkInModel.ID, _checkInModel.Amount, _checkInModel.HoursUse, _checkInModel.CardID);
