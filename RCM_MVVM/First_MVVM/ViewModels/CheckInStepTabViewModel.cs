@@ -342,6 +342,7 @@ namespace First_MVVM.ViewModels
 
         #endregion
 
+
         #region 觸發事件
 
         private void OnTimedDoorCheckEvent(Object source, ElapsedEventArgs e)
@@ -469,7 +470,6 @@ namespace First_MVVM.ViewModels
         }
 
         #endregion
-
 
 
         #region 主頁互動
