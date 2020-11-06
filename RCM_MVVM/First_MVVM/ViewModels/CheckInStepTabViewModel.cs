@@ -315,8 +315,7 @@ namespace First_MVVM.ViewModels
                     DoorCheckWithRFIDVerifyTimer.Elapsed -= OnTimedDoorCheckWithRFIDVerifyEvent;
                     DoorCheckWithRFIDVerifyTimer.Close();
 
-                    ReaderTimer.Elapsed -= OnTimedReaderEvent;
-                    ReaderTimer.Close();
+                    UnsubscribeReaderEvent();
 
                     SelectedStepTabName = "操作逾時";
                 }
@@ -330,8 +329,7 @@ namespace First_MVVM.ViewModels
                     DoorCheckWithRFIDVerifyTimer.Elapsed -= OnTimedDoorCheckWithRFIDVerifyEvent;
                     DoorCheckWithRFIDVerifyTimer.Close();
 
-                    ReaderTimer.Elapsed -= OnTimedReaderEvent;
-                    ReaderTimer.Close();
+                    UnsubscribeReaderEvent();
 
                     //建立Charge_History
                     //await _dBWrite.Inventory(_checkInModel.LockerBoxSelectedIndex, 1);
@@ -348,14 +346,18 @@ namespace First_MVVM.ViewModels
                     DoorCheckWithRFIDVerifyTimer.Elapsed -= OnTimedDoorCheckWithRFIDVerifyEvent;
                     DoorCheckWithRFIDVerifyTimer.Close();
 
-                    ReaderTimer.Elapsed -= OnTimedReaderEvent;
-                    ReaderTimer.Close();
+                    UnsubscribeReaderEvent();
 
                     SelectedStepTabName = "歸還失敗";
                 }
             }
 
             NoticeText = $"剩餘操作時間 {(30 - Counter)} sec";
+        }
+        private void UnsubscribeReaderEvent()
+        {
+            ReaderTimer.Elapsed -= OnTimedReaderEvent;
+            ReaderTimer.Close();
         }
 
         private void SetReaderTimer()
