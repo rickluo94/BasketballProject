@@ -111,17 +111,7 @@
                 </TabItem>
                 <TabItem Header="選擇櫃位">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="auto"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                        </Grid.RowDefinitions>
-                        <Grid Grid.Row="1" Grid.Column="1" x:Name="LockersList">
+                        <Grid x:Name="LockersList" >
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="">
                                     <i:InvokeCommandAction Command="" CommandParameter="{Binding ElementName=LockersList}"/>
@@ -145,10 +135,17 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                         </Grid>
+                        
+                        <Button Content="↩" Command="{Binding PreviousTabCmd}" Margin="492,10,10,817" />
 
-                        <Button Grid.Row="0" Grid.Column="0" Content="↩" Command="{Binding PreviousTabCmd}" Margin="10,10,10,10" />
-                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding NoticeText}" Width="auto" Margin="10,10,10,10" />
-                        <Button Grid.Row="2" Grid.Column="3" Content="下一步" Command="{Binding NextTabCmd}"  IsEnabled="{Binding NextStepIsEnabled}" Width="auto" Margin="10,10,10,10" />
+                        <TextBlock Margin="95,748,95,92">
+                            <Viewbox>
+                                <TextBlock Text="{Binding NoticeText}" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <Button Content="下一步" Command="{Binding NextTabCmd}"  IsEnabled="{Binding NextStepIsEnabled}" Margin="95,813,95,27" />
+                        
                     </Grid>
                 </TabItem>
                 <TabItem Header="請取球">

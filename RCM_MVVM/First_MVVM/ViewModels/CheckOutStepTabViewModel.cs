@@ -254,8 +254,8 @@ namespace First_MVVM.ViewModels
             for (int i = 0; i < CabinetButton.Count; i++)
             {
                 CabinetButton[i].Content = $"A{Math.Abs(i + 1)}";
-                CabinetButton[i].Width = 50;
-                CabinetButton[i].Height = 50;
+                CabinetButton[i].Width = 170;
+                CabinetButton[i].Height = 170;
                 CabinetButton[i].IsEnabled = _resStatuslist[i];
                 CabinetButton[i].Margin = new Thickness() { Bottom = 10, Left = 10, Right = 10, Top = 10 };
                 if (i < 4)
