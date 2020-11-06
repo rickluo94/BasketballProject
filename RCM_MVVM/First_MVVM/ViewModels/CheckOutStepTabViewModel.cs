@@ -280,6 +280,9 @@ namespace First_MVVM.ViewModels
             FinishInteraction?.Invoke();
         }
 
+
+        #region 設定輪尋事件
+
         private void SetOperationTimer()
         {
             Counter = 0;
@@ -287,28 +290,6 @@ namespace First_MVVM.ViewModels
             OperationTimer.Elapsed += OnTimedOperationEvent;
             OperationTimer.AutoReset = true;
             OperationTimer.Enabled = true;
-        }
-
-        private void OnTimedOperationEvent(Object source, ElapsedEventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(_checkOutModel.LockerBosSelectedIndex))
-            {
-                Counter += 1;
-                if (Counter == 20)
-                {
-                    Counter = 0;
-                    OperationTimer.Elapsed -= OnTimedOperationEvent;
-                    OperationTimer.Close();
-                    SelectedStepTabName = "操作逾時";
-                }
-            }
-            else
-            {
-                Counter = 0;
-                OperationTimer.Elapsed -= OnTimedOperationEvent;
-                OperationTimer.Close();
-            }
-            NoticeText = $"剩餘操作時間 {(20 - Counter)} sec";
         }
 
         private void SetDoorCheckTimer()
@@ -320,37 +301,6 @@ namespace First_MVVM.ViewModels
             DoorCheckTimer.Enabled = true;
         }
 
-        private void OnTimedDoorCheckEvent(Object source, ElapsedEventArgs e)
-        {
-            if (IO.Read(_checkOutModel.LockerBosSelectedIndex) == IO.DoorLock)
-            {
-                Counter += 1;
-                if (Counter == 15)
-                {
-                    Counter = 0;
-                    DoorCheckTimer.Elapsed -= OnTimedDoorCheckEvent;
-                    DoorCheckTimer.Close();
-                    SelectedStepTabName = "操作逾時";
-                    IO.Write(_checkOutModel.LockerBosSelectedIndex, IO.Lock);
-
-                    ReaderTimer.Elapsed -= OnTimedReaderEvent;
-                    ReaderTimer.Close();
-                }
-            }
-            else
-            {
-                Counter = 0;
-                DoorCheckTimer.Elapsed -= OnTimedDoorCheckEvent;
-                DoorCheckTimer.Close();
-                IO.Write(_checkOutModel.LockerBosSelectedIndex, IO.Lock);
-
-                ///資料庫新增會員借出紀錄依據_rentalModel內資料寫入//
-                
-                SetRFIDCheckTimer();
-            }
-            NoticeText = $"剩餘操作時間 {(15 - Counter)} sec";
-        }
-
         private void SetRFIDCheckTimer()
         {
             Counter = 0;
@@ -358,59 +308,6 @@ namespace First_MVVM.ViewModels
             RFIDCheckTimer.Elapsed += OnTimedRFIDCheckEvent;
             RFIDCheckTimer.AutoReset = true;
             RFIDCheckTimer.Enabled = true;
-        }
-
-        private void OnTimedRFIDCheckEvent(Object source, ElapsedEventArgs e)
-        {
-            if (IO.Read(_checkOutModel.LockerBosSelectedIndex) == IO.DoorOpen)
-            {
-                Counter += 1;
-                if (Counter == 50)
-                {
-                    Counter = 0;
-                    RFIDCheckTimer.Elapsed -= OnTimedRFIDCheckEvent;
-                    RFIDCheckTimer.Close();
-
-                    //寫入借出紀錄
-                    _dBWrite.Inventory(_checkOutModel.LockerBosSelectedIndex, 0);
-                    _dBWrite.Take_History(_checkOutModel.ID, _checkOutModel.LockerBosSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
-
-                    ReaderTimer.Elapsed -= OnTimedReaderEvent;
-                    ReaderTimer.Close();
-
-                    SelectedStepTabName = "租借完成";
-                }
-            }
-            else
-            {
-                //此處需要引用RFID模組
-                if (_rReaderModel.Status == false || DoorCheckCounter >= 3)
-                {
-                    Counter = 0;
-                    RFIDCheckTimer.Elapsed -= OnTimedRFIDCheckEvent;
-                    RFIDCheckTimer.Close();
-
-                    //寫入借出紀錄
-                    _dBWrite.Inventory(_checkOutModel.LockerBosSelectedIndex, 0);
-                    _dBWrite.Take_History(_checkOutModel.ID, _checkOutModel.LockerBosSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
-
-                    ReaderTimer.Elapsed -= OnTimedReaderEvent;
-                    ReaderTimer.Close();
-                    
-                    SelectedStepTabName = "租借完成";
-                }
-                else
-                {
-                    Counter = 0;
-                    RFIDCheckTimer.Elapsed -= OnTimedRFIDCheckEvent;
-                    RFIDCheckTimer.Close();
-
-                    IO.Write(_checkOutModel.LockerBosSelectedIndex, IO.UnLock);
-                    SetDoorCheckTimer(); DoorCheckCounter += 1;
-                    SelectedStepTabName = "請取球";
-                }
-            }
-            NoticeText = $"剩餘操作時間 {(50 - Counter)} sec";
         }
 
         private void SetReaderTimer()
@@ -421,9 +318,150 @@ namespace First_MVVM.ViewModels
             ReaderTimer.Enabled = true;
         }
 
+        #endregion
+
+
+        #region 取消訂閱事件
+
+        private void UnsubscribeOperationEvent()
+        {
+            OperationTimer.Elapsed -= OnTimedOperationEvent;
+            OperationTimer.Close();
+        }
+
+        private void UnsubscribeDoorCheckEvent()
+        {
+            DoorCheckTimer.Elapsed -= OnTimedDoorCheckEvent;
+            DoorCheckTimer.Close();
+        }
+
+        private void UnsubscribeRFIDCheckEvent()
+        {
+            RFIDCheckTimer.Elapsed -= OnTimedRFIDCheckEvent;
+            RFIDCheckTimer.Close();
+        }
+
+        private void UnsubscribeReaderEvent()
+        {
+            ReaderTimer.Elapsed -= OnTimedReaderEvent;
+            ReaderTimer.Close();
+        }
+
+        #endregion
+
+
+        #region 觸發事件
+
+        private void OnTimedOperationEvent(Object source, ElapsedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(_checkOutModel.LockerBosSelectedIndex))
+            {
+                Counter += 1;
+                if (Counter == 20)
+                {
+                    Counter = 0;
+
+                    UnsubscribeOperationEvent();
+
+                    SelectedStepTabName = "操作逾時";
+                }
+            }
+            else
+            {
+                Counter = 0;
+
+                UnsubscribeOperationEvent();
+            }
+            NoticeText = $"剩餘操作時間 {(20 - Counter)} sec";
+        }
+
+        private void OnTimedDoorCheckEvent(Object source, ElapsedEventArgs e)
+        {
+            if (IO.Read(_checkOutModel.LockerBosSelectedIndex) == IO.DoorLock)
+            {
+                Counter += 1;
+                if (Counter == 15)
+                {
+                    Counter = 0;
+
+                    UnsubscribeDoorCheckEvent();
+
+                    SelectedStepTabName = "操作逾時";
+                    IO.Write(_checkOutModel.LockerBosSelectedIndex, IO.Lock);
+
+                    UnsubscribeReaderEvent();
+                }
+            }
+            else
+            {
+                Counter = 0;
+
+                UnsubscribeDoorCheckEvent();
+
+                IO.Write(_checkOutModel.LockerBosSelectedIndex, IO.Lock);
+
+                ///資料庫新增會員借出紀錄依據_rentalModel內資料寫入//
+
+                SetRFIDCheckTimer();
+            }
+            NoticeText = $"剩餘操作時間 {(15 - Counter)} sec";
+        }
+
+        private void OnTimedRFIDCheckEvent(Object source, ElapsedEventArgs e)
+        {
+            if (IO.Read(_checkOutModel.LockerBosSelectedIndex) == IO.DoorOpen)
+            {
+                Counter += 1;
+                if (Counter == 50)
+                {
+                    Counter = 0;
+
+                    UnsubscribeRFIDCheckEvent();
+
+                    //寫入借出紀錄
+                    _dBWrite.Inventory(_checkOutModel.LockerBosSelectedIndex, 0);
+                    _dBWrite.Take_History(_checkOutModel.ID, _checkOutModel.LockerBosSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
+
+                    UnsubscribeReaderEvent();
+
+                    SelectedStepTabName = "租借完成";
+                }
+            }
+            else
+            {
+                //此處需要引用RFID模組
+                if (_rReaderModel.Status == false || DoorCheckCounter >= 3)
+                {
+                    Counter = 0;
+
+                    UnsubscribeRFIDCheckEvent();
+
+                    //寫入借出紀錄
+                    _dBWrite.Inventory(_checkOutModel.LockerBosSelectedIndex, 0);
+                    _dBWrite.Take_History(_checkOutModel.ID, _checkOutModel.LockerBosSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
+
+                    UnsubscribeReaderEvent();
+
+
+                    SelectedStepTabName = "租借完成";
+                }
+                else
+                {
+                    Counter = 0;
+
+                    UnsubscribeRFIDCheckEvent();
+
+                    IO.Write(_checkOutModel.LockerBosSelectedIndex, IO.UnLock);
+                    SetDoorCheckTimer(); DoorCheckCounter += 1;
+                    SelectedStepTabName = "請取球";
+                }
+            }
+            NoticeText = $"剩餘操作時間 {(50 - Counter)} sec";
+        }
+
         private void OnTimedReaderEvent(Object source, ElapsedEventArgs e)
         {
-            Tuple<bool,string,string> result = _RFID.ScannAndRead(_checkOutModel.LockerBosSelectedIndex, _checkOutModel.EPC);
+            Tuple<bool, string, string> result = _RFID.ScannAndRead(_checkOutModel.LockerBosSelectedIndex, _checkOutModel.EPC);
             _rReaderModel.Status = result.Item1;
             _rReaderModel.EPC = result.Item2;
             _rReaderModel.TID = result.Item3;
@@ -438,6 +476,10 @@ namespace First_MVVM.ViewModels
             }
         }
 
+        #endregion
+
+
+        #region 主頁互動
         public Action FinishInteraction { get; set; }
 
         private ICustomNotification _notification;
@@ -447,5 +489,8 @@ namespace First_MVVM.ViewModels
             get { return _notification; }
             set { SetProperty(ref _notification, (ICustomNotification)value); }
         }
+
+        #endregion
+
     }
 }
