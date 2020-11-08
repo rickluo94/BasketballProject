@@ -281,7 +281,7 @@ namespace First_MVVM.ViewModels
         }
 
 
-        #region 設定輪尋事件
+        #region Set Subscribe Event
 
         private void SetOperationTimer()
         {
@@ -321,7 +321,7 @@ namespace First_MVVM.ViewModels
         #endregion
 
 
-        #region 取消訂閱事件
+        #region Unsubscribe Event
 
         private void UnsubscribeOperationEvent()
         {
@@ -350,7 +350,7 @@ namespace First_MVVM.ViewModels
         #endregion
 
 
-        #region 觸發事件
+        #region On Subscribe Event
 
         private void OnTimedOperationEvent(Object source, ElapsedEventArgs e)
         {
@@ -479,7 +479,7 @@ namespace First_MVVM.ViewModels
         #endregion
 
 
-        #region 主頁互動
+        #region MainWindow Interactive
         public Action FinishInteraction { get; set; }
 
         private ICustomNotification _notification;

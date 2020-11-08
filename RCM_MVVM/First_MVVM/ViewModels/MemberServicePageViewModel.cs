@@ -281,12 +281,19 @@ namespace First_MVVM.ViewModels
             PumpBoxStartIsEnable = false;
         }
 
+
+        #region Unsubscribe Event
+
         private void UnsubscribePumpStartEvent()
         {
             PumpStartTimer.Elapsed -= OnTimePumpStartEvent;
             PumpStartTimer.Close();
         }
 
+        #endregion
+
+
+        #region Set Subscribe Event
         private void SetPumpStartTimer()
         {
             Counter = 0;
@@ -295,6 +302,11 @@ namespace First_MVVM.ViewModels
             PumpStartTimer.AutoReset = true;
             PumpStartTimer.Enabled = true;
         }
+
+        #endregion
+
+
+        #region On Subscribe Event
 
         private void OnTimePumpStartEvent(Object source, ElapsedEventArgs e)
         {
@@ -318,14 +330,16 @@ namespace First_MVVM.ViewModels
                 UnsubscribePumpStartEvent();
                 IO.Write("A8", IO.Lock);
                 IO.Write("Pump", IO.Lock);
-                
+
                 SelectedStepTabName = "完成";
             }
             NoticeText = $"剩餘操作時間 {(20 - Counter)} sec";
         }
 
+        #endregion
 
-        #region 主頁互動
+
+        #region MainWindow Interactive
 
         public Action FinishInteraction { get; set; }
 
@@ -338,5 +352,6 @@ namespace First_MVVM.ViewModels
         }
 
         #endregion
+
     }
 }

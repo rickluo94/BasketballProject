@@ -519,6 +519,8 @@ namespace First_MVVM.ViewModels
             FinishInteraction?.Invoke();
         }
 
+        #region MainWindow Interactive
+
         public Action FinishInteraction { get; set; }
 
         private ICustomNotification _notification;
@@ -528,5 +530,8 @@ namespace First_MVVM.ViewModels
             get { return _notification; }
             set { SetProperty(ref _notification, (ICustomNotification)value); }
         }
+
+        #endregion
+
     }
 }
