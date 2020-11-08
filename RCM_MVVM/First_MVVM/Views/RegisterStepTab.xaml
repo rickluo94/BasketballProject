@@ -175,14 +175,14 @@
                                 <CheckBox  Command="{Binding CheckReadRulesCmd}" Foreground="#401E01" Margin="{StaticResource ControlMargin}" IsChecked="{Binding ReadRulesIsChecked}" IsEnabled="True" Width="auto" Height="26" HorizontalAlignment="Center" />
                                 <Label Foreground="#F2F2F2" Content="我以閱讀以上條款，並同意此同意書內容" FontSize="20" />
                             </StackPanel>
-                            <Button Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Content="確認" Margin="{StaticResource ControlMargin}" FontSize="26" Width="80" Height="auto" Background="#FFF44336" BorderBrush="#FFF44336" Foreground="#DDFFFFFF"/>
+                            <Button Command="{Binding NextTabCmd}" IsEnabled="{Binding NextStepIsEnabledBool}" Content="確認" Margin="{StaticResource ControlMargin}" FontSize="26" Width="80" Height="auto" Background="#FFF44336" BorderBrush="#FFF44336" Foreground="#DDFFFFFF"/>
                         </StackPanel>
                     </Grid>
                 </TabItem>
                 <TabItem Header="帳號">
                     <Grid>
 
-                        <Button  Content="X" Command="{Binding ExitCommand}" Margin="492,10,10,817" />
+                        <Button  Content="X" Command="{Binding ExitCmd}" Margin="492,10,10,817" />
 
                         <TextBlock Margin="95,145,366,702">
                                 <Viewbox>
@@ -212,17 +212,17 @@
                             </Viewbox>
                         </TextBlock>
 
-                        <Button Content="驗證" Command="{Binding VerifySMCommand}" CommandParameter="{Binding ElementName=VerifySMBox}" Margin="95,463,95,377" />
+                        <Button Content="驗證" Command="{Binding VerifySMCmd}" CommandParameter="{Binding ElementName=VerifySMBox}" Margin="95,463,95,377" />
 
                         <Button Content="發送驗證碼" Command="{Binding SMCmd}" IsEnabled="{Binding SMCmdIsEnabledBool}" CommandParameter="{Binding ElementName=AccountBox}" Margin="352,333,95,507"/>
 
-                        <Button Content="下一步" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="95,813,95,27"/>
+                        <Button Content="下一步" Command="{Binding NextTabCmd}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="95,813,95,27"/>
                     </Grid>
                 </TabItem>
                 <TabItem Header="密碼">
                     <Grid>
 
-                        <Button  Content="↩" Command="{Binding PreviousTabCommand}" Margin="492,10,10,817" />
+                        <Button  Content="↩" Command="{Binding PreviousTabCmd}" Margin="492,10,10,817" />
 
                         <TextBlock Margin="95,145,95,702">
                             <Viewbox >
@@ -233,10 +233,10 @@
                         <PasswordBox Width="auto" x:Name="txtPassword" Margin="95,203,95,637" FontSize="50" >
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="PasswordChanged">
-                                    <i:InvokeCommandAction Command="{Binding PasswordCommand}" CommandParameter="{Binding ElementName=txtPassword}"/>
+                                    <i:InvokeCommandAction Command="{Binding PasswordCmd}" CommandParameter="{Binding ElementName=txtPassword}"/>
                                 </i:EventTrigger>
                                 <i:EventTrigger EventName="Loaded">
-                                    <i:InvokeCommandAction Command="{Binding PasswordClearCommand}" CommandParameter="{Binding ElementName=txtPassword}"/>
+                                    <i:InvokeCommandAction Command="{Binding PasswordClearCmd}" CommandParameter="{Binding ElementName=txtPassword}"/>
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </PasswordBox>
@@ -250,10 +250,10 @@
                         <PasswordBox Name="ConfirmPassword" Margin="95,333,95,507" FontSize="50" >
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="PasswordChanged">
-                                    <i:InvokeCommandAction Command="{Binding PasswordConfirmCommand}" CommandParameter="{Binding ElementName=ConfirmPassword}"/>
+                                    <i:InvokeCommandAction Command="{Binding PasswordConfirmCmd}" CommandParameter="{Binding ElementName=ConfirmPassword}"/>
                                 </i:EventTrigger>
                                 <i:EventTrigger EventName="Loaded">
-                                    <i:InvokeCommandAction Command="{Binding PasswordClearCommand}" CommandParameter="{Binding ElementName=ConfirmPassword}"/>
+                                    <i:InvokeCommandAction Command="{Binding PasswordClearCmd}" CommandParameter="{Binding ElementName=ConfirmPassword}"/>
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </PasswordBox>
@@ -264,13 +264,13 @@
                             </Viewbox>
                         </TextBlock>
 
-                        <Button Content="下一步" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="95,813,95,27" />
+                        <Button Content="下一步" Command="{Binding NextTabCmd}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="95,813,95,27" />
                         
                     </Grid>
                 </TabItem>
                 <TabItem Header="個人資料">
                     <Grid>
-                        <Button Content="↩" Command="{Binding PreviousTabCommand}" Margin="492,10,10,817"/>
+                        <Button Content="↩" Command="{Binding PreviousTabCmd}" Margin="492,10,10,817"/>
 
                         <TextBlock Margin="95,145,95,702">
                             <Viewbox>
@@ -281,7 +281,7 @@
                         <TextBox Name="NameBox" Text="{Binding NameStr}" Margin="95,203,95,637" FontSize="50" >
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="TextChanged">
-                                    <i:InvokeCommandAction Command="{Binding NameCommand}" CommandParameter="{Binding ElementName=NameBox}"/>
+                                    <i:InvokeCommandAction Command="{Binding NameCmd}" CommandParameter="{Binding ElementName=NameBox}"/>
                                 </i:EventTrigger>
                                 <i:EventTrigger EventName="Loaded">
                                     <i:InvokeCommandAction />
@@ -295,13 +295,13 @@
                             </Viewbox>
                         </TextBlock>
 
-                        <Button Content="下一步" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="95,813,95,27" />
+                        <Button Content="下一步" Command="{Binding NextTabCmd}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="95,813,95,27" />
                         
                     </Grid>
                 </TabItem>
                 <TabItem Header="地區">
                     <Grid>
-                        <Button  Content="↩" Command="{Binding PreviousTabCommand}" Margin="492,10,10,817"/>
+                        <Button  Content="↩" Command="{Binding PreviousTabCmd}" Margin="492,10,10,817"/>
 
                         <TextBlock  Margin="95,145,95,702">
                             <Viewbox>
@@ -337,14 +337,14 @@
                             </Viewbox>
                         </TextBlock>
 
-                        <Button Content="下一步" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="95,813,95,27" />
+                        <Button Content="下一步" Command="{Binding NextTabCmd}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="95,813,95,27" />
 
                     </Grid>
                 </TabItem>
                 <TabItem Header="信箱">
                     <Grid>
 
-                        <Button  Content="↩" Command="{Binding PreviousTabCommand}" Margin="492,10,10,817"/>
+                        <Button  Content="↩" Command="{Binding PreviousTabCmd}" Margin="492,10,10,817"/>
 
                         <TextBlock  Margin="95,145,95,702">
                             <Viewbox>
@@ -355,7 +355,7 @@
                         <TextBox Name="EmailBox" Text="{Binding EmailStr}" Margin="95,203,95,644" FontSize="50">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="TextChanged">
-                                    <i:InvokeCommandAction Command="{Binding EmailCommand}" CommandParameter="{Binding ElementName=EmailBox}"/>
+                                    <i:InvokeCommandAction Command="{Binding EmailCmd}" CommandParameter="{Binding ElementName=EmailBox}"/>
                                 </i:EventTrigger>
                                 <i:EventTrigger EventName="Loaded">
                                     <i:InvokeCommandAction />
@@ -369,14 +369,14 @@
                             </Viewbox>
                         </TextBlock>
 
-                        <Button Content="下一步" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="95,813,95,27" />
+                        <Button Content="下一步" Command="{Binding NextTabCmd}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="95,813,95,27" />
                         
                     </Grid>
                 </TabItem>
                 <TabItem Header="設定悠遊卡">
                     <Grid>
 
-                        <Button  Content="↩" Command="{Binding PreviousTabCommand}" Margin="492,10,10,817"/>
+                        <Button  Content="↩" Command="{Binding PreviousTabCmd}" Margin="492,10,10,817"/>
 
                         <TextBlock  Margin="95,145,95,702">
                             <Viewbox>
@@ -402,16 +402,16 @@
                             </Viewbox>
                         </TextBlock>
 
-                        <Button Content="靠卡感應" Command="{Binding ReadCardCommand}" Margin="95,424,95,424"/>
+                        <Button Content="靠卡感應" Command="{Binding ReadCardCmd}" Margin="95,424,95,424"/>
 
-                        <Button Content="下一步" Command="{Binding NextTabCommand}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="95,813,95,27" />
+                        <Button Content="下一步" Command="{Binding NextTabCmd}" IsEnabled="{Binding NextStepIsEnabledBool}" Margin="95,813,95,27" />
 
                     </Grid>
                 </TabItem>
                 <TabItem Header="完成註冊">
                     <Grid>
                         
-                        <Button Content="完成" Command="{Binding RegisterSuccess}" Margin="95,813,95,27"/>
+                        <Button Content="完成" Command="{Binding RegisterSuccessCmd}" Margin="95,813,95,27"/>
                         
                     </Grid>
                 </TabItem>

@@ -27,7 +27,7 @@ namespace First_MVVM.ViewModels
         private DBRead _dBRead = new DBRead();
         private DBWrite _dBWrite = new DBWrite();
 
-        #region 資料容器
+        #region Interface Preperty
         private bool _readRulesIsChecked;
         public bool ReadRulesIsChecked
         {
@@ -172,26 +172,26 @@ namespace First_MVVM.ViewModels
         }
         #endregion 資料流 資料
 
-        #region 命令物件
+        #region Interface Command
         public DelegateCommand CheckReadRulesCmd { get; private set; }
         public DelegateCommand RegisterStepTabLoadCmd { get; private set; }
         public DelegateCommand<TextBox> AccountCmd { get; private set; }
         public DelegateCommand<TextBox> SMCmd { get; private set; }
-        public DelegateCommand<TextBox> VerifySMCommand { get; private set; }
-        public DelegateCommand<object> PasswordCommand { get; private set; }
-        public DelegateCommand<object> PasswordConfirmCommand { get; private set; }
-        public DelegateCommand<object> PasswordClearCommand { get; private set; }
-        public DelegateCommand<TextBox> NameCommand { get; private set; }
+        public DelegateCommand<TextBox> VerifySMCmd { get; private set; }
+        public DelegateCommand<object> PasswordCmd { get; private set; }
+        public DelegateCommand<object> PasswordConfirmCmd { get; private set; }
+        public DelegateCommand<object> PasswordClearCmd { get; private set; }
+        public DelegateCommand<TextBox> NameCmd { get; private set; }
 
         public DelegateCommand CitiesIsChangeCmd { get; private set; }
         public DelegateCommand TownshipIsChangeCmd { get; private set; }
 
-        public DelegateCommand<TextBox> EmailCommand { get; private set; }
-        public DelegateCommand ReadCardCommand { get; private set; }
-        public DelegateCommand NextTabCommand { get; private set; }
-        public DelegateCommand PreviousTabCommand { get; private set; }
-        public DelegateCommand RegisterSuccess { get; private set; }
-        public DelegateCommand ExitCommand { get; private set; }
+        public DelegateCommand<TextBox> EmailCmd { get; private set; }
+        public DelegateCommand ReadCardCmd { get; private set; }
+        public DelegateCommand NextTabCmd { get; private set; }
+        public DelegateCommand PreviousTabCmd { get; private set; }
+        public DelegateCommand RegisterSuccessCmd { get; private set; }
+        public DelegateCommand ExitCmd { get; private set; }
         #endregion
 
         public RegisterStepTabViewModel()
@@ -201,21 +201,22 @@ namespace First_MVVM.ViewModels
             RegisterStepTabLoadCmd = new DelegateCommand(RegisterStepTabLoad);
             AccountCmd = new DelegateCommand<TextBox>(_checkAccount);
             SMCmd = new DelegateCommand<TextBox>(SendMessageKey);
-            VerifySMCommand = new DelegateCommand<TextBox>(VerifyMessageKey);
-            PasswordCommand = new DelegateCommand<object>(CheckPassword);
-            PasswordConfirmCommand = new DelegateCommand<object>(ConfirmPassword);
-            PasswordClearCommand = new DelegateCommand<object>(PasswordClear);
-            NameCommand = new DelegateCommand<TextBox>(CheckNameStr);
+            VerifySMCmd = new DelegateCommand<TextBox>(VerifyMessageKey);
+            PasswordCmd = new DelegateCommand<object>(CheckPassword);
+            PasswordConfirmCmd = new DelegateCommand<object>(ConfirmPassword);
+            PasswordClearCmd = new DelegateCommand<object>(PasswordClear);
+            NameCmd = new DelegateCommand<TextBox>(CheckNameStr);
             CitiesIsChangeCmd = new DelegateCommand(FillTownshipData);
             TownshipIsChangeCmd = new DelegateCommand(CheckAddress);
-            EmailCommand = new DelegateCommand<TextBox>(CheckEmailStr);
-            ReadCardCommand = new DelegateCommand(ReadCard);
-            NextTabCommand = new DelegateCommand(NextTab);
-            PreviousTabCommand = new DelegateCommand(PreviousTab);
-            RegisterSuccess = new DelegateCommand(RegisterAction);
-            ExitCommand = new DelegateCommand(ExitInteraction);
+            EmailCmd = new DelegateCommand<TextBox>(CheckEmailStr);
+            ReadCardCmd = new DelegateCommand(ReadCard);
+            NextTabCmd = new DelegateCommand(NextTab);
+            PreviousTabCmd = new DelegateCommand(PreviousTab);
+            RegisterSuccessCmd = new DelegateCommand(RegisterAction);
+            ExitCmd = new DelegateCommand(ExitInteraction);
             Cities = _nationalCities.FillCitiesData(_nationalCities.FillDefaultData());
         }
+
         private void CheckReadRules()
         {
             if (_readRulesIsChecked == true)
@@ -275,19 +276,6 @@ namespace First_MVVM.ViewModels
                 NoticeText = "不正確";
                 SMCmdIsEnabledBool = false;
             }
-        }
-
-        private void SetTimer()
-        {
-            System.Timers.Timer smTimer = new System.Timers.Timer(1000);
-            smTimer.AutoReset = true;
-            smTimer.Elapsed += OnTimedEvent;
-            smTimer.Enabled = true;
-        }
-
-        private void OnTimedEvent(Object source, ElapsedEventArgs e)
-        {
-            
         }
 
         private async void SendMessageKey(TextBox AccountBox)
