@@ -24,6 +24,7 @@ namespace First_MVVM.ViewModels
         private StrVerify _strVerify = new StrVerify();
         private SendMessage _sendMessage = new SendMessage();
         private EasyCard _easyCard = new EasyCard();
+        private EasyCardServ _easyCardServ = new EasyCardServ();
         private DBRead _dBRead = new DBRead();
         private DBWrite _dBWrite = new DBWrite();
 
@@ -430,16 +431,26 @@ namespace First_MVVM.ViewModels
             string Data = await Task.Run<string>(() => { return _easyCard.Read_card_balance_request(); });
             Card_ID = (string)JObject.Parse(Data)["result"]["card_id"];
             Card_purse_id = (string)JObject.Parse(Data)["result"]["card_purse_id"];
+            bool isThisAlreadyHadBinding = _easyCardServ.IsThisAlreadyHadBinding(Card_ID);
+
             //Card_ID = "4334488813";
             //Card_purse_id = "4334488813";
-            if (string.IsNullOrWhiteSpace(Card_ID) || string.IsNullOrWhiteSpace(Card_purse_id))
+            if (!string.IsNullOrWhiteSpace(Card_ID))
             {
-                NextStepIsEnabledBool = false;
+                if (isThisAlreadyHadBinding == true)
+                {
+                    NextStepIsEnabledBool = false;
+                }
+                else
+                {
+                    NextStepIsEnabledBool = true;
+                }
             }
             else
             {
-                NextStepIsEnabledBool = true;
+                NextStepIsEnabledBool = false;
             }
+           
         }
 
         private void FillProfile()

@@ -352,7 +352,7 @@
                             </Viewbox>
                         </TextBlock>
 
-                        <TextBox Name="EmailBox" Text="{Binding EmailStr}" Margin="95,203,95,644" FontSize="50">
+                        <TextBox Name="EmailBox" Text="{Binding EmailStr}" Margin="95,203,95,644" FontSize="40">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="TextChanged">
                                     <i:InvokeCommandAction Command="{Binding EmailCmd}" CommandParameter="{Binding ElementName=EmailBox}"/>

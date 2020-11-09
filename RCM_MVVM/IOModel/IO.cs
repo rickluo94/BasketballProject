@@ -6,6 +6,7 @@ namespace IOModel
 {
     public static class IO
     {
+        public static readonly bool IsTest = true;
         public static Arduino _IO;
         public static readonly byte Lock = 1;
         public static readonly byte UnLock = 0;
@@ -47,8 +48,15 @@ namespace IOModel
         {
             try
             {
-                _IO = new Arduino(PortName, BaudRate);
-                return true;
+                if (IsTest == false)
+                {
+                    _IO = new Arduino(PortName, BaudRate);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             catch (Exception e)
             {
@@ -60,27 +68,35 @@ namespace IOModel
         {
             try
             {
-                #region digital INPUT
-                foreach (int Value in Enum.GetValues(typeof(IN)))
+                if (IsTest == false)
                 {
-                    _IO.pinMode(Value, Arduino.INPUT);
-                }
-                #endregion
+                    #region digital INPUT
+                    foreach (int Value in Enum.GetValues(typeof(IN)))
+                    {
+                        _IO.pinMode(Value, Arduino.INPUT);
+                    }
+                    #endregion
 
-                #region digital UTPUT
-                foreach (int Value in Enum.GetValues(typeof(Out)))
-                {
-                    _IO.pinMode(Value, Arduino.OUTPUT);
-                }
-                #endregion
+                    #region digital UTPUT
+                    foreach (int Value in Enum.GetValues(typeof(Out)))
+                    {
+                        _IO.pinMode(Value, Arduino.OUTPUT);
+                    }
+                    #endregion
 
-                #region SET digital OUTPUT
-                foreach (int Value in Enum.GetValues(typeof(Out)))
-                {
-                    _IO.digitalWrite(Value, Lock);
+                    #region SET digital OUTPUT
+                    foreach (int Value in Enum.GetValues(typeof(Out)))
+                    {
+                        _IO.digitalWrite(Value, Lock);
+                    }
+                    #endregion
+                    return true;
                 }
-                #endregion
-                return true;
+                else
+                {
+                    return false;
+                }
+                
             }
             catch (Exception e)
             {
@@ -95,10 +111,17 @@ namespace IOModel
         /// <returns></returns>
         public static int Read(string PinName)
         {
-            IN iN = (IN) Enum.Parse(typeof(IN), PinName, true);
             try
             {
-                return _IO.digitalRead((int)iN);
+                if (IsTest ==false)
+                {
+                    IN iN = (IN)Enum.Parse(typeof(IN), PinName, true);
+                    return _IO.digitalRead((int)iN);
+                }
+                else
+                {
+                    return -1;
+                }
             }
             catch (Exception e)
             {
@@ -114,11 +137,19 @@ namespace IOModel
         /// <returns></returns>
         public static bool Write(string PinName, byte Value)
         {
-            Out _out = (Out) Enum.Parse(typeof(Out), PinName, true);
             try
             {
-                _IO.digitalWrite((int)_out, Value);
-                return true;
+                if (IsTest == false)
+                {
+                    Out _out = (Out)Enum.Parse(typeof(Out), PinName, true);
+                    _IO.digitalWrite((int)_out, Value);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+                
             }
             catch (Exception)
             {

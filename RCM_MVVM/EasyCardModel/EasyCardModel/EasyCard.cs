@@ -12,6 +12,8 @@ namespace EasyCardModel
         /// <summary>
         /// Your serial port
         /// </summary>
+
+        private readonly bool IsTest = true;
         private SerialPort _serialPort;
         private int _timeOut, _timeOutDefault;
         private AutoResetEvent _receiveNow;
@@ -40,12 +42,19 @@ namespace EasyCardModel
         {
             try
             {
-                if (_serialPort != null && !_serialPort.IsOpen)
+                if (IsTest == false)
                 {
-                    _receiveNow = new System.Threading.AutoResetEvent(false);
-                    _serialPort.Open();
-                    _serialPort.DataReceived += new SerialDataReceivedEventHandler(_serialPort_DataReceived);
-                    return true;
+                    if (_serialPort != null && !_serialPort.IsOpen)
+                    {
+                        _receiveNow = new System.Threading.AutoResetEvent(false);
+                        _serialPort.Open();
+                        _serialPort.DataReceived += new SerialDataReceivedEventHandler(_serialPort_DataReceived);
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
                 else
                 {
@@ -77,10 +86,17 @@ namespace EasyCardModel
         {
             try
             {
-                if (_serialPort != null && _serialPort.IsOpen)
+                if (IsTest == false)
                 {
-                    _serialPort.Close();
-                    return true;
+                    if (_serialPort != null && _serialPort.IsOpen)
+                    {
+                        _serialPort.Close();
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
                 else
                 {
