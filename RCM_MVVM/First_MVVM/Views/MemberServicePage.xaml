@@ -102,7 +102,7 @@
                             </Viewbox>
                         </TextBlock>
 
-                        <Button Content="靠卡感應" Command="{Binding ReadCardCmd}" Margin="95,463,95,377" />
+                        <Button Content="靠卡感應" Command="{Binding ReadCardCmd}" IsEnabled="{Binding ReadCardIsEnabled}" Margin="95,463,95,377" />
 
                         <Button Content="下一步" Command="{Binding NextTabCmd}" IsEnabled="{Binding NextStepIsEnabled}" Margin="95,813,95,27" />
 

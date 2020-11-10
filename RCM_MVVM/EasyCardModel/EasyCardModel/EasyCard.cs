@@ -13,7 +13,7 @@ namespace EasyCardModel
         /// Your serial port
         /// </summary>
 
-        private readonly bool IsTest = true;
+        private readonly bool IsTest = false;
         private SerialPort _serialPort;
         private int _timeOut, _timeOutDefault;
         private AutoResetEvent _receiveNow;

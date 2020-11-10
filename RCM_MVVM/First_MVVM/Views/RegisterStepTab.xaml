@@ -186,7 +186,7 @@
 
                         <TextBlock Margin="95,145,366,702">
                                 <Viewbox>
-                                    <TextBlock>帳號:</TextBlock>
+                                    <TextBlock>手機號碼:</TextBlock>
                                 </Viewbox>
                         </TextBlock>
 
@@ -378,6 +378,12 @@
 
                         <Button  Content="↩" Command="{Binding PreviousTabCmd}" Margin="492,10,10,817"/>
 
+                        <TextBlock Margin="95,742,95,98">
+                            <Viewbox>
+                                <TextBlock Text="{Binding NoticeText}" />
+                            </Viewbox>
+                        </TextBlock>
+                        
                         <TextBlock  Margin="95,145,95,702">
                             <Viewbox>
                                 <TextBlock Text="卡號:"/>
@@ -392,7 +398,7 @@
 
                         <TextBlock  Margin="95,261,95,586">
                             <Viewbox>
-                                <TextBlock Text="卡號內碼:"/>
+                                <TextBlock Text="外卡卡號:"/>
                             </Viewbox>
                         </TextBlock>
                         

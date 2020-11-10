@@ -35,6 +35,13 @@ namespace First_MVVM.ViewModels
 
         #region Interface Property
 
+        private bool _readCardIsEnabled;
+        public bool ReadCardIsEnabled
+        {
+            get { return _readCardIsEnabled; }
+            set { SetProperty(ref _readCardIsEnabled, value); }
+        }
+
         private string _readerStatusStr;
         public string ReaderStatusStr
         {
@@ -143,7 +150,8 @@ namespace First_MVVM.ViewModels
             _rReaderModel = new RFID_ReaderModel();
             _rReaderModel.Status = true;
             _easyCard.SetDevicePort("COM8", 115200, 500); _easyCard.Open();
-            NextStepIsEnabled = true;
+            NextStepIsEnabled = false;
+            ReadCardIsEnabled = true;
             SelectedStepTabIndex = 0;
             if (CheckAvailableUse() == true) { FillCabinetBtns(LockerBox);} else { MessageBox.Show("目前沒有可租借籃球"); ExitInteraction(); }
         }
@@ -173,18 +181,27 @@ namespace First_MVVM.ViewModels
             {
                 AccountStr = _rFID_UsersProfile.Rows[0]["RFID_user_id"].ToString();
                 BalanceStr = (string)JObject.Parse(Data)["result"]["balance"];
+                NoticeText = string.Empty;
+                ReadCardIsEnabled = false;
+                NextStepIsEnabled = true;
 
                 DataTable _outstanding_Amount = await _dBRead.Outstanding_Amount(AccountStr);
+
                 if (_outstanding_Amount.Rows.Count > 0)
                 {
                     NoticeText = "尚有未付款";
                     NextStepIsEnabled = false;
                 }
-                else
+
+                int _notReturnedCheckOut = await _dBRead.NotReturnedCheckOut(AccountStr);
+
+                if (_notReturnedCheckOut > 0)
                 {
-                    NoticeText = string.Empty;
-                    NextStepIsEnabled = true;
+                    NoticeText = "尚有未歸還";
+                    NextStepIsEnabled = false;
                 }
+
+
             }
             else
             {

@@ -103,7 +103,7 @@
                             </Viewbox>
                         </TextBlock>
 
-                        <Button Content="靠卡感應" Command="{Binding ReadCardCmd}" Margin="95,442,95,398" />
+                        <Button Content="靠卡感應" Command="{Binding ReadCardCmd}" IsEnabled="{Binding ReadCardIsEnabled}" Margin="95,442,95,398" />
 
                         <Button Content="下一步" Command="{Binding NextTabCmd}"  IsEnabled="{Binding NextStepIsEnabled}" Margin="95,813,95,27" />
                         
@@ -114,7 +114,7 @@
 
                         <WrapPanel x:Name="LockerBoxList" Orientation="Vertical"  Margin="98,6,12,14"/>
                         
-                        <Button Content="↩" Command="{Binding PreviousTabCmd}" Margin="492,10,10,817" />
+                        <Button Content="↩" Command="{Binding PreviousTabCmd}" Margin="492,10,10,817" IsEnabled="False"/>
 
                         <TextBlock Margin="95,750,95,90">
                             <Viewbox>

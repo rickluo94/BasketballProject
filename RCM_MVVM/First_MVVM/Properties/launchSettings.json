@@ -3,7 +3,7 @@
     "First_MVVM": {
       "commandName": "Project",
       "remoteDebugEnabled": false,
-      "remoteDebugMachine": "",
+      "remoteDebugMachine": "PC",
       "authenticationMode": "Windows"
     }
   }

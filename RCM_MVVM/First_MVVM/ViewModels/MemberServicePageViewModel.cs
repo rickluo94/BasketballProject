@@ -33,6 +33,13 @@ namespace First_MVVM.ViewModels
 
         #region Interface Property
 
+        private bool _readCardIsEnabled;
+        public bool ReadCardIsEnabled
+        {
+            get { return _readCardIsEnabled; }
+            set { SetProperty(ref _readCardIsEnabled, value); }
+        }
+
         private bool _pumpBoxStartIsEnable;
         public bool PumpBoxStartIsEnable
         {
@@ -140,6 +147,7 @@ namespace First_MVVM.ViewModels
         private void MemberServicePageLoad()
         {
             PumpBoxStartIsEnable = true;
+            ReadCardIsEnabled = true;
             NextStepIsEnabled = false;
             SelectedStepTabIndex = 0;
             _memberServiceModel = new MemberServiceModel();
@@ -238,6 +246,7 @@ namespace First_MVVM.ViewModels
                     AmountStr = _outstanding_Amount.Rows[0]["Charge_amount"].ToString();
                     SNStr = _outstanding_Amount.Rows[0]["Charge_SN"].ToString();
                 }
+                ReadCardIsEnabled = false;
                 NextStepIsEnabled = true;
             }
             else

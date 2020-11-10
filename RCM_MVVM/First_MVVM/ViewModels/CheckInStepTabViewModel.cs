@@ -32,6 +32,13 @@ namespace First_MVVM.ViewModels
 
         #region Interface Property
 
+        private bool _readCardIsEnabled;
+        public bool ReadCardIsEnabled
+        {
+            get { return _readCardIsEnabled; }
+            set { SetProperty(ref _readCardIsEnabled, value); }
+        }
+
         private string _readerStatusStr;
         public string ReaderStatusStr
         {
@@ -152,8 +159,8 @@ namespace First_MVVM.ViewModels
             _rReaderModel.Status = false;
 
             _easyCard.SetDevicePort("COM8", 115200, 500); _easyCard.Open();
-
-            NextStepIsEnabled = true;
+            ReadCardIsEnabled = true;
+            NextStepIsEnabled = false;
             SelectedStepTabIndex = 0;
         }
 
@@ -185,6 +192,7 @@ namespace First_MVVM.ViewModels
                         _checkInModel.SN = _checkOut_History.Rows[0]["Take_SN"].ToString();
                         _checkInModel.CardID = _card_id;
                         NoticeText = string.Empty;
+                        ReadCardIsEnabled = false;
                         NextStepIsEnabled = true;
                     }
                 }
@@ -233,7 +241,9 @@ namespace First_MVVM.ViewModels
 
                     break;
                 case "借出紀錄":
-                    _checkInModel.InTime = "現在時間";
+                    DateTime inDate = DateTime.Now;
+                    InTimeStr = inDate.ToString();
+                    _checkInModel.InTime = _inTimeStr;
 
                     IO.Write(_checkInModel.LockerBoxSelectedIndex, IO.UnLock);
 
@@ -406,8 +416,8 @@ namespace First_MVVM.ViewModels
                     UnsubscribeReaderEvent();
 
                     //建立Charge_History
-                    //await _dBWrite.Inventory(_checkInModel.LockerBoxSelectedIndex, 1);
-                    //await _dBWrite.Take_History_UPDATE(_checkInModel.SN, "已歸還");
+                    _dBWrite.Inventory(_checkInModel.LockerBoxSelectedIndex, 1);
+                    _dBWrite.Take_History_UPDATE(_checkInModel.SN, "已歸還");
                     ////存入歷史紀錄
                     _dBWrite.Charge_History(_checkInModel.ID, _checkInModel.Amount, _checkInModel.HoursUse, _checkInModel.CardID);
 

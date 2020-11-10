@@ -278,6 +278,29 @@ namespace DBModel
             return table;
         }
 
+        public async Task<int> NotReturnedCheckOut(string ID)
+        {
+            int Amount = 0;
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"SELECT count(Take_CheckIn) FROM ste_SBSCS.Take_History Where Take_ModifyUser = '{ID}' And Take_CheckIn = '未歸還';";
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            Amount = reader.GetInt32(0);
+                        }
+                    }
+                }
+
+            }
+            return Amount;
+        }
+
     }
 
     public class DBWrite

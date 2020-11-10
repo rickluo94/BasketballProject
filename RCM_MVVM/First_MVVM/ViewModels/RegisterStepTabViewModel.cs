@@ -439,6 +439,7 @@ namespace First_MVVM.ViewModels
             {
                 if (isThisAlreadyHadBinding == true)
                 {
+                    NoticeText = "悠遊卡不可重複綁定";
                     NextStepIsEnabledBool = false;
                 }
                 else
@@ -489,6 +490,7 @@ namespace First_MVVM.ViewModels
             NoticeText = null;
             SelectedStepTabIndex += 1;
         }
+
         private void PreviousTab()
         {
             SelectedStepTabIndex -= 1;
