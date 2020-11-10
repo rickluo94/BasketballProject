@@ -1,5 +1,8 @@
-﻿using System;
+﻿using DBModel;
+using Renci.SshNet.Security.Cryptography;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using System.Windows.Controls;
 
@@ -12,7 +15,6 @@ namespace First_MVVM.Business
 
 	public class DBResStatus : ResStatus
 	{
-
         public List<bool> GetAll()
 		{
             return new List<bool>()

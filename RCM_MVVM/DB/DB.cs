@@ -232,6 +232,46 @@ namespace DBModel
             return table;
         }
 
+        public async Task<DataTable> InventoryX()
+        {
+            DataTable table = new DataTable();
+            DataColumn column;
+            DataRow row;
+            string[] _columnName = { "Inventory_Amount", "Inventory_CabinetLoc"};
+            foreach (string _name in _columnName)
+            {
+                column = new DataColumn();
+                column.DataType = Type.GetType("System.String");
+                column.ColumnName = _name;
+                table.Columns.Add(column);
+            }
+
+            string buffer = string.Empty;
+
+
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"SELECT Inventory_Amount, Inventory_CabinetLoc FROM ste_SBSCS.Inventory;";
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            row = table.NewRow();
+                            row["Inventory_Amount"] = reader.GetInt16(0);
+                            row["Inventory_CabinetLoc"] = reader.GetString(1);
+                            table.Rows.Add(row);
+                        }
+                    }
+                }
+
+            }
+            return table;
+        }
+
         public async Task<DataTable> Charge_History(string ID)
         {
             DataTable table = new DataTable();
