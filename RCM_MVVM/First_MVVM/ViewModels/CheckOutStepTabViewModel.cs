@@ -118,7 +118,7 @@ namespace First_MVVM.ViewModels
         
 
         public ObservableCollection<bool> ResStatus { get; private set; } = new ObservableCollection<bool>();
-        private Business.ResStatus _resStatusGroup = null;
+        private Business.BoxItemStatus _resStatusGroup = null;
         private List<bool> _resStatuslist { get;  set; }
 
         #endregion
@@ -132,7 +132,7 @@ namespace First_MVVM.ViewModels
 
         #endregion
 
-        public CheckOutStepTabViewModel(Business.ResStatus resStatusGroup)
+        public CheckOutStepTabViewModel(Business.BoxItemStatus resStatusGroup)
         {
             _resStatusGroup = resStatusGroup;
             CheckOutStepTabLoadCmd = new DelegateCommand<WrapPanel>(CheckOutStepTabLoad);
@@ -142,7 +142,7 @@ namespace First_MVVM.ViewModels
             ReadCardCmd = new DelegateCommand(ReadCard);
         }
 
-        private void CheckOutStepTabLoad(WrapPanel LockerBox)
+        private async void CheckOutStepTabLoad(WrapPanel LockerBox)
         {
             _inventoryModel = new DataTable();
             _checkOutModel = new CheckOutModel();
@@ -153,13 +153,13 @@ namespace First_MVVM.ViewModels
             NextStepIsEnabled = false;
             ReadCardIsEnabled = true;
             SelectedStepTabIndex = 0;
-            if (CheckAvailableUse() == true) { FillCabinetBtns(LockerBox);} else { MessageBox.Show("目前沒有可租借籃球"); ExitInteraction(); }
+            if (await CheckAvailableUse() == true) { FillCabinetBtns(LockerBox);} else { MessageBox.Show("目前沒有可租借籃球"); ExitInteraction(); }
         }
 
-        private bool CheckAvailableUse()
+        private async Task<bool> CheckAvailableUse()
         {
             //Get res status
-            _resStatuslist = _resStatusGroup.GetAll();
+            _resStatuslist = await _resStatusGroup.GetAll();
             foreach (bool res in _resStatuslist)
             {
                 if (res == true)
