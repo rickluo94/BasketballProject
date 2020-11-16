@@ -13,9 +13,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="App.config" />
+    <None Remove="Images\basketball.png" />
+    <None Remove="Images\customer-support.png" />
+    <None Remove="Images\dribble.png" />
+    <None Remove="Images\membership.png" />
+    <None Remove="Images\Pump.png" />
+    <None Remove="Images\Tap Card.png" />
     <None Remove="Json\CityCountyData.json" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.19" />
     <PackageReference Include="MySql.Data" Version="8.0.21" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Prism.Unity" Version="7.2.0.1422" />
@@ -32,6 +39,24 @@
     <Folder Include="Notifications\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Images\basketball.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\customer-support.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\dribble.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\membership.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Pump.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Tap Card.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Json\CityCountyData.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

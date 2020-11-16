@@ -5,16 +5,73 @@
         xmlns:prism="http://prismlibrary.com/" FontSize="28"
         xmlns:View="clr-namespace:First_MVVM.Views"
         prism:ViewModelLocator.AutoWireViewModel="True"
-        Title="{Binding Title}" Background="#FF303030"
+        Title="{Binding Title}" Background="#243340"
         WindowState="Maximized"
         WindowStartupLocation="CenterScreen" 
         WindowStyle="None"
         >
     <Window.Resources>
-        <Thickness x:Key="ControlMargin">10 10 10 10</Thickness>
+        <Thickness x:Key="ControlMargin">50 50 50 0</Thickness>
         <Style TargetType="{x:Type Button}">
-            <Setter Property="Background" Value="#FFF44336"/>
-            <Setter Property="BorderBrush" Value="#FFF44336"/>
+            <Setter Property="Background" Value="#FDD835"/>
+            <Setter Property="BorderBrush" Value="#FBC02D"/>
+            <Setter Property="Foreground" Value="#F2F2F2"/>
+        </Style>
+        <Style x:Key="RoundCorner" TargetType="{x:Type Button}">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid x:Name="grid">
+                            <Border x:Name="border" CornerRadius="25" BorderBrush="#243340" BorderThickness="10">
+                                <Border.Background>
+                                    <RadialGradientBrush GradientOrigin="0.496,1.052">
+                                        <RadialGradientBrush.RelativeTransform>
+                                            <TransformGroup>
+                                                <ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="1.5" ScaleY="1.5"/>
+                                                <TranslateTransform X="0.02" Y="0.3"/>
+                                            </TransformGroup>
+                                        </RadialGradientBrush.RelativeTransform>
+                                        <GradientStop Offset="1" Color="#FDD835"/>
+                                        <GradientStop Offset="0.3" Color="#FBC02D"/>
+                                    </RadialGradientBrush>
+                                </Border.Background>
+                                <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          TextElement.FontWeight="Bold">
+                                </ContentPresenter>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" TargetName="border">
+                                    <Setter.Value>
+                                        <RadialGradientBrush GradientOrigin="0.496,1.052">
+                                            <RadialGradientBrush.RelativeTransform>
+                                                <TransformGroup>
+                                                    <ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="1.5" ScaleY="1.5"/>
+                                                    <TranslateTransform X="0.02" Y="0.3"/>
+                                                </TransformGroup>
+                                            </RadialGradientBrush.RelativeTransform>
+                                            <GradientStop Color="#00000000" Offset="1"/>
+                                            <GradientStop Color="#A62934" Offset="0.3"/>
+                                        </RadialGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" TargetName="border" Value="#A62934"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" TargetName="grid" Value="0.25"/>
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
             <Setter Property="Foreground" Value="#F2F2F2"/>
         </Style>
     </Window.Resources>
@@ -73,39 +130,68 @@
         </prism:InteractionRequestTrigger>
     </i:Interaction.Triggers>
     <Viewbox Stretch="Uniform">
-        <Grid Height="1024" Width="600">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition />
-                <ColumnDefinition Width="100"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="20" />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition Height="20" />
-            </Grid.RowDefinitions>
-            <!-- Row 1 -->
-            <ContentControl Grid.Row="0" Grid.Column="1" prism:RegionManager.RegionName="ContentRegion"/>
+        <WrapPanel Height="1024" Width="600">
 
-            <!-- Row 2 -->
-            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding UpdateText}" />
+            <ContentControl  prism:RegionManager.RegionName="ContentRegion"/>
 
-            <!-- Row 3 -->
-            <Button Grid.Row="1" Grid.Column="1" Content="Check Out 我要借球" Command="{Binding CheckOutStepTabCommand}" Margin="{StaticResource ControlMargin}"/>
+            <TextBlock Text="{Binding UpdateText}" />
 
-            <!-- Row 4 -->
-            <Button Grid.Row="2" Grid.Column="1" Content="Check In 我要還球" Command="{Binding CheckInStepTabCommand}" Margin="{StaticResource ControlMargin}"/>
+            <Button Content="Check Out 我要借球" Style="{DynamicResource RoundCorner}" Command="{Binding CheckOutStepTabCommand}" Margin="{StaticResource ControlMargin}" >
+                <Button.ContentTemplate>
+                    <DataTemplate>
+                        <Viewbox>
+                            <TextBlock>
+                                <TextBlock.Background>
+                                    <ImageBrush ImageSource="/Images/basketball.png" TileMode="None" Stretch="Uniform" ViewboxUnits="RelativeToBoundingBox" ViewportUnits="RelativeToBoundingBox" Viewbox="0,0,5,1"/>
+                                </TextBlock.Background>　我要借球
+                            </TextBlock>
+                        </Viewbox>
+                    </DataTemplate>
+                </Button.ContentTemplate>
+            </Button>
 
-            <!-- Row 5 -->
-            <Button Grid.Row="3" Grid.Column="1" Content="New Members 新會員" Command="{Binding RegisterStepTabCommand}" Margin="{StaticResource ControlMargin}"/>
+            <Button Content="Check In 我要還球" Style="{DynamicResource RoundCorner}" Command="{Binding CheckInStepTabCommand}" Margin="{StaticResource ControlMargin}">
+                <Button.ContentTemplate>
+                    <DataTemplate>
+                        <Viewbox>
+                            <TextBlock>
+                                <TextBlock.Background>
+                                    <ImageBrush ImageSource="/Images/basketball.png" TileMode="None" Stretch="Uniform" ViewboxUnits="RelativeToBoundingBox" ViewportUnits="RelativeToBoundingBox" Viewbox="0,0,5,1"/>
+                                </TextBlock.Background>　我要還球
+                            </TextBlock>
+                        </Viewbox>
+                    </DataTemplate>
+                </Button.ContentTemplate>
+            </Button>
 
-            <!-- Row 5 -->
-            <Button Grid.Row="4" Grid.Column="1" Content="Service 會員服務" Command="{Binding MemberServicePageCommand}" Margin="{StaticResource ControlMargin}"/>
+            <Button Content="Service 會員服務" Style="{DynamicResource RoundCorner}" Command="{Binding MemberServicePageCommand}" Margin="{StaticResource ControlMargin}">
+                <Button.ContentTemplate>
+                    <DataTemplate>
+                        <Viewbox>
+                            <TextBlock>
+                                <TextBlock.Background>
+                                    <ImageBrush ImageSource="/Images/customer-support.png" TileMode="None" Stretch="Uniform" ViewboxUnits="RelativeToBoundingBox" ViewportUnits="RelativeToBoundingBox" Viewbox="0,0,5,1"/>
+                                </TextBlock.Background>　會員服務
+                            </TextBlock>
+                        </Viewbox>
+                    </DataTemplate>
+                </Button.ContentTemplate>
+            </Button>
 
-        </Grid>
+            <Button Content="New Members 新會員" Style="{DynamicResource RoundCorner}" Command="{Binding RegisterStepTabCommand}" Margin="{StaticResource ControlMargin}">
+                <Button.ContentTemplate>
+                    <DataTemplate>
+                        <Viewbox>
+                            <TextBlock>
+                                <TextBlock.Background>
+                                    <ImageBrush ImageSource="/Images/membership.png" TileMode="None" Stretch="Uniform" ViewboxUnits="RelativeToBoundingBox" ViewportUnits="RelativeToBoundingBox" Viewbox="0,0,4,1"/>
+                                </TextBlock.Background>　　新 會 員
+                            </TextBlock>
+                        </Viewbox>
+                    </DataTemplate>
+                </Button.ContentTemplate>
+            </Button>
+            
+        </WrapPanel>
     </Viewbox>
 </Window>
