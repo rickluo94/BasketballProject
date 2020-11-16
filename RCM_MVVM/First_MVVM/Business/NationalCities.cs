@@ -11,7 +11,7 @@ namespace First_MVVM.Business
         public List<CitiesList> FillDefaultData()
         {
             string path = Directory.GetCurrentDirectory();
-            path = path + "\\Json\\CityCountyData.json";//netcoreapp3.1
+            path = path + "\\netcoreapp3.1\\Json\\CityCountyData.json";//netcoreapp3.1
             string jsonString = File.ReadAllText(path);
             List<CitiesList> parameter = JsonSerializer.Deserialize<List<CitiesList>>(jsonString);
 

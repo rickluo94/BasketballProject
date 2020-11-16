@@ -17,6 +17,7 @@
     <None Remove="Images\customer-support.png" />
     <None Remove="Images\dribble.png" />
     <None Remove="Images\membership.png" />
+    <None Remove="Images\Pump.png" />
     <None Remove="Images\Tap Card.png" />
     <None Remove="Json\CityCountyData.json" />
   </ItemGroup>
@@ -47,6 +48,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\membership.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Pump.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\Tap Card.png">
