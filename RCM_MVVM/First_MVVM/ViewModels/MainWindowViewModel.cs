@@ -51,6 +51,7 @@ namespace First_MVVM.ViewModels
 
             MemberServicePageRequest = new InteractionRequest<ICustomNotification>();
             MemberServicePageCommand = new DelegateCommand(MemberServicePageView);
+            
         }
 
         private void RegisterStepTabView()

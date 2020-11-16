@@ -191,7 +191,6 @@
                     </DataTemplate>
                 </Button.ContentTemplate>
             </Button>
-            
         </WrapPanel>
     </Viewbox>
 </Window>

@@ -10,6 +10,7 @@ namespace First_MVVM.Views
         public MainWindow()
         {
             InitializeComponent();
+
         }
     }
 }
