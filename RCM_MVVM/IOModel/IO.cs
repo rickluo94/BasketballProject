@@ -21,10 +21,10 @@ namespace IOModel
             A3 = 2,
             A4 = 3,
             A5 = 4,
-            A6 = 0,
-            A7 = 0,
-            A8 = 6,
-            Pump = 5
+            A6 = 5,
+            A7 = 6,
+            A8 = 18,
+            Pump = 19
         }
         #endregion
 
@@ -36,8 +36,8 @@ namespace IOModel
             A3 = 9,
             A4 = 10,
             A5 = 11,
-            A6 = 7,
-            A7 = 7,
+            A6 = 12,
+            A7 = 20,
             A8 = 21,
             Pump = 22,
             Buzz = 23
