@@ -13,6 +13,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="App.config" />
+    <None Remove="Images\basketball.png" />
+    <None Remove="Images\customer-support.png" />
+    <None Remove="Images\dribble.png" />
+    <None Remove="Images\membership.png" />
+    <None Remove="Images\Tap Card.png" />
     <None Remove="Json\CityCountyData.json" />
   </ItemGroup>
   <ItemGroup>
@@ -32,6 +37,21 @@
     <Folder Include="Notifications\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Images\basketball.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\customer-support.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\dribble.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\membership.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\Tap Card.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Json\CityCountyData.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
