@@ -149,7 +149,7 @@ namespace First_MVVM.ViewModels
             _RFID.Connect();
             _rReaderModel = new RFID_ReaderModel();
             _rReaderModel.Status = true;
-            _easyCard.SetDevicePort("COM8", 115200, 500); _easyCard.Open();
+            _easyCard.SetDevicePort("COM7", 115200, 500); _easyCard.Open();
             NextStepIsEnabled = false;
             ReadCardIsEnabled = true;
             SelectedStepTabIndex = 0;

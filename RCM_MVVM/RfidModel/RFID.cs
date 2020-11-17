@@ -48,7 +48,7 @@ namespace RfidModel
         public bool Connect()
         {
             clientConn = new GClient();
-            if (clientConn.OpenSerial("COM7:115200", 1000, out status))
+            if (clientConn.OpenSerial("COM6:115200", 1000, out status))
             {
                 MsgBaseSetPower msgBaseSetPower = new MsgBaseSetPower();
                 msgBaseSetPower.DicPower = new Dictionary<byte, byte>()

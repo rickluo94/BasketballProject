@@ -251,13 +251,13 @@
                                 </DataTemplate>
                             </Button.ContentTemplate>
                         </Button>
-                        
+
                     </Grid>
                 </TabItem>
                 <TabItem Header="選擇櫃位">
                     <Grid>
 
-                        <WrapPanel x:Name="LockerBoxList" Orientation="Vertical"  Margin="98,6,12,14"/>
+                        <WrapPanel x:Name="LockerBoxList" Orientation="Vertical"  Margin="98,6,12,127"/>
 
                         <Button Content="↩" Style="{DynamicResource RoundCorner}" Command="{Binding PreviousTabCmd}" Margin="492,10,10,817" IsEnabled="False">
                             <Button.ContentTemplate>
@@ -269,7 +269,7 @@
                             </Button.ContentTemplate>
                         </Button>
 
-                        <TextBlock Margin="95,750,95,90">
+                        <TextBlock Margin="290,712,49,132">
                             <Viewbox>
                                 <TextBlock Text="{Binding NoticeText}" />
                             </Viewbox>
@@ -288,7 +288,7 @@
                                 </DataTemplate>
                             </Button.ContentTemplate>
                         </Button>
-                        
+
                     </Grid>
                 </TabItem>
                 <TabItem Header="請取球">
@@ -330,12 +330,12 @@
                                 </DataTemplate>
                             </Button.ContentTemplate>
                         </Button>
-                        
+
                     </Grid>
                 </TabItem>
                 <TabItem Header="操作逾時">
                     <Grid>
-                        
+
                         <TextBlock Margin="95,355,95,485">
                             <Viewbox>
                                 <TextBlock Text="操作逾時!" />
@@ -351,7 +351,7 @@
                                 </DataTemplate>
                             </Button.ContentTemplate>
                         </Button>
-                        
+
                     </Grid>
                 </TabItem>
             </TabControl>

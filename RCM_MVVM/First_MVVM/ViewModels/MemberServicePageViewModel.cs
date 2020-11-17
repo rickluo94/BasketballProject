@@ -151,7 +151,7 @@ namespace First_MVVM.ViewModels
             NextStepIsEnabled = false;
             SelectedStepTabIndex = 0;
             _memberServiceModel = new MemberServiceModel();
-            _easyCard.SetDevicePort("COM8", 115200, 500); _easyCard.Open();
+            _easyCard.SetDevicePort("COM7", 115200, 500); _easyCard.Open();
         }
 
         private void ExitInteraction()

@@ -16,6 +16,7 @@
     <None Remove="Images\basketball.png" />
     <None Remove="Images\customer-support.png" />
     <None Remove="Images\dribble.png" />
+    <None Remove="Images\medal.png" />
     <None Remove="Images\membership.png" />
     <None Remove="Images\Pump.png" />
     <None Remove="Images\Tap Card.png" />
@@ -46,6 +47,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\dribble.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\medal.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\membership.png">

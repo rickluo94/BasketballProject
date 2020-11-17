@@ -39,8 +39,8 @@ namespace IOModel
             A6 = 12,
             A7 = 20,
             A8 = 21,
-            Pump = 22,
-            Buzz = 23
+            Buzz= 22,
+            Pump = 23
         }
         #endregion
 

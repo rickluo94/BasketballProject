@@ -314,79 +314,79 @@
                 <TabItem Header="付款">
                     <Grid>
 
-                        <TextBlock Margin="95,69,95,778">
+                        <TextBlock Margin="95,15,95,832">
                             <Viewbox>
                                 <TextBlock Text="會員:" />
                             </Viewbox>
                         </TextBlock>
 
-                        <TextBlock Margin="95,127,95,720">
+                        <TextBlock Margin="95,73,95,774">
                             <Viewbox>
                                 <TextBlock Text="{Binding AccountStr}" />
                             </Viewbox>
                         </TextBlock>
 
-                        <TextBlock Margin="95,185,95,662">
+                        <TextBlock Margin="95,131,95,716">
                             <Viewbox>
                                 <TextBlock Text="即時餘額:" />
                             </Viewbox>
                         </TextBlock>
 
-                        <TextBlock Margin="95,243,95,604">
+                        <TextBlock Margin="95,189,95,658">
                             <Viewbox>
                                 <TextBlock Text="{Binding BalanceStr}"/>
                             </Viewbox>
                         </TextBlock>
 
-                        <TextBlock Margin="95,301,95,546">
+                        <TextBlock Margin="95,247,95,600">
                             <Viewbox>
                                 <TextBlock Text="借出時間:"/>
                             </Viewbox>
                         </TextBlock>
 
-                        <TextBlock Margin="95,359,95,488">
+                        <TextBlock Margin="95,305,95,542">
                             <Viewbox>
                                 <TextBlock Text="{Binding OutTimeStr}" />
                             </Viewbox>
                         </TextBlock>
 
-                        <TextBlock Margin="95,417,95,430">
+                        <TextBlock Margin="95,363,95,484">
                             <Viewbox>
                                 <TextBlock Text="櫃位:" />
                             </Viewbox>
                         </TextBlock>
 
-                        <TextBlock Margin="95,475,95,371">
+                        <TextBlock Margin="95,421,95,425">
                             <Viewbox>
                                 <TextBlock Text="{Binding LockerBoxSelectedIndex}"/>
                             </Viewbox>
                         </TextBlock>
 
-                        <TextBlock Margin="95,534,95,313">
+                        <TextBlock Margin="95,480,95,367">
                             <Viewbox>
                                 <TextBlock Text="歸還時間:" />
                             </Viewbox>
                         </TextBlock>
 
-                        <TextBlock Margin="95,592,95,255">
+                        <TextBlock Margin="95,538,95,309">
                             <Viewbox>
                                 <TextBlock Text="{Binding InTimeStr}" />
                             </Viewbox>
                         </TextBlock>
 
-                        <TextBlock Margin="95,650,95,197">
+                        <TextBlock Margin="95,596,95,251">
                             <Viewbox>
                                 <TextBlock Text="本次扣款:" />
                             </Viewbox>
                         </TextBlock>
 
-                        <TextBlock Margin="95,708,95,139">
+                        <TextBlock Margin="95,654,95,193">
                             <Viewbox>
                                 <TextBlock Text="{Binding AmountStr}" />
                             </Viewbox>
                         </TextBlock>
 
-                        <TextBlock Margin="95,10,95,837">
+                        <TextBlock Margin="95,715,95,132">
                             <Viewbox>
                                 <TextBlock Text="{Binding NoticeText}" />
                             </Viewbox>
@@ -435,7 +435,7 @@
                 </TabItem>
                 <TabItem Header="操作逾時">
                     <Grid>
-                        
+
                         <TextBlock Margin="95,356,95,491">
                             <Viewbox>
                                 <TextBlock Text="操作逾時" />
@@ -451,12 +451,12 @@
                                 </DataTemplate>
                             </Button.ContentTemplate>
                         </Button>
-                        
+
                     </Grid>
                 </TabItem>
                 <TabItem Header="歸還失敗">
                     <Grid>
-                        
+
                         <TextBlock Margin="95,356,95,491">
                             <Viewbox>
                                 <TextBlock Text="歸還失敗" />
@@ -472,7 +472,7 @@
                                 </DataTemplate>
                             </Button.ContentTemplate>
                         </Button>
-                        
+
                     </Grid>
                 </TabItem>
                 <TabItem Header="付款失敗">
