@@ -297,6 +297,13 @@ namespace First_MVVM.ViewModels
             FinishInteraction?.Invoke();
         }
 
+        private async Task CallBazz()
+        {
+            IO.Write("Bazz", IO.UnLock);
+            await Task.Delay(1000);
+            IO.Write("Bazz", IO.Lock);
+            await Task.Delay(1000);
+        }
 
         #region Set Subscribe Event
 
@@ -489,6 +496,7 @@ namespace First_MVVM.ViewModels
             }
             else
             {
+                CallBazz();
                 ReaderStatusStr = "請關門";
             }
         }

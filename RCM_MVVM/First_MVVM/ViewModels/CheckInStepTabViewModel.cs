@@ -285,6 +285,14 @@ namespace First_MVVM.ViewModels
             }
         }
 
+        private async Task CallBazz()
+        {
+            IO.Write("Bazz", IO.UnLock);
+            await Task.Delay(1000);
+            IO.Write("Bazz", IO.Lock);
+            await Task.Delay(1000);
+        }
+
         #region Set Subscribe Event
 
         private void SetDoorCheckTimer()
@@ -447,6 +455,7 @@ namespace First_MVVM.ViewModels
             _rReaderModel.TID = result.Item3;
             if (_rReaderModel.Status == true)
             {
+                CallBazz();
                 ReaderStatusStr = "請關門";
             }
             else
