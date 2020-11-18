@@ -1,6 +1,5 @@
 ﻿using System;
 using LattePanda.Firmata;
-using System.Threading;
 
 namespace IOModel
 {
@@ -12,6 +11,8 @@ namespace IOModel
         public static readonly byte UnLock = 0;
         public static readonly int DoorOpen = 1;
         public static readonly int DoorLock = 0;
+        public static readonly int PumpON = 1;
+        public static readonly int PumpOFF = 0;
 
         #region DoorCheck signal
         public enum IN
