@@ -34,6 +34,13 @@ namespace First_MVVM.ViewModels
 
         #region Interface Property
 
+        private bool _debitIsEnabled;
+        public bool DebitIsEnabled
+        {
+            get { return _debitIsEnabled; }
+            set { SetProperty(ref _debitIsEnabled, value); }
+        }
+
         private bool _readCardIsEnabled;
         public bool ReadCardIsEnabled
         {
@@ -148,6 +155,7 @@ namespace First_MVVM.ViewModels
         private void MemberServicePageLoad()
         {
             PumpBoxStartIsEnable = true;
+            DebitIsEnabled = true;
             ReadCardIsEnabled = true;
             NextStepIsEnabled = false;
             SelectedStepTabIndex = 0;
@@ -228,8 +236,10 @@ namespace First_MVVM.ViewModels
 
         private async void ReadCard()
         {
+            ReadCardIsEnabled = false;
             string Data = await Task.Run<string>(() => { return _easyCard.Read_card_balance_request(); });
-            
+            ReadCardIsEnabled = true;
+
             Card_id = (string)JObject.Parse(Data)["result"]["card_id"];
             if (string.IsNullOrWhiteSpace(_card_id)) return;
             DataTable _rFID_UsersProfile = await _dBRead.RFID_Users(_card_id);
@@ -267,7 +277,9 @@ namespace First_MVVM.ViewModels
 
             if (!string.IsNullOrWhiteSpace(_memberServiceModel.Amount.ToString()))
             {
+                DebitIsEnabled = false;
                 string _chargeResult = await Task.Run<string>(() => { return _easyCard.Charge_request(_memberServiceModel.Amount); });
+                DebitIsEnabled = true;
 
                 string _isSuccess = (string)JObject.Parse(_chargeResult)["is_success"];
 
