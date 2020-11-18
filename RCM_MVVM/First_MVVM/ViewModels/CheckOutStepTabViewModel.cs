@@ -172,7 +172,10 @@ namespace First_MVVM.ViewModels
 
         private async void ReadCard()
         {
+            ReadCardIsEnabled = false;
             string Data = await Task.Run<string>(() => { return _easyCard.Read_card_balance_request(); });
+            ReadCardIsEnabled = true;
+
             string _card_id = (string)JObject.Parse(Data)["result"]["card_id"];
             if (string.IsNullOrWhiteSpace(_card_id)) return;
             DataTable _rFID_UsersProfile = await _dBRead.RFID_Users(_card_id);
