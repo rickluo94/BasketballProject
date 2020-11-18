@@ -287,9 +287,9 @@ namespace First_MVVM.ViewModels
 
         private async Task CallBazz()
         {
-            IO.Write("Bazz", IO.UnLock);
+            IO.Write("Buzz", IO.UnLock);
             await Task.Delay(1000);
-            IO.Write("Bazz", IO.Lock);
+            IO.Write("Buzz", IO.Lock);
             await Task.Delay(1000);
         }
 
@@ -361,6 +361,8 @@ namespace First_MVVM.ViewModels
                     SelectedStepTabName = "完成";
 
                     IO.Write("A8", IO.Lock);
+
+                    NoticeText = string.Empty;
                 }
 
                 NoticeText = $"請開啟A8打氣櫃 {(15 - Counter)} sec";
@@ -369,10 +371,11 @@ namespace First_MVVM.ViewModels
             {
                 Counter = 0;
 
+                NoticeText = string.Empty;
+
                 UnsubscribeDoorCheckEvent();
 
                 IO.Write("A8", IO.Lock);
-
 
                 SetPumpStartTimer();
             }
@@ -382,6 +385,8 @@ namespace First_MVVM.ViewModels
         private void OnTimePumpStartEvent(Object source, ElapsedEventArgs e)
         {
             _counter += 1;
+
+            NoticeText = $"剩餘操作時間 {(20 - Counter)} sec";
 
             if (IO.Read("Pump") == IO.PumpON)
             {
@@ -400,10 +405,11 @@ namespace First_MVVM.ViewModels
 
                 IO.Write("Pump", IO.Lock);
 
+                NoticeText = string.Empty;
+
                 SelectedStepTabName = "完成";
             }
 
-            NoticeText = $"剩餘操作時間 {(20 - Counter)} sec";
         }
 
         #endregion
