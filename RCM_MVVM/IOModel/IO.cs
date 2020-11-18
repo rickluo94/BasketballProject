@@ -11,8 +11,8 @@ namespace IOModel
         public static readonly byte UnLock = 0;
         public static readonly int DoorOpen = 1;
         public static readonly int DoorLock = 0;
-        public static readonly int PumpON = 1;
-        public static readonly int PumpOFF = 0;
+        public static readonly int PumpON = 0;
+        public static readonly int PumpOFF = 1;
 
         #region DoorCheck signal
         public enum IN
