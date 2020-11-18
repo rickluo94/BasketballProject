@@ -347,7 +347,7 @@
                             </Viewbox>
                         </TextBlock>
 
-                        <Button Style="{DynamicResource RoundCorner}" Command="{Binding DebitCmd}" Margin="95,773,95,27" >
+                        <Button Style="{DynamicResource RoundCorner}" Command="{Binding DebitCmd}" IsEnabled="{Binding DebitIsEnabled}" Margin="95,773,95,27" >
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <Viewbox>
