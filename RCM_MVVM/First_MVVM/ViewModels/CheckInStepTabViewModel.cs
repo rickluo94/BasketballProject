@@ -287,9 +287,9 @@ namespace First_MVVM.ViewModels
 
         private async Task CallBazz()
         {
-            IO.Write("Bazz", IO.UnLock);
+            IO.Write("Buzz", IO.UnLock);
             await Task.Delay(1000);
-            IO.Write("Bazz", IO.Lock);
+            IO.Write("Buzz", IO.Lock);
             await Task.Delay(1000);
         }
 
