@@ -23,6 +23,7 @@ namespace First_MVVM.ViewModels
         private DBWrite _dBWrite = new DBWrite();
 
         private System.Timers.Timer PumpStartTimer;
+        private System.Timers.Timer DoorCheckTimer;
 
         private int _counter;
         public int Counter
@@ -284,15 +285,33 @@ namespace First_MVVM.ViewModels
             }
         }
 
+        private async Task CallBazz()
+        {
+            IO.Write("Bazz", IO.UnLock);
+            await Task.Delay(1000);
+            IO.Write("Bazz", IO.Lock);
+            await Task.Delay(1000);
+        }
+
         private void PumpBoxStart()
         {
             IO.Write("A8", IO.UnLock);
-            SetPumpStartTimer();
+
+            CallBazz();
+
+            SetDoorCheckTimer();
+
             PumpBoxStartIsEnable = false;
         }
 
 
         #region Unsubscribe Event
+
+        private void UnsubscribeDoorCheckEvent()
+        {
+            DoorCheckTimer.Elapsed -= OnTimedDoorCheckEvent;
+            DoorCheckTimer.Close();
+        }
 
         private void UnsubscribePumpStartEvent()
         {
@@ -304,6 +323,16 @@ namespace First_MVVM.ViewModels
 
 
         #region Set Subscribe Event
+
+        private void SetDoorCheckTimer()
+        {
+            Counter = 0;
+            DoorCheckTimer = new System.Timers.Timer(1000);
+            DoorCheckTimer.Elapsed += OnTimedDoorCheckEvent;
+            DoorCheckTimer.AutoReset = true;
+            DoorCheckTimer.Enabled = true;
+        }
+
         private void SetPumpStartTimer()
         {
             Counter = 0;
@@ -318,31 +347,62 @@ namespace First_MVVM.ViewModels
 
         #region On Subscribe Event
 
-        private void OnTimePumpStartEvent(Object source, ElapsedEventArgs e)
+        private void OnTimedDoorCheckEvent(Object source, ElapsedEventArgs e)
         {
-            _counter += 1;
-            if (IO.Read("A8") == IO.DoorOpen)
+            if (IO.Read("A8") == IO.DoorLock)
             {
-                IO.Write("A8", IO.Lock);
-            }
+                Counter += 1;
+                if (Counter == 15)
+                {
+                    Counter = 0;
 
-            if (IO.Read("Pump") == IO.DoorOpen)
-            {
-                IO.Write("Pump", IO.Lock);
+                    UnsubscribeDoorCheckEvent();
+
+                    SelectedStepTabName = "完成";
+
+                    IO.Write("A8", IO.Lock);
+                }
+
+                NoticeText = $"請開啟A8打氣櫃 {(15 - Counter)} sec";
             }
             else
             {
-                IO.Write("Pump", IO.UnLock);
+                Counter = 0;
+
+                UnsubscribeDoorCheckEvent();
+
+                IO.Write("A8", IO.Lock);
+
+
+                SetPumpStartTimer();
             }
 
-            if (Counter == 20)
+        }
+
+        private void OnTimePumpStartEvent(Object source, ElapsedEventArgs e)
+        {
+            _counter += 1;
+
+            if (IO.Read("Pump") == IO.PumpON)
+            {
+                IO.Write("Pump", IO.UnLock);
+            }
+            else
+            {
+                IO.Write("Pump", IO.Lock);
+            }
+
+            if (Counter == 20 || IO.Read("A8") == IO.DoorLock)
             {
                 UnsubscribePumpStartEvent();
+
                 IO.Write("A8", IO.Lock);
+
                 IO.Write("Pump", IO.Lock);
 
                 SelectedStepTabName = "完成";
             }
+
             NoticeText = $"剩餘操作時間 {(20 - Counter)} sec";
         }
 
