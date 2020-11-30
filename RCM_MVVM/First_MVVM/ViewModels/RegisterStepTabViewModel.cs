@@ -431,7 +431,19 @@ namespace First_MVVM.ViewModels
             string Data = await Task.Run<string>(() => { return _easyCard.Read_card_balance_request(); });
             Card_ID = (string)JObject.Parse(Data)["result"]["card_id"];
             Card_purse_id = (string)JObject.Parse(Data)["result"]["card_purse_id"];
-            bool isThisAlreadyHadBinding = _easyCardServ.IsThisAlreadyHadBinding(Card_ID);
+            DataTable RFID_Users = await _dBRead.RFID_Users(Card_ID);
+
+            bool isThisAlreadyHadBinding;
+
+            if (RFID_Users.Rows.Count > 0)
+            {
+                isThisAlreadyHadBinding = true;
+            }
+            else
+            {
+                isThisAlreadyHadBinding = false;
+            }
+            
 
             //Card_ID = "4334488813";
             //Card_purse_id = "4334488813";
