@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using LattePanda.Firmata;
 
 namespace IOModel
@@ -74,6 +75,7 @@ namespace IOModel
                     #region digital INPUT
                     foreach (int Value in Enum.GetValues(typeof(IN)))
                     {
+                        Task.Delay(500).Wait();
                         _IO.pinMode(Value, Arduino.INPUT);
                     }
                     #endregion
@@ -81,6 +83,7 @@ namespace IOModel
                     #region digital UTPUT
                     foreach (int Value in Enum.GetValues(typeof(Out)))
                     {
+                        Task.Delay(500).Wait();
                         _IO.pinMode(Value, Arduino.OUTPUT);
                     }
                     #endregion
@@ -88,6 +91,7 @@ namespace IOModel
                     #region SET digital OUTPUT
                     foreach (int Value in Enum.GetValues(typeof(Out)))
                     {
+                        Task.Delay(500).Wait();
                         _IO.digitalWrite(Value, Lock);
                     }
                     #endregion
