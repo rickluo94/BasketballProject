@@ -286,7 +286,6 @@ namespace First_MVVM.ViewModels
 
                 DebitIsEnabled = false;
                 string _chargeResult = await Task.Run<string>(() => { return _easyCard.Charge_request(_amount); });
-                DebitIsEnabled = true;
 
                 string _isSuccess = (string)JObject.Parse(_chargeResult)["is_success"];
 
@@ -296,6 +295,7 @@ namespace First_MVVM.ViewModels
                     _checkInModel.DebitStatus = "成功";
                 }
 
+                DebitIsEnabled = true;
             }
         }
 
