@@ -29,6 +29,14 @@ namespace First_MVVM.ViewModels
         private DBWrite _dBWrite = new DBWrite();
 
         #region Interface Preperty
+
+        private bool _readCardIsEnabled;
+        public bool ReadCardIsEnabled
+        {
+            get { return _readCardIsEnabled; }
+            set { SetProperty(ref _readCardIsEnabled, value); }
+        }
+
         private bool _readRulesIsChecked;
         public bool ReadRulesIsChecked
         {
@@ -140,6 +148,13 @@ namespace First_MVVM.ViewModels
         {
             get { return _card_purse_id; }
             set { SetProperty(ref _card_purse_id, value); }
+        }
+
+        private string _ticket_type;
+        public string Ticket_type
+        {
+            get { return _ticket_type; }
+            set { SetProperty(ref _ticket_type, value); }
         }
 
         private string _noticeText;
@@ -428,9 +443,17 @@ namespace First_MVVM.ViewModels
         private async void ReadCard()
         {
             Card_ID = "請靠感應";
+
+            ReadCardIsEnabled = false;
             string Data = await Task.Run<string>(() => { return _easyCard.Read_card_balance_request(); });
+            ReadCardIsEnabled = true;
+
+
+
             Card_ID = (string)JObject.Parse(Data)["result"]["card_id"];
             Card_purse_id = (string)JObject.Parse(Data)["result"]["card_purse_id"];
+            Ticket_type = (string)JObject.Parse(Data)["ticket_type"];
+
             DataTable RFID_Users = await _dBRead.RFID_Users(Card_ID);
 
             bool isThisAlreadyHadBinding;
@@ -447,7 +470,7 @@ namespace First_MVVM.ViewModels
 
             //Card_ID = "4334488813";
             //Card_purse_id = "4334488813";
-            if (!string.IsNullOrWhiteSpace(Card_ID))
+            if (!string.IsNullOrWhiteSpace(Card_ID) && Ticket_type == "ECC")
             {
                 if (isThisAlreadyHadBinding == true)
                 {
