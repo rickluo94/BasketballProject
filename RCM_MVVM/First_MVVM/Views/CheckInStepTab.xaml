@@ -457,12 +457,24 @@
                 <TabItem Header="歸還失敗">
                     <Grid>
 
-                        <TextBlock Margin="95,356,95,491">
+                        <TextBlock Margin="95,245,95,602">
                             <Viewbox>
-                                <TextBlock Text="歸還失敗" />
+                                <TextBlock Text="歸還失敗!" />
                             </Viewbox>
                         </TextBlock>
 
+                        <TextBlock Margin="95,303,95,544">
+                            <Viewbox>
+                                <TextBlock Text="請重新操作我要還球" Foreground="Red" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,356,95,491">
+                            <Viewbox>
+                                <TextBlock Text="請依照畫面指示步驟" Foreground="Red" />
+                            </Viewbox>
+                        </TextBlock>
+                        
                         <Button Content="確定" Style="{DynamicResource RoundCorner}" Command="{Binding ExitCmd}" Margin="95,414,95,387" >
                             <Button.ContentTemplate>
                                 <DataTemplate>
