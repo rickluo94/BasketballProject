@@ -601,7 +601,7 @@
                             </Viewbox>
                         </TextBlock>
 
-                        <Button Content="靠卡感應" Style="{DynamicResource RoundCorner}" Command="{Binding ReadCardCmd}" Margin="95,463,95,317">
+                        <Button Content="靠卡感應" Style="{DynamicResource RoundCorner}" IsEnabled="{Binding ReadCardIsEnabled}" Command="{Binding ReadCardCmd}" Margin="95,463,95,317">
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <Viewbox>
