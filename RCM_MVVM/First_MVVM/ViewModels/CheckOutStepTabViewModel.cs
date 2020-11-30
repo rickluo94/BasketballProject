@@ -188,7 +188,7 @@ namespace First_MVVM.ViewModels
                 ReadCardIsEnabled = false;
                 NextStepIsEnabled = true;
 
-                DataTable _outstanding_Amount = await _dBRead.Outstanding_Amount(AccountStr);
+                DataTable _outstanding_Amount = await _dBRead.Charge_History(AccountStr);
 
                 if (_outstanding_Amount.Rows.Count > 0)
                 {
