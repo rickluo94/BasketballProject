@@ -137,12 +137,6 @@ namespace DBModel
             return table;
         }
 
-        public async Task<DataTable> Outstanding_Amount(string UserID)
-        {
-            DataTable table = new DataTable();
-            return table;
-        }
-
         public async Task<DataTable> Take_History(string UserID)
         {
             DataTable table = new DataTable();
