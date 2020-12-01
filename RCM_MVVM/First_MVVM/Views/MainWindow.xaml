@@ -75,60 +75,6 @@
             <Setter Property="Foreground" Value="#F2F2F2"/>
         </Style>
     </Window.Resources>
-    <i:Interaction.Triggers>
-        <prism:InteractionRequestTrigger SourceObject="{Binding RegisterStepTabRequest}">
-            <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
-                <prism:PopupWindowAction.WindowStyle>
-                    <Style TargetType="Window">
-                        <Setter Property="WindowState" Value="Maximized"/>
-                        <Setter Property="WindowStyle" Value="None"/>
-                    </Style>
-                </prism:PopupWindowAction.WindowStyle>
-                <prism:PopupWindowAction.WindowContent>
-                    <View:RegisterStepTab />
-                </prism:PopupWindowAction.WindowContent>
-            </prism:PopupWindowAction>
-        </prism:InteractionRequestTrigger>
-        <prism:InteractionRequestTrigger SourceObject="{Binding CheckOutStepTabRequest}">
-            <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
-                <prism:PopupWindowAction.WindowStyle>
-                    <Style TargetType="Window">
-                        <Setter Property="WindowState" Value="Maximized"/>
-                        <Setter Property="WindowStyle" Value="None"/>
-                    </Style>
-                </prism:PopupWindowAction.WindowStyle>
-                <prism:PopupWindowAction.WindowContent>
-                    <View:CheckOutStepTab/>
-                </prism:PopupWindowAction.WindowContent>
-            </prism:PopupWindowAction>
-        </prism:InteractionRequestTrigger>
-        <prism:InteractionRequestTrigger SourceObject="{Binding CheckInStepTabRequest}">
-            <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
-                <prism:PopupWindowAction.WindowStyle>
-                    <Style TargetType="Window">
-                        <Setter Property="WindowState" Value="Maximized"/>
-                        <Setter Property="WindowStyle" Value="None"/>
-                    </Style>
-                </prism:PopupWindowAction.WindowStyle>
-                <prism:PopupWindowAction.WindowContent>
-                    <View:CheckInStepTab/>
-                </prism:PopupWindowAction.WindowContent>
-            </prism:PopupWindowAction>
-        </prism:InteractionRequestTrigger>
-        <prism:InteractionRequestTrigger SourceObject="{Binding MemberServicePageRequest}">
-            <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True">
-                <prism:PopupWindowAction.WindowStyle>
-                    <Style TargetType="Window">
-                        <Setter Property="WindowState" Value="Maximized"/>
-                        <Setter Property="WindowStyle" Value="None"/>
-                    </Style>
-                </prism:PopupWindowAction.WindowStyle>
-                <prism:PopupWindowAction.WindowContent>
-                    <View:MemberServicePage/>
-                </prism:PopupWindowAction.WindowContent>
-            </prism:PopupWindowAction>
-        </prism:InteractionRequestTrigger>
-    </i:Interaction.Triggers>
     <Viewbox Stretch="Uniform">
         <WrapPanel Height="1024" Width="600">
 
@@ -136,7 +82,7 @@
 
             <TextBlock Text="{Binding UpdateText}" />
 
-            <Button Content="Check Out 我要借球" Style="{DynamicResource RoundCorner}" Command="{Binding CheckOutStepTabCommand}" Margin="{StaticResource ControlMargin}" >
+            <Button Content="Check Out 我要借球" Style="{DynamicResource RoundCorner}" Command="{Binding NavigateCmd}" CommandParameter="CheckOutStepTab" Margin="{StaticResource ControlMargin}" >
                 <Button.ContentTemplate>
                     <DataTemplate>
                         <Viewbox>
@@ -150,7 +96,7 @@
                 </Button.ContentTemplate>
             </Button>
 
-            <Button Content="Check In 我要還球" Style="{DynamicResource RoundCorner}" Command="{Binding CheckInStepTabCommand}" Margin="{StaticResource ControlMargin}">
+            <Button Content="Check In 我要還球" Style="{DynamicResource RoundCorner}" Command="{Binding NavigateCmd}" CommandParameter="CheckInStepTab" Margin="{StaticResource ControlMargin}">
                 <Button.ContentTemplate>
                     <DataTemplate>
                         <Viewbox>
@@ -164,7 +110,7 @@
                 </Button.ContentTemplate>
             </Button>
 
-            <Button Content="Service 會員服務" Style="{DynamicResource RoundCorner}" Command="{Binding MemberServicePageCommand}" Margin="{StaticResource ControlMargin}">
+            <Button Content="Service 會員服務" Style="{DynamicResource RoundCorner}" Command="{Binding NavigateCmd}" CommandParameter="MemberServicePage" Margin="{StaticResource ControlMargin}">
                 <Button.ContentTemplate>
                     <DataTemplate>
                         <Viewbox>
@@ -178,7 +124,7 @@
                 </Button.ContentTemplate>
             </Button>
 
-            <Button Content="New Members 新會員" Style="{DynamicResource RoundCorner}" Command="{Binding RegisterStepTabCommand}" Margin="{StaticResource ControlMargin}">
+            <Button Content="New Members 新會員" Style="{DynamicResource RoundCorner}" Command="{Binding NavigateCmd}" CommandParameter="RegisterStepTab" Margin="{StaticResource ControlMargin}">
                 <Button.ContentTemplate>
                     <DataTemplate>
                         <Viewbox>
@@ -191,6 +137,7 @@
                     </DataTemplate>
                 </Button.ContentTemplate>
             </Button>
+            
         </WrapPanel>
     </Viewbox>
 </Window>
