@@ -1,18 +1,17 @@
 ﻿using Prism.Commands;
 using Prism.Mvvm;
 using System;
-using System.Windows.Controls;
-using First_MVVM.Models;
-using System.Data;
-using First_MVVM.Views;
-using Prism.Interactivity.InteractionRequest;
-using First_MVVM.Notifications;
 using IOModel;
+using Prism.Regions;
 
 namespace First_MVVM.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
+        private readonly IRegionManager _regionManager;
+
+        public static bool CloseLoadingPage = false;
+
         private string _title = "Smart Locker";
         public string Title
         {
@@ -26,52 +25,25 @@ namespace First_MVVM.ViewModels
             set { SetProperty(ref _updateText, value); }
         }
 
-        public InteractionRequest<ICustomNotification> RegisterStepTabRequest { get; set; }
-        public InteractionRequest<ICustomNotification> CheckOutStepTabRequest { get; set; }
-        public InteractionRequest<ICustomNotification> CheckInStepTabRequest { get; set; }
-        public InteractionRequest<ICustomNotification> MemberServicePageRequest { get; set; }
+        public DelegateCommand<string> NavigateCmd { get; set; }
 
-        public DelegateCommand RegisterStepTabCommand { get; set; }
-        public DelegateCommand CheckOutStepTabCommand { get; set; }
-        public DelegateCommand CheckInStepTabCommand { get; set; }
-        public DelegateCommand MemberServicePageCommand { get; set; }
-
-        public MainWindowViewModel()
+        public MainWindowViewModel(IRegionManager regionManager)
         {
             IO.SetDevicePort("COM5", 9600); IO.SetIOParameter();
 
-            RegisterStepTabRequest = new InteractionRequest<ICustomNotification>();
-            RegisterStepTabCommand = new DelegateCommand(RegisterStepTabView);
-
-            CheckOutStepTabRequest = new InteractionRequest<ICustomNotification>();
-            CheckOutStepTabCommand = new DelegateCommand(CheckOutStepTabView);
-
-            CheckInStepTabRequest = new InteractionRequest<ICustomNotification>();
-            CheckInStepTabCommand = new DelegateCommand(CheckInStepTabView);
-
-            MemberServicePageRequest = new InteractionRequest<ICustomNotification>();
-            MemberServicePageCommand = new DelegateCommand(MemberServicePageView);
-            
+            _regionManager = regionManager;
+            NavigateCmd = new DelegateCommand<string>(Navigate);
         }
 
-        private void RegisterStepTabView()
+        public void Navigate(string navigatePath)
         {
-            RegisterStepTabRequest.Raise(new CustomNotification { Title = "Register Account" });
+            if (navigatePath != null)
+                _regionManager.RequestNavigate("ContentRegion", navigatePath, NavigationComplete);
         }
 
-        private void CheckOutStepTabView()
+        private void NavigationComplete(NavigationResult result)
         {
-            CheckOutStepTabRequest.Raise(new CustomNotification { Title = "Check Out" });
-        }
-
-        private void CheckInStepTabView()
-        {
-            CheckInStepTabRequest.Raise(new CustomNotification { Title = "Check In" });
-        }
-
-        private void MemberServicePageView()
-        {
-            MemberServicePageRequest.Raise(new CustomNotification { Title = "Member Service" });
+            //System.Windows.MessageBox.Show(String.Format("Navigation to {0} complete. ", result.Context.Uri));
         }
 
     }

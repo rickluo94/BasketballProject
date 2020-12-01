@@ -16,11 +16,13 @@ using DBModel;
 using System.Data;
 using System.Timers;
 using RfidModel;
+using Prism.Regions;
 
 namespace First_MVVM.ViewModels
 {
-    public class CheckOutStepTabViewModel : BindableBase, IInteractionRequestAware
+    public class CheckOutStepTabViewModel : BindableBase, INavigationAware, IRegionMemberLifetime
     {
+        private readonly IRegionManager _regionManager;
         private CheckOutModel _checkOutModel { get; set; }
         private DataTable _inventoryModel { get; set; }
         private EasyCard _easyCard = new EasyCard();
@@ -124,25 +126,29 @@ namespace First_MVVM.ViewModels
         #endregion
 
         #region Interface Command 
-        public DelegateCommand<WrapPanel> CheckOutStepTabLoadCmd { get; private set; }
+        public DelegateCommand<WrapPanel> LockerBoxItemLoadedCmd { get; private set; }
+        public DelegateCommand CheckOutStepTabLoadCmd { get; private set; }
         public DelegateCommand ExitCmd { get; private set; }
         public DelegateCommand PreviousTabCmd { get; private set; }
         public DelegateCommand NextTabCmd { get; private set; }
         public DelegateCommand ReadCardCmd { get; private set; }
+        
 
         #endregion
 
-        public CheckOutStepTabViewModel(Business.BoxItemStatus resStatusGroup)
+        public CheckOutStepTabViewModel(Business.BoxItemStatus resStatusGroup, IRegionManager regionManager)
         {
+            _regionManager = regionManager;
             _resStatusGroup = resStatusGroup;
-            CheckOutStepTabLoadCmd = new DelegateCommand<WrapPanel>(CheckOutStepTabLoad);
+            CheckOutStepTabLoadCmd = new DelegateCommand(CheckOutStepTabLoad);
             ExitCmd = new DelegateCommand(ExitInteraction);
             PreviousTabCmd = new DelegateCommand(PreviousTab);
             NextTabCmd = new DelegateCommand(NextTab);
             ReadCardCmd = new DelegateCommand(ReadCard);
+            LockerBoxItemLoadedCmd = new DelegateCommand<WrapPanel>(LockerBoxItemLoaded);
         }
 
-        private async void CheckOutStepTabLoad(WrapPanel LockerBox)
+        private void CheckOutStepTabLoad()
         {
             _inventoryModel = new DataTable();
             _checkOutModel = new CheckOutModel();
@@ -153,7 +159,21 @@ namespace First_MVVM.ViewModels
             NextStepIsEnabled = false;
             ReadCardIsEnabled = true;
             SelectedStepTabIndex = 0;
-            if (await CheckAvailableUse() == true) { FillCabinetBtns(LockerBox);} else { MessageBox.Show("目前沒有可租借籃球"); ExitInteraction(); }
+        }
+
+        private async void LockerBoxItemLoaded(WrapPanel LockerBox)
+        {
+            if (LockerBox.Children.Count == 0)
+            {
+                if (await CheckAvailableUse() == true)
+                {
+                    FillCabinetBtns(LockerBox);
+                }
+                else
+                {
+                    MessageBox.Show("目前沒有可租借籃球"); ExitInteraction();
+                }
+            }
         }
 
         private async Task<bool> CheckAvailableUse()
@@ -297,7 +317,7 @@ namespace First_MVVM.ViewModels
             DoorCheckCounter = 0;
             _easyCard.Close();
             _RFID.Disconnect();
-            FinishInteraction?.Invoke();
+            _regionManager.Regions["ContentRegion"].RemoveAll();
         }
 
         private async Task CallBazz()
@@ -508,14 +528,28 @@ namespace First_MVVM.ViewModels
 
 
         #region MainWindow Interactive
-        public Action FinishInteraction { get; set; }
 
-        private ICustomNotification _notification;
-
-        public INotification Notification
+        public bool KeepAlive
         {
-            get { return _notification; }
-            set { SetProperty(ref _notification, (ICustomNotification)value); }
+            get
+            {
+                return false;
+            }
+        }
+
+        public void OnNavigatedTo(NavigationContext navigationContext)
+        {
+
+        }
+
+        public bool IsNavigationTarget(NavigationContext navigationContext)
+        {
+            return true;
+        }
+
+        public void OnNavigatedFrom(NavigationContext navigationContext)
+        {
+
         }
 
         #endregion

@@ -1,24 +1,24 @@
 ﻿using First_MVVM.Models;
 using First_MVVM.Business;
-using First_MVVM.Notifications;
 using Newtonsoft.Json.Linq;
 using Prism.Commands;
-using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
-using System;
 using System.Data;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using EasyCardModel;
 using DBModel;
 using SendMessageModel;
-using System.Timers;
 using System.Collections.Generic;
+using Prism.Regions;
+using First_MVVM.Views;
+using System.Windows;
 
 namespace First_MVVM.ViewModels
 {
-    public class RegisterStepTabViewModel : BindableBase, IInteractionRequestAware
+    public class RegisterStepTabViewModel : BindableBase, INavigationAware, IRegionMemberLifetime
     {
+        private readonly IRegionManager _regionManager;
         private RegisterModel _registerModel { get; set; }
         private NationalCities _nationalCities = new NationalCities();
         private StrVerify _strVerify = new StrVerify();
@@ -29,6 +29,13 @@ namespace First_MVVM.ViewModels
         private DBWrite _dBWrite = new DBWrite();
 
         #region Interface Preperty
+
+        //private IRegionNavigationJournal _journal;
+        //public IRegionNavigationJournal Journal
+        //{
+        //    get { return _journal; }
+        //    set { SetProperty(ref _journal, value); }
+        //}
 
         private bool _readCardIsEnabled;
         public bool ReadCardIsEnabled
@@ -210,8 +217,9 @@ namespace First_MVVM.ViewModels
         public DelegateCommand ExitCmd { get; private set; }
         #endregion
 
-        public RegisterStepTabViewModel()
+        public RegisterStepTabViewModel(IRegionManager regionManager)
         {
+            _regionManager = regionManager;
             _registerModel = new RegisterModel();
             CheckReadRulesCmd = new DelegateCommand(CheckReadRules);
             RegisterStepTabLoadCmd = new DelegateCommand(RegisterStepTabLoad);
@@ -552,19 +560,32 @@ namespace First_MVVM.ViewModels
             EmailStr = null;
             Card_ID = null;
             _easyCard.Close();
-            FinishInteraction?.Invoke();
+            _regionManager.Regions["ContentRegion"].RemoveAll();
         }
 
         #region MainWindow Interactive
 
-        public Action FinishInteraction { get; set; }
-
-        private ICustomNotification _notification;
-
-        public INotification Notification
+        public bool KeepAlive
         {
-            get { return _notification; }
-            set { SetProperty(ref _notification, (ICustomNotification)value); }
+            get
+            {
+                return false;
+            }
+        }
+
+        public void OnNavigatedTo(NavigationContext navigationContext)
+        {
+
+        }
+
+        public bool IsNavigationTarget(NavigationContext navigationContext)
+        {
+            return true;
+        }
+
+        public void OnNavigatedFrom(NavigationContext navigationContext)
+        {
+            //_journal = navigationContext.NavigationService.Journal;
         }
 
         #endregion

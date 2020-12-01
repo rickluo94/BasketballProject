@@ -1,8 +1,11 @@
 ﻿using Prism.Commands;
 using Prism.Mvvm;
+using Prism.Regions;
+using Prism.Interactivity.InteractionRequest;
+
 using First_MVVM.Models;
 using First_MVVM.Notifications;
-using Prism.Interactivity.InteractionRequest;
+
 using System;
 using IOModel;
 using DBModel;
@@ -13,10 +16,12 @@ using Newtonsoft.Json.Linq;
 using System.Timers;
 using RfidModel;
 
+
 namespace First_MVVM.ViewModels
 {
-    public class CheckInStepTabViewModel : BindableBase , IInteractionRequestAware
+    public class CheckInStepTabViewModel : BindableBase, INavigationAware, IRegionMemberLifetime
     {
+        private readonly IRegionManager _regionManager;
         private CheckInModel _checkInModel { get; set; }
         private EasyCard _easyCard = new EasyCard();
 
@@ -147,8 +152,9 @@ namespace First_MVVM.ViewModels
 
         #endregion
 
-        public CheckInStepTabViewModel()
+        public CheckInStepTabViewModel(IRegionManager regionManager)
         {
+            _regionManager = regionManager;
             CheckInStepTabLoadCmd = new DelegateCommand(CheckInStepTabLoad);
             ExitCmd = new DelegateCommand(ExitInteraction);
             NextTabCmd = new DelegateCommand(NextTab); PreviousTabCmd = new DelegateCommand(PreviousTab);
@@ -236,7 +242,7 @@ namespace First_MVVM.ViewModels
             NoticeText = null;
             _easyCard.Close();
             _RFID.Disconnect();
-            FinishInteraction?.Invoke();
+            _regionManager.Regions["ContentRegion"].RemoveAll();
         }
 
         private void FillProfile()
@@ -508,14 +514,27 @@ namespace First_MVVM.ViewModels
 
         #region MainWindow Interactive
 
-        public Action FinishInteraction { get; set; }
-
-        private ICustomNotification _notification;
-
-        public INotification Notification
+        public bool KeepAlive
         {
-            get { return _notification; }
-            set { SetProperty(ref _notification, (ICustomNotification)value); }
+            get
+            {
+                return false;
+            }
+        }
+
+        public void OnNavigatedTo(NavigationContext navigationContext)
+        {
+
+        }
+
+        public bool IsNavigationTarget(NavigationContext navigationContext)
+        {
+            return true;
+        }
+
+        public void OnNavigatedFrom(NavigationContext navigationContext)
+        {
+
         }
 
         #endregion

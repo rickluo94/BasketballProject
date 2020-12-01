@@ -11,11 +11,14 @@ using Newtonsoft.Json.Linq;
 using First_MVVM.Models;
 using IOModel;
 using System.Timers;
+using Prism.Services.Dialogs;
+using Prism.Regions;
 
 namespace First_MVVM.ViewModels
 {
-    public class MemberServicePageViewModel : BindableBase, IInteractionRequestAware
+    public class MemberServicePageViewModel : BindableBase, INavigationAware, IRegionMemberLifetime
     {
+        private readonly IRegionManager _regionManager;
         private MemberServiceModel _memberServiceModel { get; set; }
         private EasyCard _easyCard = new EasyCard();
 
@@ -128,6 +131,7 @@ namespace First_MVVM.ViewModels
         #endregion
 
         #region Interface Command
+        public DelegateCommand<string> NavigateCommand { get; private set; }
         public DelegateCommand MemberServicePageLoadCmd { get; private set; }
         public DelegateCommand ExitCmd { get; private set; }
         public DelegateCommand NextTabCmd { get; private set; }
@@ -135,12 +139,14 @@ namespace First_MVVM.ViewModels
         public DelegateCommand DebitCmd { get; private set; }
         public DelegateCommand GoToDebitPageCmd { get; private set; }
         public DelegateCommand GoToPumpPageCmd { get; private set; }
+        public DelegateCommand CancelAccountCmd { get; private set; }
         public DelegateCommand PumpBoxStartCmd { get; private set; }
 
         #endregion
 
-        public MemberServicePageViewModel()
+        public MemberServicePageViewModel(IRegionManager regionManager)
         {
+            _regionManager = regionManager;
             MemberServicePageLoadCmd = new DelegateCommand(MemberServicePageLoad);
             ExitCmd = new DelegateCommand(ExitInteraction);
             NextTabCmd = new DelegateCommand(NextTab);
@@ -149,7 +155,7 @@ namespace First_MVVM.ViewModels
             DebitCmd = new DelegateCommand(Charge);
             GoToPumpPageCmd = new DelegateCommand(GoToPumpPage);
             PumpBoxStartCmd = new DelegateCommand(PumpBoxStart);
-
+            CancelAccountCmd = new DelegateCommand(CancelAccount);
         }
 
         private void MemberServicePageLoad()
@@ -173,7 +179,7 @@ namespace First_MVVM.ViewModels
             SNStr = null;
             PumpBoxStatus = null;
             _easyCard.Close();
-            FinishInteraction?.Invoke();
+            _regionManager.Regions["ContentRegion"].RemoveAll();
         }
 
         private void GoToDebitPage()
@@ -192,6 +198,19 @@ namespace First_MVVM.ViewModels
         private void GoToPumpPage()
         {
             SelectedStepTabName = "打氣";
+        }
+
+        private async void CancelAccount()
+        {
+            DataTable _outstanding_Amount = await _dBRead.Charge_History(AccountStr);
+            if (_outstanding_Amount.Rows.Count > 0)
+            {
+                NoticeText = "尚有未付款，不可註銷帳號";
+            }
+            else
+            {
+                
+            }
         }
 
         private void FillProfile()
@@ -430,14 +449,27 @@ namespace First_MVVM.ViewModels
 
         #region MainWindow Interactive
 
-        public Action FinishInteraction { get; set; }
-
-        private ICustomNotification _notification;
-
-        public INotification Notification
+        public bool KeepAlive
         {
-            get { return _notification; }
-            set { SetProperty(ref _notification, (ICustomNotification)value); }
+            get
+            {
+                return false;
+            }
+        }
+
+        public void OnNavigatedTo(NavigationContext navigationContext)
+        {
+
+        }
+
+        public bool IsNavigationTarget(NavigationContext navigationContext)
+        {
+            return true;
+        }
+
+        public void OnNavigatedFrom(NavigationContext navigationContext)
+        {
+
         }
 
         #endregion
