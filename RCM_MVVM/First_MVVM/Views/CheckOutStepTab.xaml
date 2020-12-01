@@ -165,7 +165,7 @@
     </UserControl.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding CheckOutStepTabLoadCmd}" CommandParameter="{Binding ElementName=LockerBoxList}"/>
+            <i:InvokeCommandAction Command="{Binding CheckOutStepTabLoadCmd}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Viewbox Stretch="Uniform">
@@ -257,7 +257,13 @@
                 <TabItem Header="選擇櫃位">
                     <Grid>
 
-                        <WrapPanel x:Name="LockerBoxList" Orientation="Vertical"  Margin="98,6,12,127"/>
+                        <WrapPanel x:Name="LockerBoxItem" Orientation="Vertical"  Margin="98,6,12,127">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Loaded">
+                                    <i:InvokeCommandAction Command="{Binding LockerBoxItemLoadedCmd}" CommandParameter="{Binding ElementName=LockerBoxItem}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </WrapPanel>
 
                         <Button Content="↩" Style="{DynamicResource RoundCorner}" Command="{Binding PreviousTabCmd}" Margin="492,10,10,817" IsEnabled="False">
                             <Button.ContentTemplate>
