@@ -287,7 +287,7 @@
                             </Button.ContentTemplate>
                         </Button>
 
-                        <Button Style="{DynamicResource RoundCorner}" Command="{Binding GoToPumpPageCmd}" Margin="168,401,168,401" >
+                        <Button Style="{DynamicResource RoundCorner}" Command="{Binding GoToPumpPageCmd}" Margin="168,352,168,450" >
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <Viewbox>
@@ -300,6 +300,21 @@
                                 </DataTemplate>
                             </Button.ContentTemplate>
                         </Button>
+
+                        <Button Style="{DynamicResource RoundCorner}" Command="{Binding CancelAccountCmd}" Margin="168,490,168,312" >
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <Viewbox>
+                                        <TextBlock>
+                                            <TextBlock.Background>
+                                                <ImageBrush ImageSource="/Images/exit.png" TileMode="None" Stretch="Uniform" ViewboxUnits="RelativeToBoundingBox" ViewportUnits="RelativeToBoundingBox" Viewbox="0,0,5,1"/>
+                                            </TextBlock.Background>　註銷帳號
+                                        </TextBlock>
+                                    </Viewbox>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+
 
                     </Grid>
                 </TabItem>
