@@ -6,7 +6,7 @@
     <AssemblyName>First_MVVM</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Models\DB_Search.cs" />
@@ -17,6 +17,7 @@
     <None Remove="Images\customer-support.png" />
     <None Remove="Images\dribble.png" />
     <None Remove="Images\exit.png" />
+    <None Remove="Images\maintenance.png" />
     <None Remove="Images\medal.png" />
     <None Remove="Images\membership.png" />
     <None Remove="Images\Pump.png" />
@@ -51,6 +52,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\exit.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\maintenance.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\medal.png">
