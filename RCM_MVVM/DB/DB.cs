@@ -9,9 +9,9 @@ namespace DBModel
     {
         MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder
         {
-            Server = "35.201.200.86",
+            Server = "34.80.22.21",
             Database = "ste_SBSCS",
-            UserID = "root",
+            UserID = "LockerUsers",
             Password = "Jyste42876046",
             //SslMode = MySqlSslMode.Required,
         };
@@ -341,9 +341,9 @@ namespace DBModel
     {
         MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder
         {
-            Server = "35.201.200.86",
+            Server = "34.80.22.21",
             Database = "ste_SBSCS",
-            UserID = "root",
+            UserID = "LockerUsers",
             Password = "Jyste42876046",
             //SslMode = MySqlSslMode.Required,
         };
