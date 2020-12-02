@@ -269,6 +269,7 @@ namespace First_MVVM.ViewModels
             EmailStr = null;
             Card_ID = null;
             NoticeText = string.Empty;
+            ReadCardIsEnabled = true;
         }
 
         private async void _checkAccount(TextBox AccountBox)
@@ -559,6 +560,7 @@ namespace First_MVVM.ViewModels
             NameStr = null;
             EmailStr = null;
             Card_ID = null;
+            ReadCardIsEnabled = false;
             _easyCard.Close();
             _regionManager.Regions["ContentRegion"].RemoveAll();
         }
