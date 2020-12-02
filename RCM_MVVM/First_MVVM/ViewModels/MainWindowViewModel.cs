@@ -1,16 +1,16 @@
-﻿using Prism.Commands;
+﻿using System;
+
 using Prism.Mvvm;
-using System;
-using IOModel;
 using Prism.Regions;
+using Prism.Commands;
+
+using IOModel;
 
 namespace First_MVVM.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
         private readonly IRegionManager _regionManager;
-
-        public static bool CloseLoadingPage = false;
 
         private string _title = "Smart Locker";
         public string Title
