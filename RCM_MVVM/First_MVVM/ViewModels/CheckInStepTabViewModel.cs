@@ -300,8 +300,10 @@ namespace First_MVVM.ViewModels
                     _dBWrite.Charge_History_UPDATE(_charge_SN);
                     _checkInModel.DebitStatus = "成功";
                 }
-
-                DebitIsEnabled = true;
+                else
+                {
+                    DebitIsEnabled = true;
+                }
             }
         }
 
