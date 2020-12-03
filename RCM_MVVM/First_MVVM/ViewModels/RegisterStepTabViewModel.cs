@@ -461,7 +461,7 @@ namespace First_MVVM.ViewModels
 
             Card_ID = (string)JObject.Parse(Data)["result"]["card_id"];
             Card_purse_id = (string)JObject.Parse(Data)["result"]["card_purse_id"];
-            Ticket_type = (string)JObject.Parse(Data)["ticket_type"];
+            Ticket_type = (string)JObject.Parse(Data)["result"]["ticket_type"];
 
             DataTable RFID_Users = await _dBRead.RFID_Users(Card_ID);
 
