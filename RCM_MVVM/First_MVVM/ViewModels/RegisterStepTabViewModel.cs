@@ -455,14 +455,11 @@ namespace First_MVVM.ViewModels
 
             ReadCardIsEnabled = false;
             string Data = await Task.Run<string>(() => { return _easyCard.Read_card_balance_request(); });
-            ReadCardIsEnabled = true;
-
-
-
+            
             Card_ID = (string)JObject.Parse(Data)["result"]["card_id"];
             Card_purse_id = (string)JObject.Parse(Data)["result"]["card_purse_id"];
             Ticket_type = (string)JObject.Parse(Data)["result"]["ticket_type"];
-
+            
             DataTable RFID_Users = await _dBRead.RFID_Users(Card_ID);
 
             bool isThisAlreadyHadBinding;
@@ -485,6 +482,7 @@ namespace First_MVVM.ViewModels
                 {
                     NoticeText = "悠遊卡不可重複綁定";
                     NextStepIsEnabledBool = false;
+                    ReadCardIsEnabled = true;
                 }
                 else
                 {
@@ -494,6 +492,7 @@ namespace First_MVVM.ViewModels
             else
             {
                 NextStepIsEnabledBool = false;
+                ReadCardIsEnabled = true;
             }
            
         }
