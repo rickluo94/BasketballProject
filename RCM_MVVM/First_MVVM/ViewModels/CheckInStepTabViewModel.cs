@@ -207,7 +207,7 @@ namespace First_MVVM.ViewModels
                 {
                     if (_checkOut_History.Rows.Count >0)
                     {
-                        OutTimeStr = _checkOut_History.Rows[0]["Take_Date"].ToString();
+                        OutTimeStr = _checkOut_History.Rows[0]["Take_CheckOut"].ToString();
                         LockerBoxSelectedIndex = _checkOut_History.Rows[0]["Take_BoxName"].ToString();
                         _checkInModel.Take_SN = _checkOut_History.Rows[0]["Take_SN"].ToString();
                         _checkInModel.CardID = _card_id;
