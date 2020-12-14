@@ -203,6 +203,7 @@ namespace First_MVVM.ViewModels
             if (RFIDS.Rows.Count > 0)
             {
                 DataTable Customer_info = await _dBRead.Customer_info(RFIDS.Rows[0]["SN"].ToString());
+                _checkOutModel.SN = Customer_info.Rows[0]["SN"].ToString();
 
                 AccountStr = Customer_info.Rows[0]["user_id"].ToString();
                 BalanceStr = (string)JObject.Parse(Data)["result"]["balance"];
@@ -210,7 +211,7 @@ namespace First_MVVM.ViewModels
                 ReadCardIsEnabled = false;
                 NextStepIsEnabled = true;
 
-                DataTable _outstanding_Amount = await _dBRead.Charge_History(AccountStr);
+                DataTable _outstanding_Amount = await _dBRead.Charge_History(_checkOutModel.SN);
 
                 if (_outstanding_Amount.Rows.Count > 0)
                 {
@@ -218,7 +219,7 @@ namespace First_MVVM.ViewModels
                     NextStepIsEnabled = false;
                 }
 
-                int _notReturnedCheckOut = await _dBRead.NotReturnedCheckOut(AccountStr);
+                int _notReturnedCheckOut = await _dBRead.NotReturnedCheckOut(_checkOutModel.SN);
 
                 if (_notReturnedCheckOut > 0)
                 {
@@ -469,7 +470,7 @@ namespace First_MVVM.ViewModels
 
                     //寫入借出紀錄
                     _dBWrite.Inventory(_checkOutModel.LockerBosSelectedIndex, 0);
-                    _dBWrite.Take_History(_checkOutModel.ID, _checkOutModel.LockerBosSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
+                    _dBWrite.Take_History(_checkOutModel.SN, _checkOutModel.LockerBosSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
 
                     UnsubscribeReaderEvent();
 
@@ -487,7 +488,7 @@ namespace First_MVVM.ViewModels
 
                     //寫入借出紀錄
                     _dBWrite.Inventory(_checkOutModel.LockerBosSelectedIndex, 0);
-                    _dBWrite.Take_History(_checkOutModel.ID, _checkOutModel.LockerBosSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
+                    _dBWrite.Take_History(_checkOutModel.SN, _checkOutModel.LockerBosSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
 
                     UnsubscribeReaderEvent();
 
