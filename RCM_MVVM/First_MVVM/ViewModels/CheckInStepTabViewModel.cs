@@ -191,11 +191,13 @@ namespace First_MVVM.ViewModels
             {
                 DataTable Customer_info = await _dBRead.Customer_info(RFIDS.Rows[0]["SN"].ToString());
 
+                _checkInModel.SN = Customer_info.Rows[0]["SN"].ToString();
+
                 AccountStr = Customer_info.Rows[0]["user_id"].ToString();
                 BalanceStr = (string)JObject.Parse(Data)["result"]["balance"];
 
-                DataTable _outstanding_Amount = await _dBRead.Charge_History(AccountStr);
-                DataTable _checkOut_History = await _dBRead.Take_History(AccountStr);
+                DataTable _outstanding_Amount = await _dBRead.Charge_History(_checkInModel.SN);
+                DataTable _checkOut_History = await _dBRead.Take_History(_checkInModel.SN);
                 if (_outstanding_Amount.Rows.Count > 0)
                 {
                     NoticeText = "尚有未付款";
@@ -207,7 +209,7 @@ namespace First_MVVM.ViewModels
                     {
                         OutTimeStr = _checkOut_History.Rows[0]["Take_Date"].ToString();
                         LockerBoxSelectedIndex = _checkOut_History.Rows[0]["Take_BoxName"].ToString();
-                        _checkInModel.SN = _checkOut_History.Rows[0]["Take_SN"].ToString();
+                        _checkInModel.Take_SN = _checkOut_History.Rows[0]["Take_SN"].ToString();
                         _checkInModel.CardID = _card_id;
                         NoticeText = string.Empty;
                         ReadCardIsEnabled = false;
@@ -285,7 +287,7 @@ namespace First_MVVM.ViewModels
 
         private async void Charge()
         {
-            DataTable _charge_History = await _dBRead.Charge_History(_checkInModel.ID);
+            DataTable _charge_History = await _dBRead.Charge_History(_checkInModel.SN);
             int _amount = _checkInModel.Amount;
 
             if (_charge_History.Rows.Count > 0)
@@ -449,9 +451,9 @@ namespace First_MVVM.ViewModels
 
                     //建立Charge_History
                     _dBWrite.Inventory(_checkInModel.LockerBoxSelectedIndex, 1);
-                    _dBWrite.Take_History_UPDATE(_checkInModel.SN, "已歸還");
+                    _dBWrite.Take_History_UPDATE(_checkInModel.Take_SN, "已歸還");
                     ////存入歷史紀錄
-                    _dBWrite.Charge_History(_checkInModel.ID, _checkInModel.Amount, _checkInModel.HoursUse, _checkInModel.CardID);
+                    _dBWrite.Charge_History(_checkInModel.SN, _checkInModel.Amount, _checkInModel.HoursUse, _checkInModel.CardID);
 
                     NoticeText = "歸還成功，請點擊付款";
                     NextStepIsEnabled = true;
