@@ -261,11 +261,13 @@ namespace First_MVVM.ViewModels
 
             Card_id = (string)JObject.Parse(Data)["result"]["card_id"];
             if (string.IsNullOrWhiteSpace(_card_id)) return;
-            DataTable _rFID_UsersProfile = await _dBRead.RFID_Users(_card_id);
+            DataTable RFIDS = await _dBRead.RFIDS(_card_id);
 
-            if (_rFID_UsersProfile.Rows.Count > 0)
+            if (RFIDS.Rows.Count > 0)
             {
-                AccountStr = _rFID_UsersProfile.Rows[0]["RFID_user_id"].ToString();
+                DataTable Customer_info = await _dBRead.Customer_info(RFIDS.Rows[0]["SN"].ToString());
+
+                AccountStr = Customer_info.Rows[0]["user_id"].ToString();
                 BalanceStr = (string)JObject.Parse(Data)["result"]["balance"];
 
                 DataTable _outstanding_Amount = await _dBRead.Charge_History(AccountStr);
