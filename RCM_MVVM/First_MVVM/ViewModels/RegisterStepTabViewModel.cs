@@ -543,13 +543,14 @@ namespace First_MVVM.ViewModels
             DataTable SN = await _dBRead.Customer_info("SN", _registerModel.ID, "INT");
             if (SN.Rows.Count == 1)
             {
-                bool RegisterPassword = await _dBWrite.Password_Manager(SN.Rows[0]["SN"].ToString(), _registerModel.Password);
-                bool RegisterAddress = await _dBWrite.Customer_Address(SN.Rows[0]["SN"].ToString(), _registerModel.City, _registerModel.Area);
+                _registerModel.SN = SN.Rows[0]["SN"].ToString();
+                bool RegisterPassword = await _dBWrite.Password_Manager(_registerModel.SN, _registerModel.Password);
+                bool RegisterAddress = await _dBWrite.Customer_Address(_registerModel.SN, _registerModel.City, _registerModel.Area);
 
-                bool RegisterRFIDS = await _dBWrite.RFIDS(SN.Rows[0]["SN"].ToString(), _registerModel.Card_id, _registerModel.Card_purse_id);
+                bool RegisterRFIDS = await _dBWrite.RFIDS(_registerModel.SN, _registerModel.Card_id, _registerModel.Card_purse_id);
                 DataTable RFID_SN = await _dBRead.RFIDS(_registerModel.Card_id);
 
-                bool RegisterCard = await _dBWrite.RFID_Customers(SN.Rows[0]["SN"].ToString(), RFID_SN.Rows[0]["RFID_SN"].ToString());
+                bool RegisterCard = await _dBWrite.RFID_Customers(_registerModel.SN, RFID_SN.Rows[0]["RFID_SN"].ToString());
 
                 if (RegisterAccount == RegisterPassword == RegisterAddress == RegisterRFIDS == RegisterCard == true)
                 {
