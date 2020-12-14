@@ -266,12 +266,13 @@ namespace First_MVVM.ViewModels
             if (RFIDS.Rows.Count > 0)
             {
                 DataTable Customer_info = await _dBRead.Customer_info(RFIDS.Rows[0]["SN"].ToString());
+                _memberServiceModel.SN = Customer_info.Rows[0]["SN"].ToString();
 
                 AccountStr = Customer_info.Rows[0]["user_id"].ToString();
                 BalanceStr = (string)JObject.Parse(Data)["result"]["balance"];
 
-                DataTable _outstanding_Amount = await _dBRead.Charge_History(AccountStr);
-                DataTable _checkOut_History = await _dBRead.Take_History(AccountStr);
+                DataTable _outstanding_Amount = await _dBRead.Charge_History(_memberServiceModel.SN);
+                DataTable _checkOut_History = await _dBRead.Take_History(_memberServiceModel.SN);
                 if (_outstanding_Amount.Rows.Count > 0)
                 {
                     NoticeText = "尚有未付款";
