@@ -283,7 +283,7 @@ namespace First_MVVM.ViewModels
 
             if (_strVerify.IsPhoneNumber(AccountBox.Text) && AccountBox.Text.Length == 10)
             {
-                DataTable table = await _dBRead.Customer_Address(AccountBox.Text);
+                DataTable table = await _dBRead.Customer_info("user_id", AccountBox.Text,"String");
                 if (table.Rows.Count > 0)
                 {
                     NoticeText = "此帳號已存在";
@@ -460,11 +460,11 @@ namespace First_MVVM.ViewModels
             Card_purse_id = (string)JObject.Parse(Data)["result"]["card_purse_id"];
             Ticket_type = (string)JObject.Parse(Data)["result"]["ticket_type"];
             
-            DataTable RFID_Users = await _dBRead.RFID_Users(Card_ID);
+            DataTable RFIDS = await _dBRead.RFIDS(Card_ID);
 
             bool isThisAlreadyHadBinding;
 
-            if (RFID_Users.Rows.Count > 0)
+            if (RFIDS.Rows.Count > 0)
             {
                 isThisAlreadyHadBinding = true;
             }
@@ -473,9 +473,6 @@ namespace First_MVVM.ViewModels
                 isThisAlreadyHadBinding = false;
             }
             
-
-            //Card_ID = "4334488813";
-            //Card_purse_id = "4334488813";
             if (!string.IsNullOrWhiteSpace(Card_ID) && Ticket_type == "ECC")
             {
                 if (isThisAlreadyHadBinding == true)
@@ -542,12 +539,22 @@ namespace First_MVVM.ViewModels
         private async void RegisterAction()
         {
             bool RegisterAccount = await _dBWrite.Customer_info(_registerModel.ID, _registerModel.Name, _registerModel.Email);
-            bool RegisterLogin = await _dBWrite.Users(_registerModel.ID, _registerModel.Name, _registerModel.Password);
-            bool RegisterAddress = await _dBWrite.Customer_Address(_registerModel.ID, _registerModel.City, _registerModel.Area);
-            bool RegisterCardPofile = await _dBWrite.RFID_Users(_registerModel.ID, _registerModel.Card_id, _registerModel.Card_purse_id);
-            if (RegisterAccount == RegisterLogin == RegisterAddress == RegisterCardPofile == true)
+
+            DataTable SN = await _dBRead.Customer_info("SN", _registerModel.ID, "INT");
+            if (SN.Rows.Count == 1)
             {
-                ExitInteraction();
+                bool RegisterPassword = await _dBWrite.Password_Manager(SN.Rows[0]["SN"].ToString(), _registerModel.Password);
+                bool RegisterAddress = await _dBWrite.Customer_Address(SN.Rows[0]["SN"].ToString(), _registerModel.City, _registerModel.Area);
+
+                bool RegisterRFIDS = await _dBWrite.RFIDS(SN.Rows[0]["SN"].ToString(), _registerModel.Card_id, _registerModel.Card_purse_id);
+                DataTable RFID_SN = await _dBRead.RFIDS(_registerModel.Card_id);
+
+                bool RegisterCard = await _dBWrite.RFID_Customers(SN.Rows[0]["SN"].ToString(), RFID_SN.Rows[0]["RFID_SN"].ToString());
+
+                if (RegisterAccount == RegisterPassword == RegisterAddress == RegisterRFIDS == RegisterCard == true)
+                {
+                    ExitInteraction();
+                }
             }
         }
 
