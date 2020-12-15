@@ -203,24 +203,24 @@ namespace First_MVVM.ViewModels
 
         private async void CancelAccount()
         {
-            NoticeText = string.Empty;
-            int _notReturnedCheckOut = await _dBRead.NotReturnedCheckOut(_memberServiceModel.SN);
-            DataTable _outstanding_Amount = await _dBRead.Charge_History(_memberServiceModel.SN);
+            MessageBoxResult ConfirmResult = MessageBox.Show("確定後將註銷帳號", "提示註銷帳號", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
-            if (_notReturnedCheckOut > 0)
+            if (ConfirmResult == MessageBoxResult.Yes)
             {
-                NoticeText = "尚有未歸還";
-            }
-            if (_outstanding_Amount.Rows.Count > 0)
-            {
-                NoticeText = "尚有未付款，不可註銷帳號";
-            }
+                NoticeText = string.Empty;
+                int _notReturnedCheckOut = await _dBRead.NotReturnedCheckOut(_memberServiceModel.SN);
+                DataTable _outstanding_Amount = await _dBRead.Charge_History(_memberServiceModel.SN);
 
-            if (_notReturnedCheckOut == 0 && _outstanding_Amount.Rows.Count == 0)
-            {
-                MessageBoxResult ConfirmResult = MessageBox.Show("確定後將註銷帳號", "提示註銷帳號", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (_notReturnedCheckOut > 0)
+                {
+                    NoticeText = "尚有未歸還";
+                }
+                if (_outstanding_Amount.Rows.Count > 0)
+                {
+                    NoticeText = "尚有未付款，不可註銷帳號";
+                }
 
-                if (ConfirmResult == MessageBoxResult.Yes)
+                if (_notReturnedCheckOut == 0 && _outstanding_Amount.Rows.Count == 0)
                 {
                     bool CancelAccount = await _dBWrite.Customer_info_UPDATE(_memberServiceModel.SN, "Status", "2");
                     if (CancelAccount == true)
@@ -230,7 +230,6 @@ namespace First_MVVM.ViewModels
                     }
 
                 }
-               
             }
         }
 
