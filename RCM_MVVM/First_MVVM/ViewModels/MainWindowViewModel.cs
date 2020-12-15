@@ -25,7 +25,7 @@ namespace First_MVVM.ViewModels
             set { SetProperty(ref _updateText, value); }
         }
 
-        private bool _checkOutEnabled;
+        private bool _checkOutEnabled = true;
         public bool CheckOutEnabled
         {
             get { return _checkOutEnabled; }
