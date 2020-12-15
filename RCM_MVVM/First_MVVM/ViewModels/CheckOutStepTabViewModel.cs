@@ -205,28 +205,35 @@ namespace First_MVVM.ViewModels
                 DataTable Customer_info = await _dBRead.Customer_info(RFIDS.Rows[0]["SN"].ToString());
                 _checkOutModel.SN = Customer_info.Rows[0]["SN"].ToString();
 
-                AccountStr = Customer_info.Rows[0]["user_id"].ToString();
-                BalanceStr = (string)JObject.Parse(Data)["result"]["balance"];
-                NoticeText = string.Empty;
-                ReadCardIsEnabled = false;
-                NextStepIsEnabled = true;
-
-                DataTable _outstanding_Amount = await _dBRead.Charge_History(_checkOutModel.SN);
-
-                if (_outstanding_Amount.Rows.Count > 0)
+                if (Customer_info.Rows[0]["Status"].ToString() == "1")
                 {
-                    NoticeText = "尚有未付款";
+
+                    AccountStr = Customer_info.Rows[0]["user_id"].ToString();
+                    BalanceStr = (string)JObject.Parse(Data)["result"]["balance"];
+                    NoticeText = string.Empty;
+                    ReadCardIsEnabled = false;
+                    NextStepIsEnabled = true;
+
+                    DataTable _outstanding_Amount = await _dBRead.Charge_History(_checkOutModel.SN);
+                    int _notReturnedCheckOut = await _dBRead.NotReturnedCheckOut(_checkOutModel.SN);
+
+                    if (_outstanding_Amount.Rows.Count > 0)
+                    {
+                        NoticeText = "尚有未付款";
+                        NextStepIsEnabled = false;
+                    }
+                    if (_notReturnedCheckOut > 0)
+                    {
+                        NoticeText = "尚有未歸還";
+                        NextStepIsEnabled = false;
+                    }
+
+                }
+                else
+                {
+                    NoticeText = "帳號已停用";
                     NextStepIsEnabled = false;
                 }
-
-                int _notReturnedCheckOut = await _dBRead.NotReturnedCheckOut(_checkOutModel.SN);
-
-                if (_notReturnedCheckOut > 0)
-                {
-                    NoticeText = "尚有未歸還";
-                    NextStepIsEnabled = false;
-                }
-
 
             }
             else

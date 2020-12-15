@@ -190,32 +190,42 @@ namespace First_MVVM.ViewModels
             if (RFIDS.Rows.Count > 0)
             {
                 DataTable Customer_info = await _dBRead.Customer_info(RFIDS.Rows[0]["SN"].ToString());
-
                 _checkInModel.SN = Customer_info.Rows[0]["SN"].ToString();
 
-                AccountStr = Customer_info.Rows[0]["user_id"].ToString();
-                BalanceStr = (string)JObject.Parse(Data)["result"]["balance"];
-
-                DataTable _outstanding_Amount = await _dBRead.Charge_History(_checkInModel.SN);
-                DataTable _checkOut_History = await _dBRead.Take_History(_checkInModel.SN);
-                if (_outstanding_Amount.Rows.Count > 0)
+                if (Customer_info.Rows[0]["Status"].ToString() == "1")
                 {
-                    NoticeText = "尚有未付款";
-                    NextStepIsEnabled = false;
+                    AccountStr = Customer_info.Rows[0]["user_id"].ToString();
+                    BalanceStr = (string)JObject.Parse(Data)["result"]["balance"];
+
+                    DataTable _outstanding_Amount = await _dBRead.Charge_History(_checkInModel.SN);
+                    DataTable _checkOut_History = await _dBRead.Take_History(_checkInModel.SN);
+                    if (_outstanding_Amount.Rows.Count > 0)
+                    {
+                        NoticeText = "尚有未付款";
+                        NextStepIsEnabled = false;
+                    }
+                    else
+                    {
+                        if (_checkOut_History.Rows.Count > 0)
+                        {
+                            OutTimeStr = _checkOut_History.Rows[0]["Take_CheckOut"].ToString();
+                            LockerBoxSelectedIndex = _checkOut_History.Rows[0]["Take_BoxName"].ToString();
+                            _checkInModel.Take_SN = _checkOut_History.Rows[0]["Take_SN"].ToString();
+                            _checkInModel.CardID = _card_id;
+                            NoticeText = string.Empty;
+                            ReadCardIsEnabled = false;
+                            NextStepIsEnabled = true;
+                        }
+                    }
+
                 }
                 else
                 {
-                    if (_checkOut_History.Rows.Count >0)
-                    {
-                        OutTimeStr = _checkOut_History.Rows[0]["Take_CheckOut"].ToString();
-                        LockerBoxSelectedIndex = _checkOut_History.Rows[0]["Take_BoxName"].ToString();
-                        _checkInModel.Take_SN = _checkOut_History.Rows[0]["Take_SN"].ToString();
-                        _checkInModel.CardID = _card_id;
-                        NoticeText = string.Empty;
-                        ReadCardIsEnabled = false;
-                        NextStepIsEnabled = true;
-                    }
+                    NoticeText = "帳號已停用";
+                    NextStepIsEnabled = false;
                 }
+
+
             }
             else
             {
