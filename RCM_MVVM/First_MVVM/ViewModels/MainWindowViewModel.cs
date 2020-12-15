@@ -25,6 +25,20 @@ namespace First_MVVM.ViewModels
             set { SetProperty(ref _updateText, value); }
         }
 
+        private bool _checkOutEnabled;
+        public bool CheckOutEnabled
+        {
+            get { return _checkOutEnabled; }
+            set { SetProperty(ref _checkOutEnabled, value); }
+        }
+
+        private bool _availableBox;
+        public bool AvailableBox
+        {
+            get { return _availableBox; }
+            set { SetProperty(ref _availableBox, value); }
+        }
+
         public DelegateCommand<string> NavigateCmd { get; set; }
 
         public MainWindowViewModel(IRegionManager regionManager)
