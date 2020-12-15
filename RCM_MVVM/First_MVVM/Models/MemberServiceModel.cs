@@ -6,6 +6,7 @@ namespace First_MVVM.Models
 {
     public class MemberServiceModel
     {
+        public string PumpSN { get; set; }
         public string SN { get; set; }
         public string ID { get; set; }
         public string CardID { get; set; }
