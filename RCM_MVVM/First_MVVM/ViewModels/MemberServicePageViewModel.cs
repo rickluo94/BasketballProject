@@ -202,14 +202,27 @@ namespace First_MVVM.ViewModels
 
         private async void CancelAccount()
         {
-            DataTable _outstanding_Amount = await _dBRead.Charge_History(AccountStr);
+            NoticeText = string.Empty;
+            int _notReturnedCheckOut = await _dBRead.NotReturnedCheckOut(_memberServiceModel.SN);
+            DataTable _outstanding_Amount = await _dBRead.Charge_History(_memberServiceModel.SN);
+
+            if (_notReturnedCheckOut > 0)
+            {
+                NoticeText = "尚有未歸還";
+            }
             if (_outstanding_Amount.Rows.Count > 0)
             {
                 NoticeText = "尚有未付款，不可註銷帳號";
             }
-            else
+
+            if (_notReturnedCheckOut == 0 && _outstanding_Amount.Rows.Count == 0)
             {
-                
+                bool CancelAccount = await _dBWrite.Customer_info_UPDATE(_memberServiceModel.SN, "Status", "2");
+                if (CancelAccount == true)
+                {
+                    NoticeText = "感謝您的使用";
+                    SelectedStepTabName = "完成";
+                }
             }
         }
 
@@ -268,20 +281,30 @@ namespace First_MVVM.ViewModels
                 DataTable Customer_info = await _dBRead.Customer_info(RFIDS.Rows[0]["SN"].ToString());
                 _memberServiceModel.SN = Customer_info.Rows[0]["SN"].ToString();
 
-                AccountStr = Customer_info.Rows[0]["user_id"].ToString();
-                BalanceStr = (string)JObject.Parse(Data)["result"]["balance"];
-
-                DataTable _outstanding_Amount = await _dBRead.Charge_History(_memberServiceModel.SN);
-                DataTable _checkOut_History = await _dBRead.Take_History(_memberServiceModel.SN);
-                if (_outstanding_Amount.Rows.Count > 0)
+                if (Customer_info.Rows[0]["Status"].ToString() == "1")
                 {
-                    NoticeText = "尚有未付款";
-                    AmountStr = _outstanding_Amount.Rows[0]["Charge_amount"].ToString();
-                    SNStr = _outstanding_Amount.Rows[0]["Charge_SN"].ToString();
+
+                    AccountStr = Customer_info.Rows[0]["user_id"].ToString();
+                    BalanceStr = (string)JObject.Parse(Data)["result"]["balance"];
+
+                    DataTable _outstanding_Amount = await _dBRead.Charge_History(_memberServiceModel.SN);
+                    DataTable _checkOut_History = await _dBRead.Take_History(_memberServiceModel.SN);
+                    if (_outstanding_Amount.Rows.Count > 0)
+                    {
+                        NoticeText = "尚有未付款";
+                        AmountStr = _outstanding_Amount.Rows[0]["Charge_amount"].ToString();
+                        SNStr = _outstanding_Amount.Rows[0]["Charge_SN"].ToString();
+                    }
+
+                    ReadCardIsEnabled = false;
+                    NextStepIsEnabled = true;
+                }
+                else
+                {
+                    NoticeText = "帳號已停用";
+                    NextStepIsEnabled = false;
                 }
 
-                ReadCardIsEnabled = false;
-                NextStepIsEnabled = true;
             }
             else
             {
