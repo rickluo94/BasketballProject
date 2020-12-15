@@ -13,6 +13,7 @@ using IOModel;
 using System.Timers;
 using Prism.Services.Dialogs;
 using Prism.Regions;
+using System.Windows;
 
 namespace First_MVVM.ViewModels
 {
@@ -217,12 +218,19 @@ namespace First_MVVM.ViewModels
 
             if (_notReturnedCheckOut == 0 && _outstanding_Amount.Rows.Count == 0)
             {
-                bool CancelAccount = await _dBWrite.Customer_info_UPDATE(_memberServiceModel.SN, "Status", "2");
-                if (CancelAccount == true)
+                MessageBoxResult ConfirmResult = MessageBox.Show("確定後將註銷帳號", "提示註銷帳號", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+                if (ConfirmResult == MessageBoxResult.Yes)
                 {
-                    NoticeText = "感謝您的使用";
-                    SelectedStepTabName = "完成";
+                    bool CancelAccount = await _dBWrite.Customer_info_UPDATE(_memberServiceModel.SN, "Status", "2");
+                    if (CancelAccount == true)
+                    {
+                        NoticeText = "感謝您的使用";
+                        SelectedStepTabName = "完成";
+                    }
+
                 }
+               
             }
         }
 
