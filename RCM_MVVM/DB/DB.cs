@@ -44,7 +44,7 @@ namespace DBModel
             DataTable table = new DataTable();
             DataColumn column;
             DataRow row;
-            string[] _columnName = { "SN", "user_id", "username", "email", "CreateDate", "ModifyDate" };
+            string[] _columnName = { "SN", "user_id", "username", "email", "CreateDate", "ModifyDate", "Status" };
             foreach (string _name in _columnName)
             {
                 column = new DataColumn();
@@ -73,7 +73,8 @@ namespace DBModel
                                 !reader.IsDBNull(reader.GetOrdinal("username")) &&
                                 !reader.IsDBNull(reader.GetOrdinal("email")) &&
                                 !reader.IsDBNull(reader.GetOrdinal("CreateDate")) &&
-                                !reader.IsDBNull(reader.GetOrdinal("ModifyDate")))
+                                !reader.IsDBNull(reader.GetOrdinal("ModifyDate")) &&
+                                !reader.IsDBNull(reader.GetOrdinal("Status")))
                             {
                                 row["SN"] = reader.GetInt32(0);
                                 row["user_id"] = reader.GetString(1);
@@ -81,6 +82,7 @@ namespace DBModel
                                 row["email"] = reader.GetString(3);
                                 row["CreateDate"] = reader.GetDateTime(4);
                                 row["ModifyDate"] = reader.GetDateTime(5);
+                                row["Status"] = reader.GetDateTime(6);
                             }
                             else
                             {
@@ -90,6 +92,7 @@ namespace DBModel
                                 row["email"] = string.Empty;
                                 row["CreateDate"] = 0;
                                 row["ModifyDate"] = 0;
+                                row["Status"] = 2;
                             }
                             table.Rows.Add(row);
                         }
@@ -449,6 +452,29 @@ namespace DBModel
                 using (var command = conn.CreateCommand())
                 {
                     command.CommandText = $"INSERT INTO `ste_SBSCS`.`Customer_info` (`user_id`, `username`, `email`) VALUES ('{ID}', '{UserName}', '{Email}');";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        public async Task<bool> Customer_info_UPDATE(string SN, string Column, string UpValue)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"UPDATE `ste_SBSCS`.`Customer_info` SET `{Column}` = '{UpValue}' WHERE (`SN` = '{SN}');";
 
                     int index = command.ExecuteNonQuery();
                     if (index == 1)
