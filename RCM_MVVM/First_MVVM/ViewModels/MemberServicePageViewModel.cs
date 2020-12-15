@@ -351,17 +351,26 @@ namespace First_MVVM.ViewModels
             await Task.Delay(1000);
         }
 
-        private void PumpBoxStart()
+        private async void PumpBoxStart()
         {
-            IO.Write("A8", IO.UnLock);
+            _memberServiceModel.CheckOut = DateTime.Now;
+            bool insertPumpHistory = await _dBWrite.Pump_History(_memberServiceModel.SN, 0, "A8");
+            if (insertPumpHistory == true)
+            {
+                IO.Write("A8", IO.UnLock);
 
-            CallBazz();
+                CallBazz();
 
-            SetDoorCheckTimer();
+                SetDoorCheckTimer();
 
-            PumpBoxStartIsEnable = false;
+                PumpBoxStartIsEnable = false;
+            }
         }
 
+        private async Task UpDatePumpHistory(double Time_usage)
+        {
+            bool UpDatePumpHistory = await _dBWrite.Pump_History_UPDATE(_memberServiceModel.SN, "Time_usage", Time_usage);
+        }
 
         #region Unsubscribe Event
 
@@ -457,6 +466,11 @@ namespace First_MVVM.ViewModels
 
             if (Counter == 20 || IO.Read("A8") == IO.DoorLock)
             {
+                _memberServiceModel.CheckIn = DateTime.Now;
+                TimeSpan Ts = _memberServiceModel.CheckIn - _memberServiceModel.CheckOut;
+                double UseTotalSec = Ts.TotalSeconds;
+                UpDatePumpHistory(UseTotalSec);
+
                 UnsubscribePumpStartEvent();
 
                 IO.Write("A8", IO.Lock);

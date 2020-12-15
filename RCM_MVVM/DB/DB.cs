@@ -743,6 +743,51 @@ namespace DBModel
             }
         }
 
+        public async Task<bool> Pump_History(string SN, double Time_usage, string BoxName)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`Pump_History` (`SN`, `Time_usage`, `BoxName`) VALUES ('{SN}', '{Time_usage}', '{BoxName}');";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        public async Task<bool> Pump_History_UPDATE(string SN, string Column, double UpValue)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"UPDATE `ste_SBSCS`.`Pump_History` SET `{Column}` = {UpValue} WHERE(`Pump_SN` = '{SN}');";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
     }
 
 }

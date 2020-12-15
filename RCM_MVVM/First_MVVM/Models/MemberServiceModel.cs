@@ -12,5 +12,7 @@ namespace First_MVVM.Models
         public string Balance { get; set; }
         public int Amount { get; set; }
         public string DebitStatus { get; set; }
+        public DateTime CheckOut { get; set; }
+        public DateTime CheckIn { get; set; }
     }
 }
