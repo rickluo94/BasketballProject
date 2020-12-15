@@ -473,6 +473,72 @@ namespace DBModel
             }
             return table;
         }
+
+        public async Task<DataTable> RFID_Customers(string SN)
+        {
+            DataTable table = new DataTable();
+            DataColumn column;
+            DataRow row;
+            string[] _columnName = { "RFID_Card_SN_1", "RFID_Card_SN_2", "RFID_Card_SN_3", "RFID_Card_SN_4", "RFID_Card_SN_5" };
+            foreach (string _name in _columnName)
+            {
+                column = new DataColumn();
+                column.DataType = Type.GetType("System.String");
+                column.ColumnName = _name;
+                table.Columns.Add(column);
+            }
+
+            string buffer = string.Empty;
+
+
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"SELECT RFID_Card_SN_1,RFID_Card_SN_2,RFID_Card_SN_3,RFID_Card_SN_4,RFID_Card_SN_5 FROM ste_SBSCS.RFID_Customers WHERE SN = '{SN}';";
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            row = table.NewRow();
+                            row["RFID_Card_SN_1"] = reader.GetInt32(0);
+                            row["RFID_Card_SN_2"] = reader.GetInt32(1);
+                            row["RFID_Card_SN_3"] = reader.GetInt32(2);
+                            row["RFID_Card_SN_4"] = reader.GetInt32(3);
+                            row["RFID_Card_SN_5"] = reader.GetInt32(4);
+                            table.Rows.Add(row);
+                        }
+                    }
+                }
+
+            }
+            return table;
+        }
+
+        public async Task<string> RFID_Card_Purse_ID(string RFID_SN)
+        {
+            string RFID_Card_Purse_ID = string.Empty;
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"SELECT RFID_Card_ID FROM ste_SBSCS.RFIDS WHERE RFID_SN ='{RFID_SN}';";
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            RFID_Card_Purse_ID = reader.GetString(0);
+                        }
+                    }
+                }
+
+            }
+            return RFID_Card_Purse_ID;
+        }
     }
 
     public class DBWrite
@@ -831,6 +897,53 @@ namespace DBModel
                 }
             }
         }
+
+        public async Task<bool> RFID_Customers_UPDATE(string SN, string Column, int UpValue)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"UPDATE `ste_SBSCS`.`RFID_Customers` SET `{Column}` = '{UpValue}' WHERE (`SN` = '{SN}');";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        public async Task<bool> RFIDS_DELETE(string RFID_SN)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"DELETE FROM `ste_SBSCS`.`RFIDS` WHERE (`RFID_SN` = '{RFID_SN}');";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
     }
 
 }

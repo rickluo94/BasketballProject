@@ -14,6 +14,7 @@ using System.Timers;
 using Prism.Services.Dialogs;
 using Prism.Regions;
 using System.Windows;
+using System.Collections.Generic;
 
 namespace First_MVVM.ViewModels
 {
@@ -129,6 +130,90 @@ namespace First_MVVM.ViewModels
             set { SetProperty(ref _pumpBoxStatus, value); }
         }
 
+        private bool _cardCanceIsEnabled = true;
+        public bool CardCanceIsEnabled
+        {
+            get { return _cardCanceIsEnabled; }
+            set { SetProperty(ref _cardCanceIsEnabled, value); }
+        }
+
+        private int _totalCards;
+        public int TotalCards
+        {
+            get { return _totalCards; }
+            set { SetProperty(ref _totalCards, value); }
+        }
+
+        private string _card_ID_01;
+        public string Card_ID_01
+        {
+            get { return _card_ID_01; }
+            set { SetProperty(ref _card_ID_01, value); }
+        }
+
+        private string _card_ID_02;
+        public string Card_ID_02
+        {
+            get { return _card_ID_02; }
+            set { SetProperty(ref _card_ID_02, value); }
+        }
+
+        private string _card_ID_03;
+        public string Card_ID_03
+        {
+            get { return _card_ID_03; }
+            set { SetProperty(ref _card_ID_03, value); }
+        }
+
+        private string _card_ID_04;
+        public string Card_ID_04
+        {
+            get { return _card_ID_04; }
+            set { SetProperty(ref _card_ID_04, value); }
+        }
+
+        private string _card_ID_05;
+        public string Card_ID_05
+        {
+            get { return _card_ID_05; }
+            set { SetProperty(ref _card_ID_05, value); }
+        }
+
+        private Visibility _x1_Visibility = Visibility.Hidden;
+        public Visibility X1_Visibility
+        {
+            get { return _x1_Visibility; }
+            set { SetProperty(ref _x1_Visibility, value); }
+        }
+
+        private Visibility _x2_Visibility = Visibility.Hidden;
+        public Visibility X2_Visibility
+        {
+            get { return _x2_Visibility; }
+            set { SetProperty(ref _x2_Visibility, value); }
+        }
+
+        private Visibility _x3_Visibility = Visibility.Hidden;
+        public Visibility X3_Visibility
+        {
+            get { return _x3_Visibility; }
+            set { SetProperty(ref _x3_Visibility, value); }
+        }
+
+        private Visibility _x4_Visibility = Visibility.Hidden;
+        public Visibility X4_Visibility
+        {
+            get { return _x4_Visibility; }
+            set { SetProperty(ref _x4_Visibility, value); }
+        }
+
+        private Visibility _x5_Visibility = Visibility.Hidden;
+        public Visibility X5_Visibility
+        {
+            get { return _x5_Visibility; }
+            set { SetProperty(ref _x5_Visibility, value); }
+        }
+
         #endregion
 
         #region Interface Command
@@ -142,7 +227,9 @@ namespace First_MVVM.ViewModels
         public DelegateCommand GoToPumpPageCmd { get; private set; }
         public DelegateCommand CancelAccountCmd { get; private set; }
         public DelegateCommand PumpBoxStartCmd { get; private set; }
-
+        public DelegateCommand GoToCardInfoCmd { get; private set; }
+        public DelegateCommand SetNewCardCmd { get; private set; }
+        public DelegateCommand<string> CardCancelCmd { get; private set; }
         #endregion
 
         public MemberServicePageViewModel(IRegionManager regionManager)
@@ -157,6 +244,10 @@ namespace First_MVVM.ViewModels
             GoToPumpPageCmd = new DelegateCommand(GoToPumpPage);
             PumpBoxStartCmd = new DelegateCommand(PumpBoxStart);
             CancelAccountCmd = new DelegateCommand(CancelAccount);
+            GoToCardInfoCmd = new DelegateCommand(GoToCardInfo);
+            SetNewCardCmd = new DelegateCommand(SetNewCard);
+            CardCancelCmd = new DelegateCommand<string>(CardCancel);
+            
         }
 
         private void MemberServicePageLoad()
@@ -199,6 +290,127 @@ namespace First_MVVM.ViewModels
         private void GoToPumpPage()
         {
             SelectedStepTabName = "打氣";
+        }
+
+        private void GoToCardInfo()
+        {
+            FillCardInfo();
+            SelectedStepTabName = "卡片相關";
+        }
+
+        private async Task FillCardInfo()
+        {
+            TotalCards = 0;
+            DataTable RFID_Customers = await _dBRead.RFID_Customers(_memberServiceModel.SN);
+            if (RFID_Customers.Rows.Count <= 0) return;
+            foreach (DataColumn item in RFID_Customers.Columns)
+            {
+                if (RFID_Customers.Rows[0][item.ColumnName].ToString() != "0")
+                {
+                    TotalCards += 1;
+                    switch (item.ColumnName)
+                    {
+                        case "RFID_Card_SN_1":
+                            Card_ID_01 = await _dBRead.RFID_Card_Purse_ID(RFID_Customers.Rows[0][item.ColumnName].ToString());
+                            X1_Visibility = Visibility.Visible;
+                            break;
+                        case "RFID_Card_SN_2":
+                            Card_ID_02 = await _dBRead.RFID_Card_Purse_ID(RFID_Customers.Rows[0][item.ColumnName].ToString());
+                            X2_Visibility = Visibility.Visible;
+                            break;
+                        case "RFID_Card_SN_3":
+                            Card_ID_03 = await _dBRead.RFID_Card_Purse_ID(RFID_Customers.Rows[0][item.ColumnName].ToString());
+                            X3_Visibility = Visibility.Visible;
+                            break;
+                        case "RFID_Card_SN_4":
+                            Card_ID_04 = await _dBRead.RFID_Card_Purse_ID(RFID_Customers.Rows[0][item.ColumnName].ToString());
+                            X4_Visibility = Visibility.Visible;
+                            break;
+                        case "RFID_Card_SN_5":
+                            Card_ID_05 = await _dBRead.RFID_Card_Purse_ID(RFID_Customers.Rows[0][item.ColumnName].ToString());
+                            X5_Visibility = Visibility.Visible;
+                            break;
+                    }
+                }
+            }
+        }
+
+        private async void SetNewCard()
+        {
+            if (TotalCards == 5) return;
+            NoticeText = "請靠卡感應";
+            //string Data = await Task.Run<string>(() => { return _easyCard.Read_card_balance_request(); });
+
+            string Card_ID = "1668314704";//(string)JObject.Parse(Data)["result"]["card_id"];
+            string Card_purse_id = "0000000000000000"; //(string)JObject.Parse(Data)["result"]["card_purse_id"];
+            string Ticket_type = "ECC";//(string)JObject.Parse(Data)["result"]["ticket_type"];
+
+            DataTable RFIDS = await _dBRead.RFIDS(Card_ID);
+
+            bool isThisAlreadyHadBinding;
+
+            if (RFIDS.Rows.Count > 0)
+            {
+                isThisAlreadyHadBinding = true;
+            }
+            else
+            {
+                isThisAlreadyHadBinding = false;
+            }
+
+            if (!string.IsNullOrWhiteSpace(Card_ID) && Ticket_type == "ECC")
+            {
+                if (isThisAlreadyHadBinding == true)
+                {
+                    NoticeText = "悠遊卡不可重複綁定";
+                }
+                else
+                {
+                    
+                }
+            }
+            else
+            {
+                
+            }
+
+        }
+
+        private async void CardCancel(string Cancelbtn)
+        {
+            if (TotalCards == 1) return;
+            switch (Cancelbtn)
+            {
+                case "1":
+                    await _dBWrite.RFID_Customers_UPDATE(_memberServiceModel.SN,"RFID_Card_SN_1",0);
+                    await _dBWrite.RFIDS_DELETE(_card_ID_01);
+                    X1_Visibility = Visibility.Hidden;
+                    break;
+                case "2":
+                    await _dBWrite.RFID_Customers_UPDATE(_memberServiceModel.SN, "RFID_Card_SN_2", 0);
+                    await _dBWrite.RFIDS_DELETE(_card_ID_02);
+                    X2_Visibility = Visibility.Hidden;
+                    break;
+                case "3":
+                    await _dBWrite.RFID_Customers_UPDATE(_memberServiceModel.SN, "RFID_Card_SN_3", 0);
+                    await _dBWrite.RFIDS_DELETE(_card_ID_03);
+                    X3_Visibility = Visibility.Hidden;
+                    break;
+                case "4":
+                    await _dBWrite.RFID_Customers_UPDATE(_memberServiceModel.SN, "RFID_Card_SN_4", 0);
+                    await _dBWrite.RFIDS_DELETE(_card_ID_04);
+                    X4_Visibility = Visibility.Hidden;
+                    break;
+                case "5":
+                    await _dBWrite.RFID_Customers_UPDATE(_memberServiceModel.SN, "RFID_Card_SN_5", 0);
+                    await _dBWrite.RFIDS_DELETE(_card_ID_05);
+                    X5_Visibility = Visibility.Hidden;
+                    break;
+                default:
+                    break;
+            }
+
+            await FillCardInfo();
         }
 
         private async void CancelAccount()
@@ -276,10 +488,10 @@ namespace First_MVVM.ViewModels
         private async void ReadCard()
         {
             ReadCardIsEnabled = false;
-            string Data = await Task.Run<string>(() => { return _easyCard.Read_card_balance_request(); });
+            //string Data = await Task.Run<string>(() => { return _easyCard.Read_card_balance_request(); });
             ReadCardIsEnabled = true;
 
-            Card_id = (string)JObject.Parse(Data)["result"]["card_id"];
+            Card_id = "1668314704";//(string)JObject.Parse(Data)["result"]["card_id"];
             if (string.IsNullOrWhiteSpace(_card_id)) return;
             DataTable RFIDS = await _dBRead.RFIDS(_card_id);
 
@@ -292,7 +504,7 @@ namespace First_MVVM.ViewModels
                 {
 
                     AccountStr = Customer_info.Rows[0]["user_id"].ToString();
-                    BalanceStr = (string)JObject.Parse(Data)["result"]["balance"];
+                    BalanceStr = "0";//(string)JObject.Parse(Data)["result"]["balance"];
 
                     DataTable _outstanding_Amount = await _dBRead.Charge_History(_memberServiceModel.SN);
                     DataTable _checkOut_History = await _dBRead.Take_History(_memberServiceModel.SN);

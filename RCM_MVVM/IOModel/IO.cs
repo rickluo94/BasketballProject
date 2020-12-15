@@ -6,7 +6,7 @@ namespace IOModel
 {
     public static class IO
     {
-        public static readonly bool IsTest = false;
+        public static readonly bool IsTest = true;
         public static Arduino _IO;
         public static readonly byte Lock = 1;
         public static readonly byte UnLock = 0;
