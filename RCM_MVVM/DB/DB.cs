@@ -82,7 +82,7 @@ namespace DBModel
                                 row["email"] = reader.GetString(3);
                                 row["CreateDate"] = reader.GetDateTime(4);
                                 row["ModifyDate"] = reader.GetDateTime(5);
-                                row["Status"] = reader.GetDateTime(6);
+                                row["Status"] = reader.GetInt32(6);
                             }
                             else
                             {
@@ -430,6 +430,49 @@ namespace DBModel
             return Amount;
         }
 
+        public async Task<DataTable> Pump_History(string SN)
+        {
+            DataTable table = new DataTable();
+            DataColumn column;
+            DataRow row;
+            string[] _columnName = { "Pump_SN", "SN", "Time_usage", "BoxName", "CreateDate", "ModifyDate" };
+            foreach (string _name in _columnName)
+            {
+                column = new DataColumn();
+                column.DataType = Type.GetType("System.String");
+                column.ColumnName = _name;
+                table.Columns.Add(column);
+            }
+
+            string buffer = string.Empty;
+
+
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"SELECT * FROM ste_SBSCS.Pump_History WHERE SN = '{SN}' AND Time_usage = 0 ORDER BY CreateDate DESC LIMIT 0 , 1;";
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            row = table.NewRow();
+                            row["Pump_SN"] = reader.GetInt32(0);
+                            row["SN"] = reader.GetInt32(1);
+                            row["Time_usage"] = reader.GetDouble(2);
+                            row["BoxName"] = reader.GetString(3);
+                            row["CreateDate"] = reader.GetDateTime(4);
+                            row["ModifyDate"] = reader.GetDateTime(5);
+                            table.Rows.Add(row);
+                        }
+                    }
+                }
+
+            }
+            return table;
+        }
     }
 
     public class DBWrite
