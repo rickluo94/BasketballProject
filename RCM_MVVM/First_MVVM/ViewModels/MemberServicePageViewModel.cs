@@ -357,6 +357,12 @@ namespace First_MVVM.ViewModels
             bool insertPumpHistory = await _dBWrite.Pump_History(_memberServiceModel.SN, 0, "A8");
             if (insertPumpHistory == true)
             {
+                DataTable _pump_History = await _dBRead.Pump_History(_memberServiceModel.SN);
+                if (_pump_History.Rows.Count == 1)
+                {
+                    _memberServiceModel.PumpSN = _pump_History.Rows[0]["Pump_SN"].ToString();
+                }
+
                 IO.Write("A8", IO.UnLock);
 
                 CallBazz();
@@ -369,7 +375,7 @@ namespace First_MVVM.ViewModels
 
         private async Task UpDatePumpHistory(double Time_usage)
         {
-            bool UpDatePumpHistory = await _dBWrite.Pump_History_UPDATE(_memberServiceModel.SN, "Time_usage", Time_usage);
+            bool UpDatePumpHistory = await _dBWrite.Pump_History_UPDATE(_memberServiceModel.PumpSN, "Time_usage", Time_usage);
         }
 
         #region Unsubscribe Event
