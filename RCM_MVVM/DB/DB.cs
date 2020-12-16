@@ -16,15 +16,101 @@ namespace DBModel
             //SslMode = MySqlSslMode.Required,
         };
 
+        public async Task<int> LAST_INSERT_ID()
+        {
+            int LAST_INSERT_ID = 0;
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
 
-        public async Task<DataTable> Customer_Address(string Account)
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"SELECT LAST_INSERT_ID();";
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            LAST_INSERT_ID = reader.GetInt32(0);
+                        }
+                    }
+                }
+
+            }
+            return LAST_INSERT_ID;
+        }
+
+        public async Task<DataTable> Customer_info(string SN)
+        {
+            DataTable table = new DataTable();
+            DataColumn column;
+            DataRow row;
+            string[] _columnName = { "SN", "user_id", "username", "email", "CreateDate", "ModifyDate", "Status" };
+            foreach (string _name in _columnName)
+            {
+                column = new DataColumn();
+                column.DataType = Type.GetType("System.String");
+                column.ColumnName = _name;
+                table.Columns.Add(column);
+            }
+
+            string buffer = string.Empty;
+
+
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"SELECT * FROM ste_SBSCS.Customer_info WHERE SN = '{SN}';";
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            row = table.NewRow();
+                            if (!reader.IsDBNull(reader.GetOrdinal("SN")) &&
+                                !reader.IsDBNull(reader.GetOrdinal("user_id")) &&
+                                !reader.IsDBNull(reader.GetOrdinal("username")) &&
+                                !reader.IsDBNull(reader.GetOrdinal("email")) &&
+                                !reader.IsDBNull(reader.GetOrdinal("CreateDate")) &&
+                                !reader.IsDBNull(reader.GetOrdinal("ModifyDate")) &&
+                                !reader.IsDBNull(reader.GetOrdinal("Status")))
+                            {
+                                row["SN"] = reader.GetInt32(0);
+                                row["user_id"] = reader.GetString(1);
+                                row["username"] = reader.GetString(2);
+                                row["email"] = reader.GetString(3);
+                                row["CreateDate"] = reader.GetDateTime(4);
+                                row["ModifyDate"] = reader.GetDateTime(5);
+                                row["Status"] = reader.GetInt32(6);
+                            }
+                            else
+                            {
+                                row["SN"] = 0;
+                                row["user_id"] = string.Empty;
+                                row["username"] = string.Empty;
+                                row["email"] = string.Empty;
+                                row["CreateDate"] = 0;
+                                row["ModifyDate"] = 0;
+                                row["Status"] = 2;
+                            }
+                            table.Rows.Add(row);
+                        }
+                    }
+                }
+
+            }
+            return table;
+        }
+
+        public async Task<DataTable> Customer_info(string Column,string Account,string ColumnType)
         {
             DataTable table = new DataTable();
             DataColumn column;
             DataRow row;
             column = new DataColumn();
             column.DataType = Type.GetType("System.String");
-            column.ColumnName = "customer_user_id";
+            column.ColumnName = Column;
             table.Columns.Add(column);
             string buffer = string.Empty;
             
@@ -35,13 +121,21 @@ namespace DBModel
 
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = $"SELECT * FROM ste_SBSCS.Customer_Address WHERE customer_user_id = '{Account}';";
+                    command.CommandText = $"SELECT {Column} FROM ste_SBSCS.Customer_info WHERE user_id = '{Account}';";
                     using (var reader = await command.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
                         {
                             row = table.NewRow();
-                            row["customer_user_id"] = reader.GetString(0);
+                            switch (ColumnType)
+                            {
+                                case "String":
+                                    row[Column] = reader.GetString(0);
+                                    break;
+                                case "INT":
+                                    row[Column] = reader.GetInt32(0);
+                                    break;
+                            }
                             table.Rows.Add(row);
                         }
                     }
@@ -93,12 +187,12 @@ namespace DBModel
             return table;
         }
 
-        public async Task<DataTable> RFID_Users(string CardID)
+        public async Task<DataTable> RFIDS(string CardID)
         {
             DataTable table = new DataTable();
             DataColumn column;
             DataRow row;
-            string[] _columnName = { "RFID_user_id","RFID_Card_ID","RFID_Last_Active","RFID_Ticket_Type","ModifyDate","RFID_Card_Purse_ID" };
+            string[] _columnName = { "RFID_SN", "SN", "RFID_Card_ID", "RFID_Last_Active", "RFID_Ticket_Type", "ModifyDate", "RFID_Card_Purse_ID" };
             foreach (string _name in _columnName)
             {
                 column = new DataColumn();
@@ -116,18 +210,19 @@ namespace DBModel
 
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = $"SELECT * FROM ste_SBSCS.RFID_Users Where RFID_Card_ID = '{CardID}';";
+                    command.CommandText = $"SELECT * FROM ste_SBSCS.RFIDS Where RFID_Card_ID = '{CardID}';";
                     using (var reader = await command.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
                         {
                             row = table.NewRow();
-                            row["RFID_user_id"] = reader.GetString(0);
-                            row["RFID_Card_ID"] = reader.GetString(1);
-                            row["RFID_Last_Active"] = reader.GetDateTime(2);
-                            row["RFID_Ticket_Type"] = reader.GetString(3);
-                            row["ModifyDate"] = reader.GetDateTime(4);
-                            row["RFID_Card_Purse_ID"] = reader.GetString(5);
+                            row["RFID_SN"] = reader.GetInt32(0);
+                            row["SN"] = reader.GetInt32(1);
+                            row["RFID_Card_ID"] = reader.GetString(2);
+                            row["RFID_Last_Active"] = reader.GetDateTime(3);
+                            row["RFID_Ticket_Type"] = reader.GetString(4);
+                            row["ModifyDate"] = reader.GetDateTime(5);
+                            row["RFID_Card_Purse_ID"] = reader.GetString(6);
                             table.Rows.Add(row);
                         }
                     }
@@ -137,12 +232,12 @@ namespace DBModel
             return table;
         }
 
-        public async Task<DataTable> Take_History(string UserID)
+        public async Task<DataTable> Take_History(string SN)
         {
             DataTable table = new DataTable();
             DataColumn column;
             DataRow row;
-            string[] _columnName = { "Take_SN", "Take_Items_EPC", "Take_Items_TID", "Take_ModifyUser", "Take_Date", "Take_CheckIn", "Take_BoxName" };
+            string[] _columnName = { "Take_SN", "SN", "Take_Items_EPC", "Take_Items_TID", "Take_CheckOut", "Take_CheckIn", "Take_BoxName" };
             foreach (string _name in _columnName)
             {
                 column = new DataColumn();
@@ -160,17 +255,17 @@ namespace DBModel
 
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = $"SELECT * FROM ste_SBSCS.Take_History Where Take_ModifyUser ='{UserID}' And Take_CheckIn = '未歸還';";
+                    command.CommandText = $"SELECT * FROM ste_SBSCS.Take_History Where SN ='{SN}' And Take_CheckIn = '未歸還';";
                     using (var reader = await command.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
                         {
                             row = table.NewRow();
                             row["Take_SN"] = reader.GetInt32(0);
-                            row["Take_Items_EPC"] = reader.GetString(1);
-                            row["Take_Items_TID"] = reader.GetString(2);
-                            row["Take_ModifyUser"] = reader.GetString(3);
-                            row["Take_Date"] = reader.GetDateTime(4);
+                            row["SN"] = reader.GetInt32(1);
+                            row["Take_Items_EPC"] = reader.GetString(2);
+                            row["Take_Items_TID"] = reader.GetString(3);
+                            row["Take_CheckOut"] = reader.GetDateTime(4);
                             row["Take_CheckIn"] = reader.GetString(5);
                             row["Take_BoxName"] = reader.GetString(6);
                             table.Rows.Add(row);
@@ -266,12 +361,12 @@ namespace DBModel
             return table;
         }
 
-        public async Task<DataTable> Charge_History(string ID)
+        public async Task<DataTable> Charge_History(string SN)
         {
             DataTable table = new DataTable();
             DataColumn column;
             DataRow row;
-            string[] _columnName = { "Charge_SN", "Charge_id", "Charge_amount", "Charge_Hours_use", "RFID_Card_ID", "CreateDate", "ModifyDate", "Charge_Status" };
+            string[] _columnName = { "Charge_SN", "SN", "Charge_amount", "Charge_Hours_use", "RFID_Card_ID", "CreateDate", "ModifyDate", "Charge_Status" };
             foreach (string _name in _columnName)
             {
                 column = new DataColumn();
@@ -289,14 +384,14 @@ namespace DBModel
 
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = $"SELECT * FROM ste_SBSCS.Charge_History Where Charge_id = '{ID}' And Charge_Status = '未付款';";
+                    command.CommandText = $"SELECT * FROM ste_SBSCS.Charge_History Where SN = '{SN}' And Charge_Status = '未付款';";
                     using (var reader = await command.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
                         {
                             row = table.NewRow();
                             row["Charge_SN"] = reader.GetInt32(0);
-                            row["Charge_id"] = reader.GetString(1);
+                            row["SN"] = reader.GetInt32(1);
                             row["Charge_amount"] = reader.GetInt16(2);
                             row["Charge_Hours_use"] = reader.GetString(3);
                             row["RFID_Card_ID"] = reader.GetString(4);
@@ -312,7 +407,7 @@ namespace DBModel
             return table;
         }
 
-        public async Task<int> NotReturnedCheckOut(string ID)
+        public async Task<int> NotReturnedCheckOut(string SN)
         {
             int Amount = 0;
             using (var conn = new MySqlConnection(builder.ConnectionString))
@@ -321,7 +416,7 @@ namespace DBModel
 
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = $"SELECT count(Take_CheckIn) FROM ste_SBSCS.Take_History Where Take_ModifyUser = '{ID}' And Take_CheckIn = '未歸還';";
+                    command.CommandText = $"SELECT count(Take_CheckIn) FROM ste_SBSCS.Take_History Where SN = '{SN}' And Take_CheckIn = '未歸還';";
                     using (var reader = await command.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -335,6 +430,115 @@ namespace DBModel
             return Amount;
         }
 
+        public async Task<DataTable> Pump_History(string SN)
+        {
+            DataTable table = new DataTable();
+            DataColumn column;
+            DataRow row;
+            string[] _columnName = { "Pump_SN", "SN", "Time_usage", "BoxName", "CreateDate", "ModifyDate" };
+            foreach (string _name in _columnName)
+            {
+                column = new DataColumn();
+                column.DataType = Type.GetType("System.String");
+                column.ColumnName = _name;
+                table.Columns.Add(column);
+            }
+
+            string buffer = string.Empty;
+
+
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"SELECT * FROM ste_SBSCS.Pump_History WHERE SN = '{SN}' AND Time_usage = 0 ORDER BY CreateDate DESC LIMIT 0 , 1;";
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            row = table.NewRow();
+                            row["Pump_SN"] = reader.GetInt32(0);
+                            row["SN"] = reader.GetInt32(1);
+                            row["Time_usage"] = reader.GetDouble(2);
+                            row["BoxName"] = reader.GetString(3);
+                            row["CreateDate"] = reader.GetDateTime(4);
+                            row["ModifyDate"] = reader.GetDateTime(5);
+                            table.Rows.Add(row);
+                        }
+                    }
+                }
+
+            }
+            return table;
+        }
+
+        public async Task<DataTable> RFID_Customers(string SN)
+        {
+            DataTable table = new DataTable();
+            DataColumn column;
+            DataRow row;
+            string[] _columnName = { "RFID_Card_SN_1", "RFID_Card_SN_2", "RFID_Card_SN_3", "RFID_Card_SN_4", "RFID_Card_SN_5" };
+            foreach (string _name in _columnName)
+            {
+                column = new DataColumn();
+                column.DataType = Type.GetType("System.String");
+                column.ColumnName = _name;
+                table.Columns.Add(column);
+            }
+
+            string buffer = string.Empty;
+
+
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"SELECT RFID_Card_SN_1,RFID_Card_SN_2,RFID_Card_SN_3,RFID_Card_SN_4,RFID_Card_SN_5 FROM ste_SBSCS.RFID_Customers WHERE SN = '{SN}';";
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            row = table.NewRow();
+                            row["RFID_Card_SN_1"] = reader.GetInt32(0);
+                            row["RFID_Card_SN_2"] = reader.GetInt32(1);
+                            row["RFID_Card_SN_3"] = reader.GetInt32(2);
+                            row["RFID_Card_SN_4"] = reader.GetInt32(3);
+                            row["RFID_Card_SN_5"] = reader.GetInt32(4);
+                            table.Rows.Add(row);
+                        }
+                    }
+                }
+
+            }
+            return table;
+        }
+
+        public async Task<string> RFID_Card_Purse_ID(string RFID_SN)
+        {
+            string RFID_Card_Purse_ID = string.Empty;
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"SELECT RFID_Card_ID FROM ste_SBSCS.RFIDS WHERE RFID_SN ='{RFID_SN}';";
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            RFID_Card_Purse_ID = reader.GetString(0);
+                        }
+                    }
+                }
+
+            }
+            return RFID_Card_Purse_ID;
+        }
     }
 
     public class DBWrite
@@ -356,7 +560,7 @@ namespace DBModel
 
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`Customer_info` (`customer_user_id`, `username`, `email`) VALUES ('{ID}', '{UserName}', '{Email}');";
+                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`Customer_info` (`user_id`, `username`, `email`) VALUES ('{ID}', '{UserName}', '{Email}');";
 
                     int index = command.ExecuteNonQuery();
                     if (index == 1)
@@ -371,7 +575,7 @@ namespace DBModel
             }
         }
 
-        public async Task<bool> Users(string ID, string UserName, string Password)
+        public async Task<bool> Customer_info_UPDATE(string SN, string Column, string UpValue)
         {
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {
@@ -379,7 +583,7 @@ namespace DBModel
 
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`users` (`user_id`, `username`, `password`) VALUES ('{ID}', '{UserName}', '{Password}');";
+                    command.CommandText = $"UPDATE `ste_SBSCS`.`Customer_info` SET `{Column}` = '{UpValue}' WHERE (`SN` = '{SN}');";
 
                     int index = command.ExecuteNonQuery();
                     if (index == 1)
@@ -394,7 +598,7 @@ namespace DBModel
             }
         }
 
-        public async Task<bool> Customer_Address(string ID, string City, string Area)
+        public async Task<bool> Password_Manager(string SN, string Password)
         {
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {
@@ -402,7 +606,7 @@ namespace DBModel
 
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`Customer_Address` (`customer_user_id`, `city`, `area`) VALUES ('{ID}', '{City}', '{Area}');";
+                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`Password_Manager` (`SN`, `password`) VALUES ('{SN}', '{Password}');";
 
                     int index = command.ExecuteNonQuery();
                     if (index == 1)
@@ -417,7 +621,7 @@ namespace DBModel
             }
         }
 
-        public async Task<bool> RFID_Users(string ID, string RFID_Card_ID, string RFID_Card_Purse_ID)
+        public async Task<bool> Customer_Address(string SN, string City, string Area)
         {
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {
@@ -425,7 +629,53 @@ namespace DBModel
 
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`RFID_Users` (`RFID_user_id`, `RFID_Card_ID`, `RFID_Card_Purse_ID`) VALUES ('{ID}', '{RFID_Card_ID}', '{RFID_Card_Purse_ID}');";
+                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`Customer_Address` (`SN`, `city`, `area`) VALUES ('{SN}', '{City}', '{Area}');";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        public async Task<bool> RFIDS(string SN, string RFID_Card_ID, string RFID_Card_Purse_ID)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`RFIDS` (`SN`, `RFID_Card_ID`, `RFID_Card_Purse_ID`) VALUES ('{SN}', '{RFID_Card_ID}', '{RFID_Card_Purse_ID}');";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        public async Task<bool> RFID_Customers(string SN, string RFID_Card_SN_1)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`RFID_Customers` (`SN`, `RFID_Card_SN_1`) VALUES ('{SN}', '{RFID_Card_SN_1}');";
 
                     int index = command.ExecuteNonQuery();
                     if (index == 1)
@@ -510,7 +760,7 @@ namespace DBModel
             }
         }
 
-        public async Task<bool> Take_History(string ID,string BoxName,string Object_EPC, string Object_TID)
+        public async Task<bool> Take_History(string SN, string BoxName,string Object_EPC, string Object_TID)
         {
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {
@@ -518,7 +768,7 @@ namespace DBModel
 
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`Take_History` (`Take_Items_EPC`, `Take_Items_TID`, `Take_ModifyUser`, `Take_BoxName`) VALUES ('{Object_EPC}', '{Object_TID}', '{ID}','{BoxName}');";
+                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`Take_History` (`SN`,`Take_Items_EPC`, `Take_Items_TID`, `Take_BoxName`) VALUES ('{SN}','{Object_EPC}', '{Object_TID}','{BoxName}');";
 
                     int index = command.ExecuteNonQuery();
                     if (index == 1)
@@ -556,7 +806,7 @@ namespace DBModel
             }
         }
 
-        public async Task<bool> Charge_History(string ID,int Amount,string HoursUse,string Card_ID)
+        public async Task<bool> Charge_History(string SN, int Amount,string HoursUse,string Card_ID)
         {
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {
@@ -564,7 +814,7 @@ namespace DBModel
 
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`Charge_History` (`Charge_id`, `Charge_amount`, `Charge_Hours_use`, `RFID_Card_ID`) VALUES('{ID}', '{Amount}', '{HoursUse}', '{Card_ID}');";
+                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`Charge_History` (`SN`, `Charge_amount`, `Charge_Hours_use`, `RFID_Card_ID`) VALUES('{SN}', '{Amount}', '{HoursUse}', '{Card_ID}');";
 
                     int index = command.ExecuteNonQuery();
                     if (index == 1)
@@ -588,6 +838,98 @@ namespace DBModel
                 using (var command = conn.CreateCommand())
                 {
                     command.CommandText = $"UPDATE `ste_SBSCS`.`Charge_History` SET `Charge_Status` = '已付款' WHERE(`Charge_SN` = '{Charge_SN}');";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        public async Task<bool> Pump_History(string SN, double Time_usage, string BoxName)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`Pump_History` (`SN`, `Time_usage`, `BoxName`) VALUES ('{SN}', '{Time_usage}', '{BoxName}');";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        public async Task<bool> Pump_History_UPDATE(string SN, string Column, double UpValue)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"UPDATE `ste_SBSCS`.`Pump_History` SET `{Column}` = {UpValue} WHERE(`Pump_SN` = '{SN}');";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        public async Task<bool> RFID_Customers_UPDATE(string SN, string Column, int UpValue)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"UPDATE `ste_SBSCS`.`RFID_Customers` SET `{Column}` = '{UpValue}' WHERE (`SN` = '{SN}');";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        public async Task<bool> RFIDS_DELETE(string RFID_SN)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"DELETE FROM `ste_SBSCS`.`RFIDS` WHERE (`RFID_SN` = '{RFID_SN}');";
 
                     int index = command.ExecuteNonQuery();
                     if (index == 1)

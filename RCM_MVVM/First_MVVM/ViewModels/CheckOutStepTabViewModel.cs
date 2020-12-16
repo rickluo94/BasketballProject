@@ -198,32 +198,42 @@ namespace First_MVVM.ViewModels
 
             string _card_id = (string)JObject.Parse(Data)["result"]["card_id"];
             if (string.IsNullOrWhiteSpace(_card_id)) return;
-            DataTable _rFID_UsersProfile = await _dBRead.RFID_Users(_card_id);
+            DataTable RFIDS = await _dBRead.RFIDS(_card_id);
 
-            if (_rFID_UsersProfile.Rows.Count > 0)
+            if (RFIDS.Rows.Count > 0)
             {
-                AccountStr = _rFID_UsersProfile.Rows[0]["RFID_user_id"].ToString();
-                BalanceStr = (string)JObject.Parse(Data)["result"]["balance"];
-                NoticeText = string.Empty;
-                ReadCardIsEnabled = false;
-                NextStepIsEnabled = true;
+                DataTable Customer_info = await _dBRead.Customer_info(RFIDS.Rows[0]["SN"].ToString());
+                _checkOutModel.SN = Customer_info.Rows[0]["SN"].ToString();
 
-                DataTable _outstanding_Amount = await _dBRead.Charge_History(AccountStr);
-
-                if (_outstanding_Amount.Rows.Count > 0)
+                if (Customer_info.Rows[0]["Status"].ToString() == "1")
                 {
-                    NoticeText = "尚有未付款";
+
+                    AccountStr = Customer_info.Rows[0]["user_id"].ToString();
+                    BalanceStr = (string)JObject.Parse(Data)["result"]["balance"];
+                    NoticeText = string.Empty;
+                    ReadCardIsEnabled = false;
+                    NextStepIsEnabled = true;
+
+                    DataTable _outstanding_Amount = await _dBRead.Charge_History(_checkOutModel.SN);
+                    int _notReturnedCheckOut = await _dBRead.NotReturnedCheckOut(_checkOutModel.SN);
+
+                    if (_outstanding_Amount.Rows.Count > 0)
+                    {
+                        NoticeText = "尚有未付款";
+                        NextStepIsEnabled = false;
+                    }
+                    if (_notReturnedCheckOut > 0)
+                    {
+                        NoticeText = "尚有未歸還";
+                        NextStepIsEnabled = false;
+                    }
+
+                }
+                else
+                {
+                    NoticeText = "帳號已停用";
                     NextStepIsEnabled = false;
                 }
-
-                int _notReturnedCheckOut = await _dBRead.NotReturnedCheckOut(AccountStr);
-
-                if (_notReturnedCheckOut > 0)
-                {
-                    NoticeText = "尚有未歸還";
-                    NextStepIsEnabled = false;
-                }
-
 
             }
             else
@@ -467,7 +477,7 @@ namespace First_MVVM.ViewModels
 
                     //寫入借出紀錄
                     _dBWrite.Inventory(_checkOutModel.LockerBosSelectedIndex, 0);
-                    _dBWrite.Take_History(_checkOutModel.ID, _checkOutModel.LockerBosSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
+                    _dBWrite.Take_History(_checkOutModel.SN, _checkOutModel.LockerBosSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
 
                     UnsubscribeReaderEvent();
 
@@ -485,7 +495,7 @@ namespace First_MVVM.ViewModels
 
                     //寫入借出紀錄
                     _dBWrite.Inventory(_checkOutModel.LockerBosSelectedIndex, 0);
-                    _dBWrite.Take_History(_checkOutModel.ID, _checkOutModel.LockerBosSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
+                    _dBWrite.Take_History(_checkOutModel.SN, _checkOutModel.LockerBosSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
 
                     UnsubscribeReaderEvent();
 

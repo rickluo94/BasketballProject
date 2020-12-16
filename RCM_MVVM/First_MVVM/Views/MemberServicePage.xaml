@@ -301,7 +301,21 @@
                             </Button.ContentTemplate>
                         </Button>
 
-                        <Button Style="{DynamicResource RoundCorner}" Command="{Binding CancelAccountCmd}" Margin="168,490,168,312" >
+                        <Button Style="{DynamicResource RoundCorner}" Command="{Binding GoToCardInfoCmd}" Margin="168,490,168,312" >
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <Viewbox>
+                                        <TextBlock>
+                                            <TextBlock.Background>
+                                                <ImageBrush ImageSource="/Images/membership.png" TileMode="None" Stretch="Uniform" ViewboxUnits="RelativeToBoundingBox" ViewportUnits="RelativeToBoundingBox" Viewbox="0,0,5,1"/>
+                                            </TextBlock.Background>　卡片相關
+                                        </TextBlock>
+                                    </Viewbox>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+
+                        <Button Style="{DynamicResource RoundCorner}" Command="{Binding CancelAccountCmd}" Margin="168,738,168,64" >
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <Viewbox>
@@ -404,6 +418,148 @@
                                 </DataTemplate>
                             </Button.ContentTemplate>
                         </Button>
+                        
+                    </Grid>
+                </TabItem>
+                <TabItem Header="卡片相關">
+                    <Grid>
+                        <TextBlock Margin="95,38,95,832">
+                            <Viewbox>
+                                <TextBlock Text="1.若您欲刪除特定卡片，請按該卡片右方X鈕" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,73,95,797">
+                            <Viewbox>
+                                <TextBlock Text="2.欲新增其他卡片，請按下方+號鈕　　　" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,108,95,762">
+                            <Viewbox>
+                                <TextBlock Text="3.每個帳號至少綁定一張，最多五張卡片　" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <Button Content="1" Style="{DynamicResource RoundCorner}" Command="{Binding CardCancelCmd}" IsEnabled="{Binding CardCanceIsEnabled}" Visibility="{Binding X1_Visibility}" CommandParameter="1" Margin="490,143,23,697" >
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <Viewbox>
+                                        <TextBlock>
+                                            X
+                                        </TextBlock>
+                                    </Viewbox>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+
+                        <Button Content="2" Style="{DynamicResource RoundCorner}" Command="{Binding CardCancelCmd}" IsEnabled="{Binding CardCanceIsEnabled}" Visibility="{Binding X2_Visibility}" CommandParameter="2" Margin="490,208,23,632" >
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <Viewbox>
+                                        <TextBlock>
+                                            X
+                                        </TextBlock>
+                                    </Viewbox>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+
+                        <Button Content="3" Style="{DynamicResource RoundCorner}" Command="{Binding CardCancelCmd}" IsEnabled="{Binding CardCanceIsEnabled}" Visibility="{Binding X3_Visibility}" CommandParameter="3" Margin="490,273,23,567" >
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <Viewbox>
+                                        <TextBlock>
+                                            X
+                                        </TextBlock>
+                                    </Viewbox>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+
+                        <Button Content="4" Style="{DynamicResource RoundCorner}" Command="{Binding CardCancelCmd}" IsEnabled="{Binding CardCanceIsEnabled}" Visibility="{Binding X4_Visibility}" CommandParameter="4" Margin="490,338,23,502" >
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <Viewbox>
+                                        <TextBlock>
+                                            X
+                                        </TextBlock>
+                                    </Viewbox>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+
+                        <Button Content="5" Style="{DynamicResource RoundCorner}" Command="{Binding CardCancelCmd}" Visibility="{Binding X5_Visibility}" CommandParameter="5" Margin="490,403,23,437" >
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <Viewbox>
+                                        <TextBlock>
+                                            X
+                                        </TextBlock>
+                                    </Viewbox>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+
+                        <TextBlock Margin="95,143,95,697">
+                            <Viewbox>
+                                <TextBlock Text="{Binding Card_ID_01}" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,208,95,632">
+                            <Viewbox>
+                                <TextBlock Text="{Binding Card_ID_02}" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,273,95,567">
+                            <Viewbox>
+                                <TextBlock Text="{Binding Card_ID_03}" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,338,95,502">
+                            <Viewbox>
+                                <TextBlock Text="{Binding Card_ID_04}" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBlock Margin="95,403,95,437">
+                            <Viewbox>
+                                <TextBlock Text="{Binding Card_ID_05}" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <Button Content="新增卡片" Style="{DynamicResource RoundCorner}" Command="{Binding SetNewCardCmd}" Margin="78,575,290,251" >
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <Viewbox>
+                                        <TextBlock>
+                                            新增卡片
+                                        </TextBlock>
+                                    </Viewbox>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+
+                        <Button Content="退出" Style="{DynamicResource RoundCorner}" Command="{Binding ExitCmd}" Margin="295,575,73,251" >
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <Viewbox>
+                                        <TextBlock>
+                                            退出
+                                        </TextBlock>
+                                    </Viewbox>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+
+                        <TextBlock Margin="95,693,95,147">
+                            <Viewbox>
+                                <TextBlock Text="{Binding NoticeText}" />
+                            </Viewbox>
+                        </TextBlock>
                         
                     </Grid>
                 </TabItem>

@@ -82,7 +82,7 @@
 
             <TextBlock Text="{Binding UpdateText}" />
 
-            <Button Content="Check Out 我要借球" Style="{DynamicResource RoundCorner}" Command="{Binding NavigateCmd}" CommandParameter="CheckOutStepTab" Margin="{StaticResource ControlMargin}" >
+            <Button Content="Check Out 我要借球" Style="{DynamicResource RoundCorner}" Command="{Binding NavigateCmd}" IsEnabled="{Binding CheckOutEnabled}" CommandParameter="CheckOutStepTab" Margin="{StaticResource ControlMargin}" >
                 <Button.ContentTemplate>
                     <DataTemplate>
                         <Viewbox>

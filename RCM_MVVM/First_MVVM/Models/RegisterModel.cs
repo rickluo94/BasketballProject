@@ -3,6 +3,7 @@ namespace First_MVVM.Models
 {
     public class RegisterModel
     {
+        public string SN { get; set; }
         public string ID { get; set; }
         public string Password { get; set; }
         public string Name { get; set; }
