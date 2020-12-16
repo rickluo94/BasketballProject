@@ -339,11 +339,16 @@ namespace First_MVVM.ViewModels
         {
             if (TotalCards == 5) return;
             NoticeText = "請靠卡感應";
-            //string Data = await Task.Run<string>(() => { return _easyCard.Read_card_balance_request(); });
 
-            string Card_ID = "1668314704";//(string)JObject.Parse(Data)["result"]["card_id"];
-            string Card_purse_id = "0000000000000000"; //(string)JObject.Parse(Data)["result"]["card_purse_id"];
-            string Ticket_type = "ECC";//(string)JObject.Parse(Data)["result"]["ticket_type"];
+            string Data = await Task.Run<string>(() => { return _easyCard.Read_card_balance_request(); });
+            
+            //string Card_ID = "1668314704";
+            //string Card_purse_id = "0000000000000000";
+            //string Ticket_type = "ECC";
+
+            string Card_ID = (string)JObject.Parse(Data)["result"]["card_id"];
+            string Card_purse_id = (string)JObject.Parse(Data)["result"]["card_purse_id"];
+            string Ticket_type = (string)JObject.Parse(Data)["result"]["ticket_type"];
 
             DataTable RFIDS = await _dBRead.RFIDS(Card_ID);
 
@@ -488,10 +493,10 @@ namespace First_MVVM.ViewModels
         private async void ReadCard()
         {
             ReadCardIsEnabled = false;
-            //string Data = await Task.Run<string>(() => { return _easyCard.Read_card_balance_request(); });
+            string Data = await Task.Run<string>(() => { return _easyCard.Read_card_balance_request(); });
             ReadCardIsEnabled = true;
 
-            Card_id = "1668314704";//(string)JObject.Parse(Data)["result"]["card_id"];
+            Card_id = (string)JObject.Parse(Data)["result"]["card_id"];
             if (string.IsNullOrWhiteSpace(_card_id)) return;
             DataTable RFIDS = await _dBRead.RFIDS(_card_id);
 
@@ -504,7 +509,7 @@ namespace First_MVVM.ViewModels
                 {
 
                     AccountStr = Customer_info.Rows[0]["user_id"].ToString();
-                    BalanceStr = "0";//(string)JObject.Parse(Data)["result"]["balance"];
+                    BalanceStr = (string)JObject.Parse(Data)["result"]["balance"];
 
                     DataTable _outstanding_Amount = await _dBRead.Charge_History(_memberServiceModel.SN);
                     DataTable _checkOut_History = await _dBRead.Take_History(_memberServiceModel.SN);
