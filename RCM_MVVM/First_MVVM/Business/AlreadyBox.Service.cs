@@ -9,7 +9,7 @@ namespace First_MVVM.Business
 {
     public class AlreadyBox
     {
-        private DBRead dBRead = new DBRead();
+        private LC_DBRead _lC_DBRead = new LC_DBRead();
         private DataTable invenotryX { get; set; }
         Dictionary<string, bool> Status = new Dictionary<string, bool>();
 
@@ -29,11 +29,11 @@ namespace First_MVVM.Business
             try
             {
                 Status.Clear();
-                invenotryX = await dBRead.InventoryX();
+                invenotryX = await _lC_DBRead.InventoryX();
 
                 foreach (string item in Enum.GetNames(typeof(BoxName)))
                 {
-                    int Boxfilter = invenotryX.Select("Inventory_CabinetLoc ='" + item + "' and Inventory_Amount = '1'").Length;
+                    int Boxfilter = invenotryX.Select("CabinetLoc ='" + item + "' and Amount = '1'").Length;
                     if (Boxfilter >= 1)
                     {
                         Status.Add(item, true);
