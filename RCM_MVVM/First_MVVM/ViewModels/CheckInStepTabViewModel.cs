@@ -30,6 +30,7 @@ namespace First_MVVM.ViewModels
 
         private DBRead _dBRead = new DBRead();
         private DBWrite _dBWrite = new DBWrite();
+        private LC_DBWrite _lC_DBWrite = new LC_DBWrite();
         private System.Timers.Timer ReaderTimer;
         private System.Timers.Timer DoorCheckTimer;
         private System.Timers.Timer DoorCheckWithRFIDVerifyTimer;
@@ -460,7 +461,7 @@ namespace First_MVVM.ViewModels
                     UnsubscribeReaderEvent();
 
                     //建立Charge_History
-                    _dBWrite.Inventory(_checkInModel.LockerBoxSelectedIndex, 1);
+                    _lC_DBWrite.Inventory(_checkInModel.LockerBoxSelectedIndex, 1);
                     _dBWrite.Take_History_UPDATE(_checkInModel.Take_SN, "已歸還");
                     ////存入歷史紀錄
                     _dBWrite.Charge_History(_checkInModel.SN, _checkInModel.Amount, _checkInModel.HoursUse, _checkInModel.CardID);
