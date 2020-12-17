@@ -9,7 +9,7 @@ namespace DBModel
     {
         MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder
         {
-            Server = "34.80.22.21",
+            Server = "104.199.138.253",
             Database = "ste_SBSCS",
             UserID = "LockerUsers",
             Password = "Jyste42876046",
@@ -121,7 +121,7 @@ namespace DBModel
 
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = $"SELECT {Column} FROM ste_SBSCS.Customer_info WHERE user_id = '{Account}';";
+                    command.CommandText = $"SELECT {Column} FROM ste_SBSCS.Customer_info WHERE user_id = '{Account}' AND Status ='1';";
                     using (var reader = await command.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -143,47 +143,6 @@ namespace DBModel
                 
             }
 
-            return table;
-        }
-
-        public async Task<DataTable> Verify_SmPhoneBinding(string PhoneNumber,string RandomKey)
-        {
-            DataTable table = new DataTable();
-            DataColumn column;
-            DataRow row;
-            string[] _columnName = {"Verify_user_id", "ModifyDate", "Verify_SmKeyBinding"};
-            foreach (string _name in _columnName)
-            {
-                column = new DataColumn();
-                column.DataType = Type.GetType("System.String");
-                column.ColumnName = _name;
-                table.Columns.Add(column);
-            }
-
-            string buffer = string.Empty;
-
-
-            using (var conn = new MySqlConnection(builder.ConnectionString))
-            {
-                await conn.OpenAsync();
-
-                using (var command = conn.CreateCommand())
-                {
-                    command.CommandText = $"SELECT* FROM ste_SBSCS.Verify_SmPhoneBinding WHERE Verify_user_id ='{PhoneNumber}' AND Verify_SmKeyBinding = SHA2('{RandomKey}', 256);";
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            row = table.NewRow();
-                            row["Verify_user_id"] = reader.GetString(0);
-                            row["ModifyDate"] = reader.GetString(0);
-                            row["Verify_SmKeyBinding"] = reader.GetString(0);
-                            table.Rows.Add(row);
-                        }
-                    }
-                }
-
-            }
             return table;
         }
 
@@ -268,90 +227,6 @@ namespace DBModel
                             row["Take_CheckOut"] = reader.GetDateTime(4);
                             row["Take_CheckIn"] = reader.GetString(5);
                             row["Take_BoxName"] = reader.GetString(6);
-                            table.Rows.Add(row);
-                        }
-                    }
-                }
-
-            }
-            return table;
-        }
-
-        public async Task<DataTable> Inventory(string CabinetLoc)
-        {
-            DataTable table = new DataTable();
-            DataColumn column;
-            DataRow row;
-            string[] _columnName = { "Inventory_Items_EPC", "Inventory_Items_TID", "Inventory_Amount", "Inventory_CabinetLoc", "ModifyDate", "CreateDate" };
-            foreach (string _name in _columnName)
-            {
-                column = new DataColumn();
-                column.DataType = Type.GetType("System.String");
-                column.ColumnName = _name;
-                table.Columns.Add(column);
-            }
-
-            string buffer = string.Empty;
-
-
-            using (var conn = new MySqlConnection(builder.ConnectionString))
-            {
-                await conn.OpenAsync();
-
-                using (var command = conn.CreateCommand())
-                {
-                    command.CommandText = $"SELECT * FROM ste_SBSCS.Inventory Where Inventory_CabinetLoc = '{CabinetLoc}';";
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            row = table.NewRow();
-                            row["Inventory_Items_EPC"] = reader.GetString(0);
-                            row["Inventory_Items_TID"] = reader.GetString(1);
-                            row["Inventory_Amount"] = reader.GetInt16(2);
-                            row["Inventory_CabinetLoc"] = reader.GetString(3);
-                            row["ModifyDate"] = reader.GetDateTime(4);
-                            row["CreateDate"] = reader.GetDateTime(5);
-                            table.Rows.Add(row);
-                        }
-                    }
-                }
-
-            }
-            return table;
-        }
-
-        public async Task<DataTable> InventoryX()
-        {
-            DataTable table = new DataTable();
-            DataColumn column;
-            DataRow row;
-            string[] _columnName = { "Inventory_Amount", "Inventory_CabinetLoc"};
-            foreach (string _name in _columnName)
-            {
-                column = new DataColumn();
-                column.DataType = Type.GetType("System.String");
-                column.ColumnName = _name;
-                table.Columns.Add(column);
-            }
-
-            string buffer = string.Empty;
-
-
-            using (var conn = new MySqlConnection(builder.ConnectionString))
-            {
-                await conn.OpenAsync();
-
-                using (var command = conn.CreateCommand())
-                {
-                    command.CommandText = $"SELECT Inventory_Amount, Inventory_CabinetLoc FROM ste_SBSCS.Inventory;";
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            row = table.NewRow();
-                            row["Inventory_Amount"] = reader.GetInt16(0);
-                            row["Inventory_CabinetLoc"] = reader.GetString(1);
                             table.Rows.Add(row);
                         }
                     }
@@ -545,7 +420,7 @@ namespace DBModel
     {
         MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder
         {
-            Server = "34.80.22.21",
+            Server = "104.199.138.253",
             Database = "ste_SBSCS",
             UserID = "LockerUsers",
             Password = "Jyste42876046",
@@ -676,76 +551,6 @@ namespace DBModel
                 using (var command = conn.CreateCommand())
                 {
                     command.CommandText = $"INSERT INTO `ste_SBSCS`.`RFID_Customers` (`SN`, `RFID_Card_SN_1`) VALUES ('{SN}', '{RFID_Card_SN_1}');";
-
-                    int index = command.ExecuteNonQuery();
-                    if (index == 1)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
-
-        public async Task<bool> Verify_SmPhoneBinding(string PhoneNumber, string RandomKey)
-        {
-            using (var conn = new MySqlConnection(builder.ConnectionString))
-            {
-                await conn.OpenAsync();
-
-                using (var command = conn.CreateCommand())
-                {
-                    command.CommandText = $"INSERT INTO ste_SBSCS.Verify_SmPhoneBinding(Verify_user_id, Verify_SmKeyBinding) " +
-                    "VALUES ('" + PhoneNumber + "',SHA2('" + RandomKey + "',256)) ON DUPLICATE KEY UPDATE Verify_SmKeyBinding = SHA2('" + RandomKey + "',256);";
-
-                    int index = command.ExecuteNonQuery();
-                    if (index == 1)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
-
-        public async Task<bool> Verify_SmPhoneBinding_UPDATE(string PhoneNumber,string RandomKey)
-        {
-            using (var conn = new MySqlConnection(builder.ConnectionString))
-            {
-                await conn.OpenAsync();
-
-                using (var command = conn.CreateCommand())
-                {
-                    command.CommandText = $"UPDATE `ste_SBSCS`.`Verify_SmPhoneBinding` SET `Verify_SmKeyBinding` = SHA2('{RandomKey}',256) WHERE (`Verify_user_id` = '{PhoneNumber}');";
-
-                    int index = command.ExecuteNonQuery();
-                    if (index == 1)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
-
-        public async Task<bool> Inventory(string CabinetLoc, int Amount)
-        {
-            using (var conn = new MySqlConnection(builder.ConnectionString))
-            {
-                await conn.OpenAsync();
-
-                using (var command = conn.CreateCommand())
-                {
-                    command.CommandText = $"UPDATE `ste_SBSCS`.`Inventory` SET `Inventory_Amount` = '{Amount}' WHERE (`Inventory_CabinetLoc` = '{CabinetLoc}');";
 
                     int index = command.ExecuteNonQuery();
                     if (index == 1)
@@ -921,6 +726,30 @@ namespace DBModel
             }
         }
 
+        public async Task<bool> RFID_Customers_RESET(string SN)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"UPDATE `ste_SBSCS`.`RFID_Customers` SET `RFID_Card_SN_1` = '0', `RFID_Card_SN_2` = '0'," +
+                        $" `RFID_Card_SN_3` = '0', `RFID_Card_SN_4` = '0', `RFID_Card_SN_5` = '0' WHERE (`SN` = '{SN}');";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
         public async Task<bool> RFIDS_DELETE(string RFID_SN)
         {
             using (var conn = new MySqlConnection(builder.ConnectionString))
@@ -944,6 +773,248 @@ namespace DBModel
             }
         }
 
+        public async Task<bool> RFIDS_DELETE_BY_SN(string SN)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"DELETE FROM `ste_SBSCS`.`RFIDS` WHERE (`SN` = '{SN}');";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
     }
 
+    public class LC_DBRead
+    {
+        MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder
+        {
+            Server = "127.0.0.1",
+            Database = "ste_locker",
+            UserID = "LockerUsers",
+            Password = "Jyste42876046",
+            //SslMode = MySqlSslMode.Required,
+        };
+
+
+        public async Task<DataTable> Inventory(string CabinetLoc)
+        {
+            DataTable table = new DataTable();
+            DataColumn column;
+            DataRow row;
+            string[] _columnName = { "Items_EPC", "Items_TID", "Amount", "CabinetLoc", "ModifyDate", "CreateDate" };
+            foreach (string _name in _columnName)
+            {
+                column = new DataColumn();
+                column.DataType = Type.GetType("System.String");
+                column.ColumnName = _name;
+                table.Columns.Add(column);
+            }
+
+            string buffer = string.Empty;
+
+
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"SELECT * FROM ste_locker.inventory Where CabinetLoc = '{CabinetLoc}';";
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            row = table.NewRow();
+                            row["Items_EPC"] = reader.GetString(0);
+                            row["Items_TID"] = reader.GetString(1);
+                            row["Amount"] = reader.GetInt16(2);
+                            row["CabinetLoc"] = reader.GetString(3);
+                            row["ModifyDate"] = reader.GetDateTime(4);
+                            row["CreateDate"] = reader.GetDateTime(5);
+                            table.Rows.Add(row);
+                        }
+                    }
+                }
+
+            }
+            return table;
+        }
+
+        public async Task<DataTable> InventoryX()
+        {
+            DataTable table = new DataTable();
+            DataColumn column;
+            DataRow row;
+            string[] _columnName = { "Amount", "CabinetLoc" };
+            foreach (string _name in _columnName)
+            {
+                column = new DataColumn();
+                column.DataType = Type.GetType("System.String");
+                column.ColumnName = _name;
+                table.Columns.Add(column);
+            }
+
+            string buffer = string.Empty;
+
+
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"SELECT Amount, CabinetLoc FROM ste_locker.inventory;";
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            row = table.NewRow();
+                            row["Amount"] = reader.GetInt16(0);
+                            row["CabinetLoc"] = reader.GetString(1);
+                            table.Rows.Add(row);
+                        }
+                    }
+                }
+
+            }
+            return table;
+        }
+
+        public async Task<DataTable> Verify_SmPhoneBinding(string PhoneNumber, string RandomKey)
+        {
+            DataTable table = new DataTable();
+            DataColumn column;
+            DataRow row;
+            string[] _columnName = { "user_id", "ModifyDate", "Verify_SmKeyBinding" };
+            foreach (string _name in _columnName)
+            {
+                column = new DataColumn();
+                column.DataType = Type.GetType("System.String");
+                column.ColumnName = _name;
+                table.Columns.Add(column);
+            }
+
+            string buffer = string.Empty;
+
+
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"SELECT* FROM ste_locker.verify_smphonebinding WHERE user_id ='{PhoneNumber}' AND Verify_SmKeyBinding = SHA2('{RandomKey}', 256);";
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            row = table.NewRow();
+                            row["user_id"] = reader.GetString(0);
+                            row["ModifyDate"] = reader.GetString(0);
+                            row["Verify_SmKeyBinding"] = reader.GetString(0);
+                            table.Rows.Add(row);
+                        }
+                    }
+                }
+
+            }
+            return table;
+        }
+
+    }
+
+    public class LC_DBWrite
+    {
+        MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder
+        {
+            Server = "127.0.0.1",
+            Database = "ste_locker",
+            UserID = "LockerUsers",
+            Password = "Jyste42876046",
+            //SslMode = MySqlSslMode.Required,
+        };
+
+        public async Task<bool> Inventory(string CabinetLoc, int Amount)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"UPDATE `ste_locker`.`inventory` SET `Amount` = '{Amount}' WHERE (`CabinetLoc` = '{CabinetLoc}');";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        public async Task<bool> Verify_SmPhoneBinding(string PhoneNumber, string RandomKey)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"INSERT INTO ste_locker.verify_smphonebinding(user_id, Verify_SmKeyBinding) " +
+                    "VALUES ('" + PhoneNumber + "',SHA2('" + RandomKey + "',256)) ON DUPLICATE KEY UPDATE Verify_SmKeyBinding = SHA2('" + RandomKey + "',256);";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        public async Task<bool> Verify_SmPhoneBinding_UPDATE(string PhoneNumber, string RandomKey)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"UPDATE `ste_locker`.`verify_smphonebinding` SET `Verify_SmKeyBinding` = SHA2('{RandomKey}',256) WHERE (`user_id` = '{PhoneNumber}');";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+    }
 }
