@@ -30,6 +30,8 @@ namespace First_MVVM.ViewModels
         private RFID_ReaderModel _rReaderModel { get; set; }
         private DBRead _dBRead = new DBRead();
         private DBWrite _dBWrite = new DBWrite();
+        private LC_DBRead _lC_DBRead = new LC_DBRead();
+        private LC_DBWrite _lC_DBWrite = new LC_DBWrite();
         private System.Timers.Timer OperationTimer;
         private System.Timers.Timer DoorCheckTimer;
         private System.Timers.Timer RFIDCheckTimer;
@@ -271,9 +273,9 @@ namespace First_MVVM.ViewModels
                 case "選擇櫃位":
                     _checkOutModel.LockerBosSelectedIndex = _lockerSelectedIndex;
                     //寫入櫃位EPC TID資料
-                    _inventoryModel = await _dBRead.Inventory(_lockerSelectedIndex);
-                    _checkOutModel.EPC = _inventoryModel.Rows[0]["Inventory_Items_EPC"].ToString();
-                    _checkOutModel.TID = _inventoryModel.Rows[0]["Inventory_Items_TID"].ToString();
+                    _inventoryModel = await _lC_DBRead.Inventory(_lockerSelectedIndex);
+                    _checkOutModel.EPC = _inventoryModel.Rows[0]["Items_EPC"].ToString();
+                    _checkOutModel.TID = _inventoryModel.Rows[0]["Items_TID"].ToString();
 
                     IO.Write(_checkOutModel.LockerBosSelectedIndex, IO.UnLock);
                     NoticeText = "提醒您球櫃開起後未關閉視同已借出";
@@ -476,7 +478,7 @@ namespace First_MVVM.ViewModels
                     UnsubscribeRFIDCheckEvent();
 
                     //寫入借出紀錄
-                    _dBWrite.Inventory(_checkOutModel.LockerBosSelectedIndex, 0);
+                    _lC_DBWrite.Inventory(_checkOutModel.LockerBosSelectedIndex, 0);
                     _dBWrite.Take_History(_checkOutModel.SN, _checkOutModel.LockerBosSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
 
                     UnsubscribeReaderEvent();
@@ -494,7 +496,7 @@ namespace First_MVVM.ViewModels
                     UnsubscribeRFIDCheckEvent();
 
                     //寫入借出紀錄
-                    _dBWrite.Inventory(_checkOutModel.LockerBosSelectedIndex, 0);
+                    _lC_DBWrite.Inventory(_checkOutModel.LockerBosSelectedIndex, 0);
                     _dBWrite.Take_History(_checkOutModel.SN, _checkOutModel.LockerBosSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
 
                     UnsubscribeReaderEvent();
