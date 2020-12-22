@@ -15,6 +15,8 @@ using Prism.Services.Dialogs;
 using Prism.Regions;
 using System.Windows;
 using System.Collections.Generic;
+using System.Windows.Controls;
+using First_MVVM.Business;
 
 namespace First_MVVM.ViewModels
 {
@@ -23,6 +25,7 @@ namespace First_MVVM.ViewModels
         private readonly IRegionManager _regionManager;
         private MemberServiceModel _memberServiceModel { get; set; }
         private EasyCard _easyCard = new EasyCard();
+        private StrVerify _strVerify = new StrVerify();
 
         private DBRead _dBRead = new DBRead();
         private DBWrite _dBWrite = new DBWrite();
@@ -37,7 +40,21 @@ namespace First_MVVM.ViewModels
             set { _counter = value; }
         }
 
+        private DataTable _rFID_Customers;
+        public DataTable RFID_Customers
+        {
+            get { return _rFID_Customers; }
+            set { SetProperty(ref _rFID_Customers, value); }
+        }
+
         #region Interface Property
+
+        private string _passwordStr;
+        public string PasswordStr
+        {
+            get { return _passwordStr; }
+            set { SetProperty(ref _passwordStr, value); }
+        }
 
         private bool _debitIsEnabled;
         public bool DebitIsEnabled
@@ -116,11 +133,11 @@ namespace First_MVVM.ViewModels
             set { SetProperty(ref _amountStr, value); }
         }
 
-        private string _sNStr;
-        public string SNStr
+        private string _charge_SN;
+        public string Charge_SN
         {
-            get { return _sNStr; }
-            set { SetProperty(ref _sNStr, value); }
+            get { return _charge_SN; }
+            set { SetProperty(ref _charge_SN, value); }
         }
 
         private string _pumpBoxStatus;
@@ -135,6 +152,20 @@ namespace First_MVVM.ViewModels
         {
             get { return _cardCanceIsEnabled; }
             set { SetProperty(ref _cardCanceIsEnabled, value); }
+        }
+
+        private bool _useKeyLoginIsEnabled = true;
+        public bool UseKeyLoginIsEnabled
+        {
+            get { return _useKeyLoginIsEnabled; }
+            set { SetProperty(ref _useKeyLoginIsEnabled, value); }
+        }
+
+        private bool _confirmPasswordIsEnabled = false;
+        public bool ConfirmPasswordIsEnabled
+        {
+            get { return _confirmPasswordIsEnabled; }
+            set { SetProperty(ref _confirmPasswordIsEnabled, value); }
         }
 
         private int _totalCards;
@@ -217,6 +248,17 @@ namespace First_MVVM.ViewModels
         #endregion
 
         #region Interface Command
+        public DelegateCommand PasswordEdit { get; private set; }
+        public DelegateCommand<object> PasswordCmd { get; private set; }
+        public DelegateCommand<object> PasswordConfirmCmd { get; private set; }
+        public DelegateCommand<object> PasswordClearCmd { get; private set; }
+        public DelegateCommand<object> UpdateNewPasswordCmd { get; private set; }
+
+        public DelegateCommand UseKeyLoginCmd { get; private set; }
+        public DelegateCommand<object> KeyLoginCmd { get; private set; }
+        public DelegateCommand<TextBox> AccountLostFocusCmd { get; private set; }
+        public DelegateCommand<object> VerifyPassword { get; private set; }
+        public DelegateCommand<object> PasswordChangedCmd { get; private set; }
         public DelegateCommand<string> NavigateCommand { get; private set; }
         public DelegateCommand MemberServicePageLoadCmd { get; private set; }
         public DelegateCommand ExitCmd { get; private set; }
@@ -235,6 +277,11 @@ namespace First_MVVM.ViewModels
         public MemberServicePageViewModel(IRegionManager regionManager)
         {
             _regionManager = regionManager;
+            PasswordEdit = new DelegateCommand(GoToPasswordEdit);
+            UseKeyLoginCmd = new DelegateCommand(GoToKeyLoginPage);
+            KeyLoginCmd = new DelegateCommand<object>(LoginCheck);
+            AccountLostFocusCmd = new DelegateCommand<TextBox>(CheckAccount);
+            PasswordChangedCmd = new DelegateCommand<object>(CheckPassword);
             MemberServicePageLoadCmd = new DelegateCommand(MemberServicePageLoad);
             ExitCmd = new DelegateCommand(ExitInteraction);
             NextTabCmd = new DelegateCommand(NextTab);
@@ -247,7 +294,139 @@ namespace First_MVVM.ViewModels
             GoToCardInfoCmd = new DelegateCommand(GoToCardInfo);
             SetNewCardCmd = new DelegateCommand(SetNewCard);
             CardCancelCmd = new DelegateCommand<string>(CardCancel);
-            
+            PasswordCmd = new DelegateCommand<object>(CheckPassword);
+
+            PasswordConfirmCmd = new DelegateCommand<object>(ConfirmPassword);
+            PasswordClearCmd = new DelegateCommand<object>(PasswordClear);
+            UpdateNewPasswordCmd = new DelegateCommand<object>(UpdateNewPassword);
+        }
+        
+        private async void LoginCheck(object parameter)
+        {
+            var passwordBox = parameter as PasswordBox;
+            if (string.IsNullOrWhiteSpace(AccountStr)) return;
+            if (string.IsNullOrWhiteSpace(passwordBox.Password))
+            {
+                return;
+            }
+            else
+            {
+                DataTable SN = await _dBRead.Customer_info("SN", AccountStr, "INT");
+                if (SN.Rows.Count == 1)
+                {
+                    DataTable Password_Manager = await _dBRead.Password_Manager(SN.Rows[0]["SN"].ToString());
+                    if (passwordBox.Password == Password_Manager.Rows[0]["password"].ToString())
+                    {
+                        DataTable Customer_info = await _dBRead.Customer_info(SN.Rows[0]["SN"].ToString());
+                        _memberServiceModel.SN = Customer_info.Rows[0]["SN"].ToString();
+                        AccountStr = Customer_info.Rows[0]["user_id"].ToString();
+
+                        DataTable _outstanding_Amount = await _dBRead.Charge_History(_memberServiceModel.SN);
+                        if (_outstanding_Amount.Rows.Count > 0)
+                        {
+                            NoticeText = "尚有未付款";
+                            AmountStr = _outstanding_Amount.Rows[0]["Charge_amount"].ToString();
+                            Charge_SN = _outstanding_Amount.Rows[0]["Charge_SN"].ToString();
+                        }
+
+                        GoToServicePage();
+                    }
+                    else
+                    {
+                        NoticeText = "帳號或密碼有誤";
+                    }
+                }
+                else
+                {
+                    NoticeText = "帳號不存在";
+                }
+            }
+
+        }
+
+        private async void CheckAccount(TextBox AccountBox)
+        {
+            if (string.IsNullOrWhiteSpace(AccountBox.Text))
+            {
+                NoticeText = "不可為空白";
+                return;
+            }
+
+            if (_strVerify.IsPhoneNumber(AccountBox.Text) && AccountBox.Text.Length == 10)
+            {
+                NoticeText = string.Empty;
+            }
+            else
+            {
+                NoticeText = "帳號有誤";
+            }
+        }
+
+        private async void CheckPassword(object parameter)
+        {
+            var passwordBox = parameter as PasswordBox;
+            PasswordStr = passwordBox.Password;
+            if (_strVerify.Checkpassword(passwordBox.Password))
+            {
+                NoticeText = string.Empty;
+            }
+            else
+            {
+                passwordBox.Clear();
+                NoticeText = "密碼有誤";
+            }
+        }
+
+        private void ConfirmPassword(object parameter)
+        {
+            var passwordBox = parameter as PasswordBox;
+            if (_strVerify.Checkpassword(passwordBox.Password))
+            {
+                if (passwordBox.Password == PasswordStr)
+                {
+                    NoticeText = "可用";
+                    ConfirmPasswordIsEnabled = true;
+                }
+                else
+                {
+                    NoticeText = "密碼不一致";
+                    ConfirmPasswordIsEnabled = false;
+                }
+            }
+            else
+            {
+                passwordBox.Clear();
+                NoticeText = string.Empty;
+                ConfirmPasswordIsEnabled = false;
+            }
+        }
+
+        private async void UpdateNewPassword(object parameter)
+        {
+            var passwordBox = parameter as PasswordBox;
+            if (string.IsNullOrWhiteSpace(passwordBox.Password))
+            {
+                return;
+            }
+            else
+            {
+                bool result = await _dBWrite.Password_Manager_UPDATE(_memberServiceModel.SN, passwordBox.Password);
+                if (result == true)
+                {
+                    NoticeText = "密碼已修改，感謝您的使用";
+                }
+                else
+                {
+                    NoticeText = "密碼修改失敗，感謝您的使用";
+                }
+                GoToSuccessPage();
+            }
+        }
+
+        private void PasswordClear(object parameter)
+        {
+            var passwordBox = parameter as PasswordBox;
+            passwordBox.Clear();
         }
 
         private void MemberServicePageLoad()
@@ -268,10 +447,30 @@ namespace First_MVVM.ViewModels
             NoticeText = null;
             Card_id = null;
             AmountStr = null;
-            SNStr = null;
+            Charge_SN = null;
             PumpBoxStatus = null;
             _easyCard.Close();
             _regionManager.Regions["ContentRegion"].RemoveAll();
+        }
+
+        private void GoToSuccessPage()
+        {
+            SelectedStepTabName = "完成";
+        }
+        
+        private void GoToPasswordEdit()
+        {
+            SelectedStepTabName = "密碼修改";
+        }
+
+        private void GoToServicePage()
+        {
+            SelectedStepTabName = "服務選單";
+        }
+
+        private void GoToKeyLoginPage()
+        {
+            SelectedStepTabName = "密碼登入";
         }
 
         private void GoToDebitPage()
@@ -301,7 +500,7 @@ namespace First_MVVM.ViewModels
         private async Task FillCardInfo()
         {
             TotalCards = 0;
-            DataTable RFID_Customers = await _dBRead.RFID_Customers(_memberServiceModel.SN);
+            RFID_Customers = await _dBRead.RFID_Customers(_memberServiceModel.SN);
             if (RFID_Customers.Rows.Count <= 0) return;
             foreach (DataColumn item in RFID_Customers.Columns)
             {
@@ -339,10 +538,13 @@ namespace First_MVVM.ViewModels
         {
             if (TotalCards == 5) return;
             NoticeText = "請靠卡感應";
+            MessageBox.Show("點擊確認後，請靠卡感應於下方感應區。","提示");
 
             string Data = await Task.Run<string>(() => { return _easyCard.Read_card_balance_request(); });
-            
-            //string Card_ID = "1668314704";
+            NoticeText = string.Empty;
+
+
+            //string Card_ID = "1668314700";
             //string Card_purse_id = "0000000000000000";
             //string Ticket_type = "ECC";
 
@@ -371,12 +573,23 @@ namespace First_MVVM.ViewModels
                 }
                 else
                 {
-                    
+                    bool RegisterRFIDS = await _dBWrite.RFIDS(_memberServiceModel.SN, Card_ID, Card_purse_id);
+                    DataTable RFID_SN = await _dBRead.RFIDS(Card_ID);
+
+                    foreach (DataColumn item in RFID_Customers.Columns)
+                    {
+                        if (RFID_Customers.Rows[0][item.ColumnName].ToString() == "0")
+                        {
+                            await _dBWrite.RFID_Customers_UPDATE(_memberServiceModel.SN, item.ColumnName, Convert.ToInt16(RFID_SN.Rows[0]["RFID_SN"]));
+                            break;
+                        }
+                    }
                 }
+                FillCardInfo();
             }
             else
             {
-                
+                NoticeText = "請使用悠遊卡綁定";
             }
 
         }
@@ -388,27 +601,32 @@ namespace First_MVVM.ViewModels
             {
                 case "1":
                     await _dBWrite.RFID_Customers_UPDATE(_memberServiceModel.SN,"RFID_Card_SN_1",0);
-                    await _dBWrite.RFIDS_DELETE(_card_ID_01);
+                    await _dBWrite.RFIDS_DELETE(RFID_Customers.Rows[0]["RFID_Card_SN_1"].ToString());
+                    Card_ID_01 = string.Empty;
                     X1_Visibility = Visibility.Hidden;
                     break;
                 case "2":
                     await _dBWrite.RFID_Customers_UPDATE(_memberServiceModel.SN, "RFID_Card_SN_2", 0);
-                    await _dBWrite.RFIDS_DELETE(_card_ID_02);
+                    await _dBWrite.RFIDS_DELETE(RFID_Customers.Rows[0]["RFID_Card_SN_2"].ToString());
+                    Card_ID_02 = string.Empty;
                     X2_Visibility = Visibility.Hidden;
                     break;
                 case "3":
                     await _dBWrite.RFID_Customers_UPDATE(_memberServiceModel.SN, "RFID_Card_SN_3", 0);
-                    await _dBWrite.RFIDS_DELETE(_card_ID_03);
+                    await _dBWrite.RFIDS_DELETE(RFID_Customers.Rows[0]["RFID_Card_SN_3"].ToString());
+                    Card_ID_03 = string.Empty;
                     X3_Visibility = Visibility.Hidden;
                     break;
                 case "4":
                     await _dBWrite.RFID_Customers_UPDATE(_memberServiceModel.SN, "RFID_Card_SN_4", 0);
-                    await _dBWrite.RFIDS_DELETE(_card_ID_04);
+                    await _dBWrite.RFIDS_DELETE(RFID_Customers.Rows[0]["RFID_Card_SN_4"].ToString());
+                    Card_ID_04 = string.Empty;
                     X4_Visibility = Visibility.Hidden;
                     break;
                 case "5":
                     await _dBWrite.RFID_Customers_UPDATE(_memberServiceModel.SN, "RFID_Card_SN_5", 0);
-                    await _dBWrite.RFIDS_DELETE(_card_ID_05);
+                    await _dBWrite.RFIDS_DELETE(RFID_Customers.Rows[0]["RFID_Card_SN_5"].ToString());
+                    Card_ID_05 = string.Empty;
                     X5_Visibility = Visibility.Hidden;
                     break;
                 default:
@@ -440,7 +658,10 @@ namespace First_MVVM.ViewModels
                 if (_notReturnedCheckOut == 0 && _outstanding_Amount.Rows.Count == 0)
                 {
                     bool CancelAccount = await _dBWrite.Customer_info_UPDATE(_memberServiceModel.SN, "Status", "2");
-                    if (CancelAccount == true)
+                    bool CancelAccountCard = await _dBWrite.RFIDS_DELETE_BY_SN(_memberServiceModel.SN);
+                    bool ResetAccountCard = await _dBWrite.RFID_Customers_RESET(_memberServiceModel.SN);
+
+                    if (CancelAccount == CancelAccountCard == ResetAccountCard == true)
                     {
                         NoticeText = "感謝您的使用";
                         SelectedStepTabName = "完成";
@@ -492,6 +713,8 @@ namespace First_MVVM.ViewModels
 
         private async void ReadCard()
         {
+            UseKeyLoginIsEnabled = false;
+            NoticeText = string.Empty;
             ReadCardIsEnabled = false;
             string Data = await Task.Run<string>(() => { return _easyCard.Read_card_balance_request(); });
             ReadCardIsEnabled = true;
@@ -512,12 +735,12 @@ namespace First_MVVM.ViewModels
                     BalanceStr = (string)JObject.Parse(Data)["result"]["balance"];
 
                     DataTable _outstanding_Amount = await _dBRead.Charge_History(_memberServiceModel.SN);
-                    DataTable _checkOut_History = await _dBRead.Take_History(_memberServiceModel.SN);
+                    //DataTable _checkOut_History = await _dBRead.Take_History(_memberServiceModel.SN);
                     if (_outstanding_Amount.Rows.Count > 0)
                     {
                         NoticeText = "尚有未付款";
                         AmountStr = _outstanding_Amount.Rows[0]["Charge_amount"].ToString();
-                        SNStr = _outstanding_Amount.Rows[0]["Charge_SN"].ToString();
+                        Charge_SN = _outstanding_Amount.Rows[0]["Charge_SN"].ToString();
                     }
 
                     ReadCardIsEnabled = false;
@@ -541,6 +764,7 @@ namespace First_MVVM.ViewModels
 
         private async void Charge()
         {
+            if (string.IsNullOrWhiteSpace(_charge_SN)) return;
             //測試用
             _memberServiceModel.Amount = 0;
 
@@ -553,7 +777,7 @@ namespace First_MVVM.ViewModels
 
                 if (_isSuccess == "True")
                 {
-                    _dBWrite.Charge_History_UPDATE(_sNStr);
+                    _dBWrite.Charge_History_UPDATE(_charge_SN);
                     _memberServiceModel.DebitStatus = "成功";
                     NoticeText = "扣款成功";
                     SelectedStepTabName = "完成";
@@ -578,7 +802,7 @@ namespace First_MVVM.ViewModels
         private async void PumpBoxStart()
         {
             _memberServiceModel.CheckOut = DateTime.Now;
-            bool insertPumpHistory = await _dBWrite.Pump_History(_memberServiceModel.SN, 0, "A8");
+            bool insertPumpHistory = await _dBWrite.Pump_History(_memberServiceModel.SN, 0, SystemSetModel.StationName, "A8");
             if (insertPumpHistory == true)
             {
                 DataTable _pump_History = await _dBRead.Pump_History(_memberServiceModel.SN);
