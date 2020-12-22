@@ -478,8 +478,9 @@ namespace First_MVVM.ViewModels
                     UnsubscribeRFIDCheckEvent();
 
                     //寫入借出紀錄
+
                     _lC_DBWrite.Inventory(_checkOutModel.LockerBosSelectedIndex, 0);
-                    _dBWrite.Take_History(_checkOutModel.SN, _checkOutModel.LockerBosSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
+                    _dBWrite.Take_History(_checkOutModel.SN, SystemSetModel.StationName, _checkOutModel.LockerBosSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
 
                     UnsubscribeReaderEvent();
 
@@ -497,7 +498,7 @@ namespace First_MVVM.ViewModels
 
                     //寫入借出紀錄
                     _lC_DBWrite.Inventory(_checkOutModel.LockerBosSelectedIndex, 0);
-                    _dBWrite.Take_History(_checkOutModel.SN, _checkOutModel.LockerBosSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
+                    _dBWrite.Take_History(_checkOutModel.SN, SystemSetModel.StationName, _checkOutModel.LockerBosSelectedIndex, _checkOutModel.EPC, _checkOutModel.TID);
 
                     UnsubscribeReaderEvent();
 
