@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:prism="http://prismlibrary.com/"  
+             xmlns:View="clr-namespace:First_MVVM.Views"
              prism:ViewModelLocator.AutoWireViewModel="True"
              FontSize="20"
              Background="#243340"
@@ -122,10 +123,12 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="5"/>
                 <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="5"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="5"/>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="5"/>
             </Grid.RowDefinitions>
@@ -232,8 +235,10 @@
                                 </FlowDocument>
                             </RichTextBox>
                             <StackPanel Margin="{StaticResource ControlMargin}" Orientation="Horizontal" Height="auto" Width="auto" HorizontalAlignment="Center">
-                                <CheckBox  Command="{Binding CheckReadRulesCmd}" Foreground="#401E01" Margin="{StaticResource ControlMargin}" IsChecked="{Binding ReadRulesIsChecked}" IsEnabled="True" Width="auto" Height="26" HorizontalAlignment="Center" />
-                                <Label Foreground="#F2F2F2" Content="我以閱讀以上條款，並同意此同意書內容" FontSize="20" />
+                                <Viewbox Width="70">
+                                    <CheckBox  Command="{Binding CheckReadRulesCmd}" Foreground="#401E01" Margin="{StaticResource ControlMargin}" IsChecked="{Binding ReadRulesIsChecked}" IsEnabled="True" HorizontalAlignment="Center" />
+                                </Viewbox>
+                                <Label Foreground="#F2F2F2" Content="我以閱讀以上條款，並同意此同意書內容" FontSize="23" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </StackPanel>
                             <Button Style="{DynamicResource RoundCorner}" Command="{Binding NextTabCmd}" IsEnabled="{Binding NextStepIsEnabledBool}" Content="確認" Margin="{StaticResource ControlMargin}" Width="150" Height="100">
                                 <Button.ContentTemplate>
@@ -321,7 +326,7 @@
                                 </DataTemplate>
                             </Button.ContentTemplate>
                         </Button>
-                        
+
                     </Grid>
                 </TabItem>
                 <TabItem Header="密碼">
@@ -337,7 +342,7 @@
                             </Button.ContentTemplate>
                         </Button>
 
-                        <TextBlock Margin="95,145,95,702">
+                        <TextBlock Margin="95,138,95,702">
                             <Viewbox >
                                 <TextBlock Text="設定密碼:" />
                             </Viewbox>
@@ -390,9 +395,10 @@
                                 </DataTemplate>
                             </Button.ContentTemplate>
                         </Button>
-                        
+
                     </Grid>
                 </TabItem>
+                <!-- 個人資料取消
                 <TabItem Header="個人資料">
                     <Grid>
                         <Button Content="↩" Style="{DynamicResource RoundCorner}" Command="{Binding PreviousTabCmd}" Margin="492,10,10,817">
@@ -444,6 +450,7 @@
                         
                     </Grid>
                 </TabItem>
+                -->
                 <TabItem Header="地區">
                     <Grid>
                         <Button  Content="↩" Style="{DynamicResource RoundCorner}" Command="{Binding PreviousTabCmd}" Margin="492,10,10,817">
@@ -555,17 +562,17 @@
                                 </DataTemplate>
                             </Button.ContentTemplate>
                         </Button>
-                        
+
                     </Grid>
                 </TabItem>
                 <TabItem Header="設定悠遊卡">
                     <Grid>
 
-                        <Button  Content="↩" Style="{DynamicResource RoundCorner}" Command="{Binding PreviousTabCmd}" Margin="492,10,10,817">
+                        <Button  Content="X" Style="{DynamicResource RoundCorner}" Command="{Binding ExitCmd}" Margin="492,10,10,817">
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <Viewbox>
-                                        <TextBlock>↩</TextBlock>
+                                        <TextBlock>X</TextBlock>
                                     </Viewbox>
                                 </DataTemplate>
                             </Button.ContentTemplate>
@@ -576,13 +583,13 @@
                                 <TextBlock Text="{Binding NoticeText}" />
                             </Viewbox>
                         </TextBlock>
-                        
+
                         <TextBlock  Margin="95,145,95,702">
                             <Viewbox>
                                 <TextBlock Text="卡號:"/>
                             </Viewbox>
                         </TextBlock>
-                        
+
                         <TextBlock  Margin="95,203,95,644">
                             <Viewbox>
                                 <TextBlock Text="{Binding Card_ID}"/>
@@ -594,7 +601,7 @@
                                 <TextBlock Text="外卡卡號:"/>
                             </Viewbox>
                         </TextBlock>
-                        
+
                         <TextBlock  Margin="95,319,95,528">
                             <Viewbox>
                                 <TextBlock Text="{Binding Card_purse_id}"/>
@@ -647,7 +654,7 @@
                                 </DataTemplate>
                             </Button.ContentTemplate>
                         </Button>
-                        
+
                     </Grid>
                 </TabItem>
             </TabControl>
