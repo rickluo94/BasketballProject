@@ -78,6 +78,10 @@
     <Viewbox Stretch="Uniform">
         <WrapPanel Height="1024" Width="600">
 
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding LoadingVisibility}" Height="auto" Width="auto">
+                <View:LoadingPage />
+            </StackPanel>
+
             <ContentControl  prism:RegionManager.RegionName="ContentRegion"/>
 
             <TextBlock Text="{Binding UpdateText}" />
@@ -137,7 +141,7 @@
                     </DataTemplate>
                 </Button.ContentTemplate>
             </Button>
-            
+
         </WrapPanel>
     </Viewbox>
 </Window>
