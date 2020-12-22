@@ -4,15 +4,9 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:prism="http://prismlibrary.com/"             
              xmlns:av="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="av" x:Class="First_MVVM.Views.LoadingPage"             
-             prism:ViewModelLocator.AutoWireViewModel="True"
              FontSize="20"
              Background="#243340"
              >
-    <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadingPageLoadCmd}"  CommandParameter="{Binding ElementName=BasketballSB}"/>
-        </i:EventTrigger>
-    </i:Interaction.Triggers>
     <UserControl.Resources>
         <Style TargetType="{x:Type TextBlock}">
             <Setter Property="Foreground" Value="#F2F2F2"/>
