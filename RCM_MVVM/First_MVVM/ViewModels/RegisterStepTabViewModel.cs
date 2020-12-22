@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using Prism.Regions;
 using First_MVVM.Views;
 using System.Windows;
+using System.Threading;
+using System;
 
 namespace First_MVVM.ViewModels
 {
@@ -27,6 +29,8 @@ namespace First_MVVM.ViewModels
         private EasyCardServ _easyCardServ = new EasyCardServ();
         private DBRead _dBRead = new DBRead();
         private DBWrite _dBWrite = new DBWrite();
+        private LC_DBRead _lC_DBRead = new LC_DBRead();
+        private LC_DBWrite _lC_DBWrite = new LC_DBWrite();
 
         #region Interface Preperty
 
@@ -36,6 +40,13 @@ namespace First_MVVM.ViewModels
         //    get { return _journal; }
         //    set { SetProperty(ref _journal, value); }
         //}
+
+        private Visibility _loadingVisibility = Visibility.Hidden;
+        public Visibility LoadingVisibility
+        {
+            get { return _loadingVisibility; }
+            set { SetProperty(ref _loadingVisibility, value); }
+        }
 
         private bool _readCardIsEnabled;
         public bool ReadCardIsEnabled
@@ -310,7 +321,7 @@ namespace First_MVVM.ViewModels
 
             #region 資料庫寫入true=>發送驗證碼
 
-            bool result = await _dBWrite.Verify_SmPhoneBinding(_phoneNumber,_randomKey);
+            bool result = await _lC_DBWrite.Verify_SmPhoneBinding(_phoneNumber,_randomKey);
             if (result == true)
             {
                 _sendMessage.SmSendSampleCode(_phoneNumber, _randomKey);
@@ -319,7 +330,7 @@ namespace First_MVVM.ViewModels
             }
             else
             {
-                bool resultAgain = await _dBWrite.Verify_SmPhoneBinding_UPDATE(_phoneNumber, _randomKey);
+                bool resultAgain = await _lC_DBWrite.Verify_SmPhoneBinding_UPDATE(_phoneNumber, _randomKey);
                 if (resultAgain == true)
                 {
                     _sendMessage.SmSendSampleCode(_phoneNumber, _randomKey);
@@ -333,7 +344,8 @@ namespace First_MVVM.ViewModels
 
         private async void VerifyMessageKey(TextBox VerifySMBox)
         {
-            DataTable table = await _dBRead.Verify_SmPhoneBinding(AccountStr, VerifySMBox.Text);
+            if (NoticeText != "可用") return;
+            DataTable table = await _lC_DBRead.Verify_SmPhoneBinding(AccountStr, VerifySMBox.Text);
             if (table.Rows.Count > 0)
             {
                 NoticeText = "驗證成功";
@@ -452,14 +464,14 @@ namespace First_MVVM.ViewModels
         private async void ReadCard()
         {
             Card_ID = "請靠感應";
-
+            MessageBox.Show("點擊確認後，請靠卡感應於下方感應區。", "提示");
             ReadCardIsEnabled = false;
             string Data = await Task.Run<string>(() => { return _easyCard.Read_card_balance_request(); });
-            
+
             Card_ID = (string)JObject.Parse(Data)["result"]["card_id"];
             Card_purse_id = (string)JObject.Parse(Data)["result"]["card_purse_id"];
             Ticket_type = (string)JObject.Parse(Data)["result"]["ticket_type"];
-            
+
             DataTable RFIDS = await _dBRead.RFIDS(Card_ID);
 
             bool isThisAlreadyHadBinding;
@@ -483,6 +495,7 @@ namespace First_MVVM.ViewModels
                 }
                 else
                 {
+                    NoticeText = "設定完成";
                     NextStepIsEnabledBool = true;
                 }
             }
@@ -538,7 +551,7 @@ namespace First_MVVM.ViewModels
 
         private async void RegisterAction()
         {
-            bool RegisterAccount = await _dBWrite.Customer_info(_registerModel.ID, _registerModel.Name, _registerModel.Email);
+            bool RegisterAccount = await _dBWrite.Customer_info(_registerModel.ID, _registerModel.Email);
 
             DataTable SN = await _dBRead.Customer_info("SN", _registerModel.ID, "INT");
             if (SN.Rows.Count == 1)
@@ -550,7 +563,7 @@ namespace First_MVVM.ViewModels
                 bool RegisterRFIDS = await _dBWrite.RFIDS(_registerModel.SN, _registerModel.Card_id, _registerModel.Card_purse_id);
                 DataTable RFID_SN = await _dBRead.RFIDS(_registerModel.Card_id);
 
-                bool RegisterCard = await _dBWrite.RFID_Customers(_registerModel.SN, RFID_SN.Rows[0]["RFID_SN"].ToString());
+                bool RegisterCard = await _dBWrite.RFID_Customers(_registerModel.SN, "RFID_Card_SN_1", RFID_SN.Rows[0]["RFID_SN"].ToString());
 
                 if (RegisterAccount == RegisterPassword == RegisterAddress == RegisterRFIDS == RegisterCard == true)
                 {
