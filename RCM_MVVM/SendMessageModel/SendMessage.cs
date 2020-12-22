@@ -22,7 +22,7 @@ namespace SendMessageModel
                 _params.Append("username=42876046");
                 _params.Append("&password=jyste9697");
                 _params.Append($"&dstaddr={PhoneNumber}");
-                _params.Append($"&smbody=智慧籃球櫃服務手機簡訊驗證碼：{RandomKeynote}，請於收到簡訊90秒內完成手機驗證。");
+                _params.Append($"&smbody=您的【智慧籃球櫃】註冊驗證碼為 {RandomKeynote} ，請將驗證碼輸入於畫面欄位。如非本人操作請忽略。");
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(new
                 Uri(reqUrl.ToString()));
                 request.Method = "POST";
