@@ -16,6 +16,8 @@ namespace DBModel
             //SslMode = MySqlSslMode.Required,
         };
 
+
+
         public async Task<int> LAST_INSERT_ID()
         {
             int LAST_INSERT_ID = 0;
@@ -146,6 +148,48 @@ namespace DBModel
             return table;
         }
 
+        public async Task<DataTable> Password_Manager(string SN)
+        {
+            DataTable table = new DataTable();
+            DataColumn column;
+            DataRow row;
+            string[] _columnName = { "SN", "password", "LastLogin", "ModifyDate" };
+            foreach (string _name in _columnName)
+            {
+                column = new DataColumn();
+                column.DataType = Type.GetType("System.String");
+                column.ColumnName = _name;
+                table.Columns.Add(column);
+            }
+
+            string buffer = string.Empty;
+
+
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"SELECT * FROM ste_SBSCS.Password_Manager WHERE SN = '{SN}';";
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            row = table.NewRow();
+                            row["SN"] = reader.GetInt32(0);
+                            row["password"] = reader.GetString(1);
+                            row["LastLogin"] = reader.GetDateTime(2);
+                            row["ModifyDate"] = reader.GetDateTime(3);
+                            table.Rows.Add(row);
+                        }
+                    }
+                }
+
+            }
+            return table;
+        }
+
         public async Task<DataTable> RFIDS(string CardID)
         {
             DataTable table = new DataTable();
@@ -196,7 +240,7 @@ namespace DBModel
             DataTable table = new DataTable();
             DataColumn column;
             DataRow row;
-            string[] _columnName = { "Take_SN", "SN", "Take_Items_EPC", "Take_Items_TID", "Take_CheckOut", "Take_CheckIn", "Take_BoxName" };
+            string[] _columnName = { "Take_SN", "SN", "Take_Items_EPC", "Take_Items_TID", "Take_CheckOut", "Take_CheckIn", "StationName", "Take_BoxName" };
             foreach (string _name in _columnName)
             {
                 column = new DataColumn();
@@ -226,7 +270,8 @@ namespace DBModel
                             row["Take_Items_TID"] = reader.GetString(3);
                             row["Take_CheckOut"] = reader.GetDateTime(4);
                             row["Take_CheckIn"] = reader.GetString(5);
-                            row["Take_BoxName"] = reader.GetString(6);
+                            row["StationName"] = reader.GetString(6);
+                            row["Take_BoxName"] = reader.GetString(7);
                             table.Rows.Add(row);
                         }
                     }
@@ -427,7 +472,7 @@ namespace DBModel
             //SslMode = MySqlSslMode.Required,
         };
 
-        public async Task<bool> Customer_info(string ID, string UserName, string Email)
+        public async Task<bool> Customer_info(string ID, string Email)
         {
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {
@@ -435,7 +480,7 @@ namespace DBModel
 
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`Customer_info` (`user_id`, `username`, `email`) VALUES ('{ID}', '{UserName}', '{Email}');";
+                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`Customer_info` (`user_id`, `email`) VALUES ('{ID}', '{Email}');";
 
                     int index = command.ExecuteNonQuery();
                     if (index == 1)
@@ -496,6 +541,29 @@ namespace DBModel
             }
         }
 
+        public async Task<bool> Password_Manager_UPDATE(string SN, string Password)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"UPDATE `ste_SBSCS`.`Password_Manager` SET `password` = '{Password}' WHERE (`SN` = '{SN}');";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
         public async Task<bool> Customer_Address(string SN, string City, string Area)
         {
             using (var conn = new MySqlConnection(builder.ConnectionString))
@@ -542,7 +610,7 @@ namespace DBModel
             }
         }
 
-        public async Task<bool> RFID_Customers(string SN, string RFID_Card_SN_1)
+        public async Task<bool> RFID_Customers(string SN,string Column, string RFID_Card_SN)
         {
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {
@@ -550,7 +618,7 @@ namespace DBModel
 
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`RFID_Customers` (`SN`, `RFID_Card_SN_1`) VALUES ('{SN}', '{RFID_Card_SN_1}');";
+                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`RFID_Customers` (`SN`, `{Column}`) VALUES ('{SN}', '{RFID_Card_SN}');";
 
                     int index = command.ExecuteNonQuery();
                     if (index == 1)
@@ -565,7 +633,7 @@ namespace DBModel
             }
         }
 
-        public async Task<bool> Take_History(string SN, string BoxName,string Object_EPC, string Object_TID)
+        public async Task<bool> Take_History(string SN, string StationName, string BoxName,string Object_EPC, string Object_TID)
         {
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {
@@ -573,7 +641,7 @@ namespace DBModel
 
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`Take_History` (`SN`,`Take_Items_EPC`, `Take_Items_TID`, `Take_BoxName`) VALUES ('{SN}','{Object_EPC}', '{Object_TID}','{BoxName}');";
+                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`Take_History` (`SN`,`Take_Items_EPC`, `Take_Items_TID`, `StationName`, `Take_BoxName`) VALUES ('{SN}','{Object_EPC}', '{Object_TID}', '{StationName}','{BoxName}');";
 
                     int index = command.ExecuteNonQuery();
                     if (index == 1)
@@ -657,7 +725,7 @@ namespace DBModel
             }
         }
 
-        public async Task<bool> Pump_History(string SN, double Time_usage, string BoxName)
+        public async Task<bool> Pump_History(string SN, double Time_usage,string StationName, string BoxName)
         {
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {
@@ -665,7 +733,7 @@ namespace DBModel
 
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`Pump_History` (`SN`, `Time_usage`, `BoxName`) VALUES ('{SN}', '{Time_usage}', '{BoxName}');";
+                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`Pump_History` (`SN`, `Time_usage`, `StationName`, `BoxName`) VALUES ('{SN}', '{Time_usage}', '{StationName}', '{BoxName}');";
 
                     int index = command.ExecuteNonQuery();
                     if (index == 1)
@@ -808,6 +876,48 @@ namespace DBModel
             //SslMode = MySqlSslMode.Required,
         };
 
+        public async Task<DataTable> system_set()
+        {
+            DataTable table = new DataTable();
+            DataColumn column;
+            DataRow row;
+            string[] _columnName = { "SN", "Name", "Value", "ValueType", "ModifyDate" };
+            foreach (string _name in _columnName)
+            {
+                column = new DataColumn();
+                column.DataType = Type.GetType("System.String");
+                column.ColumnName = _name;
+                table.Columns.Add(column);
+            }
+
+            string buffer = string.Empty;
+
+
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"SELECT * FROM ste_locker.system_set;";
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            row = table.NewRow();
+                            row["SN"] = reader.GetInt32(0);
+                            row["Name"] = reader.GetString(1);
+                            row["Value"] = reader.GetString(2);
+                            row["ValueType"] = reader.GetString(3);
+                            row["ModifyDate"] = reader.GetDateTime(4);
+                            table.Rows.Add(row);
+                        }
+                    }
+                }
+
+            }
+            return table;
+        }
 
         public async Task<DataTable> Inventory(string CabinetLoc)
         {
