@@ -183,7 +183,7 @@
             <TabControl SelectedIndex="{Binding SelectedStepTabIndex}" SelectedValue="{Binding SelectedStepTabName}" SelectedValuePath="Header" Grid.Row="1" Grid.Column="1">
                 <TabItem Header="登入">
                     <Grid>
-                        
+
                         <Button Content="X" Style="{DynamicResource RoundCorner}" Command="{Binding ExitCmd}" Margin="492,10,10,817" >
                             <Button.ContentTemplate>
                                 <DataTemplate>
@@ -238,6 +238,20 @@
                             </Button.ContentTemplate>
                         </Button>
 
+                        <Button Content="密碼登入" Style="{DynamicResource RoundCorner}" Command="{Binding UseKeyLoginCmd}" IsEnabled="{Binding UseKeyLoginIsEnabled}" Margin="95,588,95,192" >
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <Viewbox>
+                                        <TextBlock>
+                                            <TextBlock.Background>
+                                                <ImageBrush ImageSource="/Images/User_Interface.png" TileMode="None" Stretch="Uniform" ViewboxUnits="RelativeToBoundingBox" ViewportUnits="RelativeToBoundingBox" Viewbox="0,0,5,1"/>
+                                            </TextBlock.Background>　密碼登入
+                                        </TextBlock>
+                                    </Viewbox>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+
                         <Button Content="下一步" Style="{DynamicResource RoundCorner}" Command="{Binding NextTabCmd}"  IsEnabled="{Binding NextStepIsEnabled}" Margin="95,773,95,27" >
                             <Button.ContentTemplate>
                                 <DataTemplate>
@@ -251,7 +265,7 @@
                                 </DataTemplate>
                             </Button.ContentTemplate>
                         </Button>
-                        
+
                     </Grid>
                 </TabItem>
                 <TabItem Header="服務選單">
@@ -287,7 +301,7 @@
                             </Button.ContentTemplate>
                         </Button>
 
-                        <Button Style="{DynamicResource RoundCorner}" Command="{Binding GoToPumpPageCmd}" Margin="168,352,168,450" >
+                        <Button Style="{DynamicResource RoundCorner}" Command="{Binding GoToPumpPageCmd}" Margin="168,328,168,474" >
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <Viewbox>
@@ -301,7 +315,7 @@
                             </Button.ContentTemplate>
                         </Button>
 
-                        <Button Style="{DynamicResource RoundCorner}" Command="{Binding GoToCardInfoCmd}" Margin="168,490,168,312" >
+                        <Button Style="{DynamicResource RoundCorner}" Command="{Binding GoToCardInfoCmd}" Margin="168,431,168,371" >
                             <Button.ContentTemplate>
                                 <DataTemplate>
                                     <Viewbox>
@@ -309,6 +323,20 @@
                                             <TextBlock.Background>
                                                 <ImageBrush ImageSource="/Images/membership.png" TileMode="None" Stretch="Uniform" ViewboxUnits="RelativeToBoundingBox" ViewportUnits="RelativeToBoundingBox" Viewbox="0,0,5,1"/>
                                             </TextBlock.Background>　卡片相關
+                                        </TextBlock>
+                                    </Viewbox>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+
+                        <Button Style="{DynamicResource RoundCorner}" Command="{Binding PasswordEdit}" Margin="168,534,168,268" >
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <Viewbox>
+                                        <TextBlock>
+                                            <TextBlock.Background>
+                                                <ImageBrush ImageSource="/Images/User_Interface.png" TileMode="None" Stretch="Uniform" ViewboxUnits="RelativeToBoundingBox" ViewportUnits="RelativeToBoundingBox" Viewbox="0,0,5,1"/>
+                                            </TextBlock.Background>　密碼修改
                                         </TextBlock>
                                     </Viewbox>
                                 </DataTemplate>
@@ -370,7 +398,7 @@
                             </Viewbox>
                         </TextBlock>
 
-                        <TextBlock Margin="95,748,95,92">
+                        <TextBlock Margin="95,653,95,187">
                             <Viewbox>
                                 <TextBlock Text="{Binding NoticeText}" />
                             </Viewbox>
@@ -503,31 +531,31 @@
 
                         <TextBlock Margin="95,143,95,697">
                             <Viewbox>
-                                <TextBlock Text="{Binding Card_ID_01}" />
+                                <TextBlock Text="{Binding Card_ID_01}" FontFamily="Dubai Medium" />
                             </Viewbox>
                         </TextBlock>
 
                         <TextBlock Margin="95,208,95,632">
                             <Viewbox>
-                                <TextBlock Text="{Binding Card_ID_02}" />
+                                <TextBlock Text="{Binding Card_ID_02}" FontFamily="Dubai Medium"/>
                             </Viewbox>
                         </TextBlock>
 
                         <TextBlock Margin="95,273,95,567">
                             <Viewbox>
-                                <TextBlock Text="{Binding Card_ID_03}" />
+                                <TextBlock Text="{Binding Card_ID_03}" FontFamily="Dubai Medium"/>
                             </Viewbox>
                         </TextBlock>
 
                         <TextBlock Margin="95,338,95,502">
                             <Viewbox>
-                                <TextBlock Text="{Binding Card_ID_04}" />
+                                <TextBlock Text="{Binding Card_ID_04}" FontFamily="Dubai Medium"/>
                             </Viewbox>
                         </TextBlock>
 
                         <TextBlock Margin="95,403,95,437">
                             <Viewbox>
-                                <TextBlock Text="{Binding Card_ID_05}" />
+                                <TextBlock Text="{Binding Card_ID_05}" FontFamily="Dubai Medium"/>
                             </Viewbox>
                         </TextBlock>
 
@@ -563,7 +591,7 @@
                         
                     </Grid>
                 </TabItem>
-                <TabItem Header="操作逾時">
+                <TabItem Header="操作逾時" Visibility="Collapsed">
                     <Grid>
                         
                         <TextBlock Margin="95,355,95,485">
@@ -586,7 +614,7 @@
                         
                     </Grid>
                 </TabItem>
-                <TabItem Header="完成">
+                <TabItem Header="完成" Visibility="Collapsed">
                     <Grid>
 
                         <TextBlock Margin="95,360,95,480">
@@ -607,6 +635,125 @@
                             </Button.ContentTemplate>
                         </Button>
 
+                    </Grid>
+                </TabItem>
+                <TabItem Header="密碼登入" Visibility="Collapsed">
+                    <Grid>
+                        <TextBlock Margin="95,138,95,702">
+                            <Viewbox>
+                                <TextBlock Text="帳號:手機號碼" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <TextBox x:Name="AccountBox" FontSize="50" Text="{Binding AccountStr}" Margin="95,203,95,637" >
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="LostFocus">
+                                    <i:InvokeCommandAction Command="{Binding AccountLostFocusCmd}" CommandParameter="{Binding ElementName=AccountBox}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBox>
+
+                        <TextBlock Margin="95,268,95,572">
+                            <Viewbox>
+                                <TextBlock Text="密碼" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <PasswordBox Name="VerifyPassword" Margin="95,333,95,507" FontSize="50" >
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="PasswordChanged">
+                                    <i:InvokeCommandAction Command="{Binding PasswordChangedCmd}" CommandParameter="{Binding ElementName=VerifyPassword}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </PasswordBox>
+
+                        <TextBlock Margin="95,420,95,420">
+                            <Viewbox>
+                                <TextBlock Text="{Binding NoticeText}" />
+                            </Viewbox>
+                        </TextBlock>
+                        
+                        <Button Content="登入" Style="{DynamicResource RoundCorner}" Command="{Binding KeyLoginCmd}" CommandParameter="{Binding ElementName=VerifyPassword}" Margin="95,773,95,27" >
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <Viewbox>
+                                        <TextBlock>
+                                            登入
+                                        </TextBlock>
+                                    </Viewbox>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+
+
+                    </Grid>
+                </TabItem>
+                <TabItem Header="密碼修改">
+                    <Grid>
+
+                        <Button  Content="X" Style="{DynamicResource RoundCorner}" Command="{Binding ExitCmd}" Margin="492,10,10,817">
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <Viewbox>
+                                        <TextBlock>X</TextBlock>
+                                    </Viewbox>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                        
+                        <TextBlock Margin="95,138,95,702">
+                            <Viewbox >
+                                <TextBlock Text="設定密碼:" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <PasswordBox Width="auto" x:Name="txtPassword" Margin="95,203,95,637" FontSize="50" >
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="PasswordChanged">
+                                    <i:InvokeCommandAction Command="{Binding PasswordCmd}" CommandParameter="{Binding ElementName=txtPassword}"/>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="Loaded">
+                                    <i:InvokeCommandAction Command="{Binding PasswordClearCmd}" CommandParameter="{Binding ElementName=txtPassword}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </PasswordBox>
+
+                        <TextBlock Margin="95,268,95,572" >
+                            <Viewbox>
+                                <TextBlock Text="確認密碼:" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <PasswordBox Name="ConfirmPassword" Margin="95,333,95,507" FontSize="50" >
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="PasswordChanged">
+                                    <i:InvokeCommandAction Command="{Binding PasswordConfirmCmd}" CommandParameter="{Binding ElementName=ConfirmPassword}"/>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="Loaded">
+                                    <i:InvokeCommandAction Command="{Binding PasswordClearCmd}" CommandParameter="{Binding ElementName=ConfirmPassword}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </PasswordBox>
+
+                        <TextBlock Margin="95,398,95,442">
+                            <Viewbox>
+                                <TextBlock Text="{Binding NoticeText}" />
+                            </Viewbox>
+                        </TextBlock>
+
+                        <Button Style="{DynamicResource RoundCorner}" Command="{Binding UpdateNewPasswordCmd}" CommandParameter="{Binding ElementName=ConfirmPassword}" IsEnabled="{Binding ConfirmPasswordIsEnabled}" Margin="168,738,168,64" >
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <Viewbox>
+                                        <TextBlock>
+                                            <TextBlock.Background>
+                                                <ImageBrush ImageSource="/Images/confirm.png" TileMode="None" Stretch="Uniform" ViewboxUnits="RelativeToBoundingBox" ViewportUnits="RelativeToBoundingBox" Viewbox="0,0,5,1"/>
+                                            </TextBlock.Background>　確認
+                                        </TextBlock>
+                                    </Viewbox>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
                     </Grid>
                 </TabItem>
             </TabControl>
