@@ -637,7 +637,7 @@
 
                     </Grid>
                 </TabItem>
-                <TabItem Header="密碼登入" Visibility="Collapsed">
+                <TabItem Header="密碼登入" Visibility="Visible">
                     <Grid>
                         <TextBlock Margin="95,138,95,702">
                             <Viewbox>
@@ -645,10 +645,23 @@
                             </Viewbox>
                         </TextBlock>
 
+                        <Button Content="X" Style="{DynamicResource RoundCorner}" Command="{Binding ExitCmd}" Margin="492,10,10,817" >
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <Viewbox>
+                                        <TextBlock>X</TextBlock>
+                                    </Viewbox>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                        
                         <TextBox x:Name="AccountBox" FontSize="50" Text="{Binding AccountStr}" Margin="95,203,95,637" >
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="LostFocus">
                                     <i:InvokeCommandAction Command="{Binding AccountLostFocusCmd}" CommandParameter="{Binding ElementName=AccountBox}"/>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="TouchDown">
+                                    <i:InvokeCommandAction Command="{Binding TextBoxTouchDownCmd}" CommandParameter="{Binding ElementName=AccountBox}"/>
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </TextBox>
@@ -663,6 +676,9 @@
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="PasswordChanged">
                                     <i:InvokeCommandAction Command="{Binding PasswordChangedCmd}" CommandParameter="{Binding ElementName=VerifyPassword}"/>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="TouchDown">
+                                    <i:InvokeCommandAction Command="{Binding PasswordBoxTouchDownCmd}" CommandParameter="{Binding ElementName=VerifyPassword}"/>
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </PasswordBox>
@@ -715,6 +731,9 @@
                                 <i:EventTrigger EventName="Loaded">
                                     <i:InvokeCommandAction Command="{Binding PasswordClearCmd}" CommandParameter="{Binding ElementName=txtPassword}"/>
                                 </i:EventTrigger>
+                                <i:EventTrigger EventName="TouchDown">
+                                    <i:InvokeCommandAction Command="{Binding PasswordBoxTouchDownCmd}" CommandParameter="{Binding ElementName=txtPassword}"/>
+                                </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </PasswordBox>
 
@@ -731,6 +750,9 @@
                                 </i:EventTrigger>
                                 <i:EventTrigger EventName="Loaded">
                                     <i:InvokeCommandAction Command="{Binding PasswordClearCmd}" CommandParameter="{Binding ElementName=ConfirmPassword}"/>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="TouchDown">
+                                    <i:InvokeCommandAction Command="{Binding PasswordBoxTouchDownCmd}" CommandParameter="{Binding ElementName=ConfirmPassword}"/>
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </PasswordBox>

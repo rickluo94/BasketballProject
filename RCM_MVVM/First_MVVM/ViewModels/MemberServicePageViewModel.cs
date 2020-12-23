@@ -17,11 +17,13 @@ using System.Windows;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using First_MVVM.Business;
+using VirtualKeyboard;
 
 namespace First_MVVM.ViewModels
 {
     public class MemberServicePageViewModel : BindableBase, INavigationAware, IRegionMemberLifetime
     {
+        private ShiuanKey _shiuanKey = new ShiuanKey();
         private readonly IRegionManager _regionManager;
         private MemberServiceModel _memberServiceModel { get; set; }
         private EasyCard _easyCard = new EasyCard();
@@ -272,6 +274,8 @@ namespace First_MVVM.ViewModels
         public DelegateCommand GoToCardInfoCmd { get; private set; }
         public DelegateCommand SetNewCardCmd { get; private set; }
         public DelegateCommand<string> CardCancelCmd { get; private set; }
+        public DelegateCommand<TextBox> TextBoxTouchDownCmd { get; private set; }
+        public DelegateCommand<object> PasswordBoxTouchDownCmd { get; private set; }
         #endregion
 
         public MemberServicePageViewModel(IRegionManager regionManager)
@@ -299,8 +303,26 @@ namespace First_MVVM.ViewModels
             PasswordConfirmCmd = new DelegateCommand<object>(ConfirmPassword);
             PasswordClearCmd = new DelegateCommand<object>(PasswordClear);
             UpdateNewPasswordCmd = new DelegateCommand<object>(UpdateNewPassword);
+
+            TextBoxTouchDownCmd = new DelegateCommand<TextBox>(ShowVirtualKeyboard);
+            PasswordBoxTouchDownCmd = new DelegateCommand<object>(ShowVirtualKeyboard);
         }
         
+        private void ShowVirtualKeyboard(TextBox parameter)
+        {
+            _shiuanKey.Show();
+            _shiuanKey.Top = 512;
+            parameter.Focus();
+        }
+
+        private void ShowVirtualKeyboard(object parameter)
+        {
+            var passwordBox = parameter as PasswordBox;
+            _shiuanKey.Show();
+            _shiuanKey.Top = 512;
+            passwordBox.Focus();
+        }
+
         private async void LoginCheck(object parameter)
         {
             var passwordBox = parameter as PasswordBox;
