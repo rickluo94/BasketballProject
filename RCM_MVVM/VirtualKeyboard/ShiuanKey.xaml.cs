@@ -193,6 +193,11 @@ namespace VirtualKeyboard
                     keydownMode = _KeyDown;
                     switch (strValue)
                     {
+                        case "@":
+                            keybd_event(16, 0, 0, 0);
+                            keybd_event(50, 0, 0, 0);
+                            keybd_event(16, 0, 2, 0);
+                            break;
                         case "`":
                             key = _keyvalue.VK_OEM_3;
                             break;
