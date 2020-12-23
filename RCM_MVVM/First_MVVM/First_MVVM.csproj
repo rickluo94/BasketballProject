@@ -10,10 +10,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Models\DB_Search.cs" />
+    <Compile Remove="Views\LoadingControl.xaml.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="App.config" />
     <None Remove="Images\basketball.png" />
+    <None Remove="Images\confirm.png" />
     <None Remove="Images\customer-support.png" />
     <None Remove="Images\dribble.png" />
     <None Remove="Images\exit.png" />
@@ -22,7 +24,11 @@
     <None Remove="Images\membership.png" />
     <None Remove="Images\Pump.png" />
     <None Remove="Images\Tap Card.png" />
+    <None Remove="Images\User_Interface.png" />
     <None Remove="Json\CityCountyData.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Remove="Views\LoadingControl.xaml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.19" />
@@ -37,12 +43,16 @@
     <ProjectReference Include="..\IOModel\IOModel.csproj" />
     <ProjectReference Include="..\RfidModel\RfidModel.csproj" />
     <ProjectReference Include="..\SendMessageModel\SendMessageModel.csproj" />
+    <ProjectReference Include="..\VirtualKeyboard\VirtualKeyboard.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Notifications\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\basketball.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\confirm.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\customer-support.png">
@@ -67,6 +77,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\Tap Card.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\User_Interface.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Json\CityCountyData.json">
