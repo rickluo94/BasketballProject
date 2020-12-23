@@ -276,6 +276,9 @@
                                 <i:EventTrigger EventName="LostFocus">
                                     <i:InvokeCommandAction Command="{Binding AccountCmd}" CommandParameter="{Binding ElementName=AccountBox}"/>
                                 </i:EventTrigger>
+                                <i:EventTrigger EventName="TouchDown">
+                                    <i:InvokeCommandAction Command="{Binding TextBoxTouchDownCmd}" CommandParameter="{Binding ElementName=AccountBox}"/>
+                                </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </TextBox>
 
@@ -285,7 +288,13 @@
                                 </Viewbox>
                         </TextBlock>
 
-                        <TextBox x:Name="VerifySMBox" FontSize="50" Text="{Binding VerifySMStr}" Margin="95,333,233,507" />
+                        <TextBox x:Name="VerifySMBox" FontSize="50" Text="{Binding VerifySMStr}" Margin="95,333,233,507">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="TouchDown">
+                                    <i:InvokeCommandAction Command="{Binding TextBoxTouchDownCmd}" CommandParameter="{Binding ElementName=VerifySMBox}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBox>
 
                         <TextBlock Margin="95,398,95,442" >
                             <Viewbox>
@@ -356,6 +365,9 @@
                                 <i:EventTrigger EventName="Loaded">
                                     <i:InvokeCommandAction Command="{Binding PasswordClearCmd}" CommandParameter="{Binding ElementName=txtPassword}"/>
                                 </i:EventTrigger>
+                                <i:EventTrigger EventName="TouchDown">
+                                    <i:InvokeCommandAction Command="{Binding PasswordBoxTouchDownCmd}" CommandParameter="{Binding ElementName=txtPassword}"/>
+                                </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </PasswordBox>
 
@@ -372,6 +384,9 @@
                                 </i:EventTrigger>
                                 <i:EventTrigger EventName="Loaded">
                                     <i:InvokeCommandAction Command="{Binding PasswordClearCmd}" CommandParameter="{Binding ElementName=ConfirmPassword}"/>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="TouchDown">
+                                    <i:InvokeCommandAction Command="{Binding PasswordBoxTouchDownCmd}" CommandParameter="{Binding ElementName=ConfirmPassword}"/>
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </PasswordBox>
@@ -539,6 +554,9 @@
                                 </i:EventTrigger>
                                 <i:EventTrigger EventName="Loaded">
                                     <i:InvokeCommandAction />
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="TouchDown">
+                                    <i:InvokeCommandAction Command="{Binding TextBoxTouchDownCmd}" CommandParameter="{Binding ElementName=EmailBox}"/>
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </TextBox>

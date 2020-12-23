@@ -15,12 +15,14 @@ using First_MVVM.Views;
 using System.Windows;
 using System.Threading;
 using System;
+using VirtualKeyboard;
 
 namespace First_MVVM.ViewModels
 {
     public class RegisterStepTabViewModel : BindableBase, INavigationAware, IRegionMemberLifetime
     {
         private readonly IRegionManager _regionManager;
+        private ShiuanKey _shiuanKey = new ShiuanKey();
         private RegisterModel _registerModel { get; set; }
         private NationalCities _nationalCities = new NationalCities();
         private StrVerify _strVerify = new StrVerify();
@@ -226,6 +228,9 @@ namespace First_MVVM.ViewModels
         public DelegateCommand PreviousTabCmd { get; private set; }
         public DelegateCommand RegisterSuccessCmd { get; private set; }
         public DelegateCommand ExitCmd { get; private set; }
+
+        public DelegateCommand<TextBox> TextBoxTouchDownCmd { get; private set; }
+        public DelegateCommand<object> PasswordBoxTouchDownCmd { get; private set; }
         #endregion
 
         public RegisterStepTabViewModel(IRegionManager regionManager)
@@ -250,6 +255,24 @@ namespace First_MVVM.ViewModels
             RegisterSuccessCmd = new DelegateCommand(RegisterAction);
             ExitCmd = new DelegateCommand(ExitInteraction);
             Cities = _nationalCities.FillCitiesData(_nationalCities.FillDefaultData());
+
+            TextBoxTouchDownCmd = new DelegateCommand<TextBox>(ShowVirtualKeyboard);
+            PasswordBoxTouchDownCmd = new DelegateCommand<object>(ShowVirtualKeyboard);
+        }
+
+        private void ShowVirtualKeyboard(TextBox parameter)
+        {
+            _shiuanKey.Show();
+            _shiuanKey.Top = 512;
+            parameter.Focus();
+        }
+
+        private void ShowVirtualKeyboard(object parameter)
+        {
+            var passwordBox = parameter as PasswordBox;
+            _shiuanKey.Show();
+            _shiuanKey.Top = 512;
+            passwordBox.Focus();
         }
 
         private void CheckReadRules()
