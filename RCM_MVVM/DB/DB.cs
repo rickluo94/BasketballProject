@@ -258,7 +258,7 @@ namespace DBModel
 
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = $"SELECT * FROM ste_SBSCS.Take_History Where SN ='{SN}' And Take_CheckIn = '未歸還';";
+                    command.CommandText = $"SELECT * FROM ste_SBSCS.Take_History Where SN ='{SN}' And Take_CheckIn = '1994-10-29 12:00:00';";
                     using (var reader = await command.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -269,7 +269,7 @@ namespace DBModel
                             row["Take_Items_EPC"] = reader.GetString(2);
                             row["Take_Items_TID"] = reader.GetString(3);
                             row["Take_CheckOut"] = reader.GetDateTime(4);
-                            row["Take_CheckIn"] = reader.GetString(5);
+                            row["Take_CheckIn"] = reader.GetDateTime(5);
                             row["Take_StationName"] = reader.GetString(6);
                             row["Take_BoxName"] = reader.GetString(7);
                             table.Rows.Add(row);
@@ -336,7 +336,7 @@ namespace DBModel
 
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = $"SELECT count(Take_CheckIn) FROM ste_SBSCS.Take_History Where SN = '{SN}' And Take_CheckIn = '未歸還';";
+                    command.CommandText = $"SELECT count(Take_CheckIn) FROM ste_SBSCS.Take_History Where SN = '{SN}' And Take_CheckIn = '1994-10-29 12:00:00';";
                     using (var reader = await command.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())

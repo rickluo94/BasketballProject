@@ -267,14 +267,16 @@ namespace First_MVVM.ViewModels
                 case "登入":
                     _checkInModel.ID = _accountStr;
                     _checkInModel.Balance = _balanceStr;
-                    _checkInModel.OutTime = _outTimeStr;
+                    _checkInModel.OutTime = Convert.ToDateTime(_outTimeStr);
                     _checkInModel.LockerBoxSelectedIndex = _lockerBoxSelectedIndex;
 
                     break;
                 case "借出紀錄":
                     DateTime inDate = DateTime.Now;
                     InTimeStr = inDate.ToString();
-                    _checkInModel.InTime = _inTimeStr;
+                    _checkInModel.InTime = inDate;
+                    TimeSpan Duration = _checkInModel.InTime.Subtract(_checkInModel.OutTime).Duration();
+                    _checkInModel.HoursUse = Duration.TotalMinutes.ToString();
 
                     IO.Write(_checkInModel.LockerBoxSelectedIndex, IO.UnLock);
 
@@ -462,7 +464,7 @@ namespace First_MVVM.ViewModels
 
                     //建立Charge_History
                     _lC_DBWrite.Inventory(_checkInModel.LockerBoxSelectedIndex, 1);
-                    _dBWrite.Take_History_UPDATE(_checkInModel.Take_SN, "已歸還");
+                    _dBWrite.Take_History_UPDATE(_checkInModel.Take_SN, _checkInModel.InTime.ToString());
                     ////存入歷史紀錄
                     _dBWrite.Charge_History(_checkInModel.SN, _checkInModel.Amount, _checkInModel.HoursUse, _checkInModel.CardID);
 

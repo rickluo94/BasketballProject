@@ -12,8 +12,8 @@ namespace First_MVVM.Models
         public string CardID { get; set; }
         public string Balance { get; set; }
         public string EPC { get; set; }
-        public string OutTime { get; set; }
-        public string InTime { get; set; }
+        public DateTime OutTime { get; set; }
+        public DateTime InTime { get; set; }
         public string DebitStatus { get; set; }
         public int Amount { get; set; }
         public string HoursUse { get; set; }
