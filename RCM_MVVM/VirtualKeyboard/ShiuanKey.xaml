@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:VirtualKeyboard"
         xmlns:UserInterface="clr-namespace:VirtualKeyboard"
         mc:Ignorable="d"
-        Title="ShiuanKey" Height="450" Width="600" Loaded="Window_Loaded" Closed="Window_Closed" Background="Black"
+        Title="ShiuanKey" Height="450" Width="590" Loaded="Window_Loaded" Closed="Window_Closed" Background="Black"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None" ResizeMode="NoResize" Top="512"
         >
