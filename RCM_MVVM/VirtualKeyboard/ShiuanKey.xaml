@@ -102,7 +102,7 @@
                     <UserInterface:UserButton Grid.Column="6"  Content="J"        CommandParameter="J"        Click="KeyDown_Ascii"/>
                     <UserInterface:UserButton Grid.Column="7"  Content="K"        CommandParameter="K"        Click="KeyDown_Ascii"/>
                     <UserInterface:UserButton Grid.Column="8" Content="P"    CommandParameter="P"       Click="KeyDown_Ascii"/>
-                    <UserInterface:UserButton Grid.Column="9"  Content="大/小" CommandParameter="CapsLock" Click="KeyDown_Ascii"/>
+                    <UserInterface:UserButton Grid.Column="9"  Content="大/小" CommandParameter="Aa" Click="KeyDown_Ascii"/>
                 </Grid>
                 <Grid>
                     <Grid.ColumnDefinitions>

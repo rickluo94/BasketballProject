@@ -193,6 +193,10 @@ namespace VirtualKeyboard
                     keydownMode = _KeyDown;
                     switch (strValue)
                     {
+                        case "Aa":
+                            keybd_event(20, 0, 0, 0);
+                            keybd_event(20, 0, 2, 0);
+                            break;
                         case "@":
                             keybd_event(16, 0, 0, 0);
                             keybd_event(50, 0, 0, 0);

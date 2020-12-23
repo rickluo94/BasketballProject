@@ -604,6 +604,7 @@ namespace First_MVVM.ViewModels
             EmailStr = null;
             Card_ID = null;
             ReadCardIsEnabled = false;
+            _shiuanKey.Hide();
             _easyCard.Close();
             _regionManager.Regions["ContentRegion"].RemoveAll();
         }

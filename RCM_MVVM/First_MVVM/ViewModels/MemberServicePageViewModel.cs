@@ -462,19 +462,6 @@ namespace First_MVVM.ViewModels
             _easyCard.SetDevicePort("COM7", 115200, 500); _easyCard.Open();
         }
 
-        private void ExitInteraction()
-        {
-            AccountStr = null;
-            BalanceStr = null;
-            NoticeText = null;
-            Card_id = null;
-            AmountStr = null;
-            Charge_SN = null;
-            PumpBoxStatus = null;
-            _easyCard.Close();
-            _regionManager.Regions["ContentRegion"].RemoveAll();
-        }
-
         private void GoToSuccessPage()
         {
             SelectedStepTabName = "完成";
@@ -517,6 +504,20 @@ namespace First_MVVM.ViewModels
         {
             FillCardInfo();
             SelectedStepTabName = "卡片相關";
+        }
+
+        private void ExitInteraction()
+        {
+            AccountStr = null;
+            BalanceStr = null;
+            NoticeText = null;
+            Card_id = null;
+            AmountStr = null;
+            Charge_SN = null;
+            PumpBoxStatus = null;
+            _easyCard.Close();
+            _shiuanKey.Hide();
+            _regionManager.Regions["ContentRegion"].RemoveAll();
         }
 
         private async Task FillCardInfo()
