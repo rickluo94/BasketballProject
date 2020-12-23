@@ -240,7 +240,7 @@ namespace DBModel
             DataTable table = new DataTable();
             DataColumn column;
             DataRow row;
-            string[] _columnName = { "Take_SN", "SN", "Take_Items_EPC", "Take_Items_TID", "Take_CheckOut", "Take_CheckIn", "StationName", "Take_BoxName" };
+            string[] _columnName = { "Take_SN", "SN", "Take_Items_EPC", "Take_Items_TID", "Take_CheckOut", "Take_CheckIn", "Take_StationName", "Take_BoxName" };
             foreach (string _name in _columnName)
             {
                 column = new DataColumn();
@@ -270,7 +270,7 @@ namespace DBModel
                             row["Take_Items_TID"] = reader.GetString(3);
                             row["Take_CheckOut"] = reader.GetDateTime(4);
                             row["Take_CheckIn"] = reader.GetString(5);
-                            row["StationName"] = reader.GetString(6);
+                            row["Take_StationName"] = reader.GetString(6);
                             row["Take_BoxName"] = reader.GetString(7);
                             table.Rows.Add(row);
                         }
@@ -355,7 +355,7 @@ namespace DBModel
             DataTable table = new DataTable();
             DataColumn column;
             DataRow row;
-            string[] _columnName = { "Pump_SN", "SN", "Time_usage", "BoxName", "CreateDate", "ModifyDate" };
+            string[] _columnName = { "Pump_SN", "SN", "Time_usage", "StationName", "BoxName", "CreateDate", "ModifyDate" };
             foreach (string _name in _columnName)
             {
                 column = new DataColumn();
@@ -382,9 +382,10 @@ namespace DBModel
                             row["Pump_SN"] = reader.GetInt32(0);
                             row["SN"] = reader.GetInt32(1);
                             row["Time_usage"] = reader.GetDouble(2);
-                            row["BoxName"] = reader.GetString(3);
-                            row["CreateDate"] = reader.GetDateTime(4);
-                            row["ModifyDate"] = reader.GetDateTime(5);
+                            row["StationName"] = reader.GetString(3);
+                            row["BoxName"] = reader.GetString(4);
+                            row["CreateDate"] = reader.GetDateTime(5);
+                            row["ModifyDate"] = reader.GetDateTime(6);
                             table.Rows.Add(row);
                         }
                     }
@@ -633,7 +634,7 @@ namespace DBModel
             }
         }
 
-        public async Task<bool> Take_History(string SN, string StationName, string BoxName,string Object_EPC, string Object_TID)
+        public async Task<bool> Take_History(string SN, string Take_StationName, string BoxName,string Object_EPC, string Object_TID)
         {
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {
@@ -641,7 +642,7 @@ namespace DBModel
 
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`Take_History` (`SN`,`Take_Items_EPC`, `Take_Items_TID`, `StationName`, `Take_BoxName`) VALUES ('{SN}','{Object_EPC}', '{Object_TID}', '{StationName}','{BoxName}');";
+                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`Take_History` (`SN`,`Take_Items_EPC`, `Take_Items_TID`, `Take_StationName`, `Take_BoxName`) VALUES ('{SN}','{Object_EPC}', '{Object_TID}', '{Take_StationName}','{BoxName}');";
 
                     int index = command.ExecuteNonQuery();
                     if (index == 1)
