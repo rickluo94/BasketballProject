@@ -276,7 +276,7 @@ namespace First_MVVM.ViewModels
                     InTimeStr = inDate.ToString();
                     _checkInModel.InTime = inDate;
                     TimeSpan Duration = _checkInModel.InTime.Subtract(_checkInModel.OutTime).Duration();
-                    _checkInModel.HoursUse = Duration.TotalMinutes.ToString();
+                    _checkInModel.UsageTime = (int)Duration.TotalMinutes;
 
                     IO.Write(_checkInModel.LockerBoxSelectedIndex, IO.UnLock);
 
@@ -466,7 +466,7 @@ namespace First_MVVM.ViewModels
                     _lC_DBWrite.Inventory(_checkInModel.LockerBoxSelectedIndex, 1);
                     _dBWrite.Take_History_UPDATE(_checkInModel.Take_SN, _checkInModel.InTime.ToString("yyyy-MM-dd HH:mm:ss"));
                     ////存入歷史紀錄
-                    _dBWrite.Charge_History(_checkInModel.SN, _checkInModel.Amount, _checkInModel.HoursUse, _checkInModel.CardID);
+                    _dBWrite.Charge_History(_checkInModel.SN, _checkInModel.Amount, _checkInModel.UsageTime, _checkInModel.CardID);
 
                     NoticeText = "歸還成功，請點擊付款";
                     NextStepIsEnabled = true;

@@ -16,7 +16,7 @@ namespace First_MVVM.Models
         public DateTime InTime { get; set; }
         public string DebitStatus { get; set; }
         public int Amount { get; set; }
-        public string HoursUse { get; set; }
+        public int UsageTime { get; set; }
         public string LockerBoxSelectedIndex { get; set; }
     }
 }

@@ -286,7 +286,7 @@ namespace DBModel
             DataTable table = new DataTable();
             DataColumn column;
             DataRow row;
-            string[] _columnName = { "Charge_SN", "SN", "Charge_amount", "Charge_Hours_use", "RFID_Card_ID", "CreateDate", "ModifyDate", "Charge_Status" };
+            string[] _columnName = { "Charge_SN", "SN", "Charge_amount", "Charge_UsageTime", "RFID_Card_ID", "CreateDate", "ModifyDate", "Charge_Status" };
             foreach (string _name in _columnName)
             {
                 column = new DataColumn();
@@ -313,7 +313,7 @@ namespace DBModel
                             row["Charge_SN"] = reader.GetInt32(0);
                             row["SN"] = reader.GetInt32(1);
                             row["Charge_amount"] = reader.GetInt16(2);
-                            row["Charge_Hours_use"] = reader.GetString(3);
+                            row["Charge_UsageTime"] = reader.GetInt16(3);
                             row["RFID_Card_ID"] = reader.GetString(4);
                             row["CreateDate"] = reader.GetDateTime(5);
                             row["ModifyDate"] = reader.GetDateTime(6);
@@ -680,7 +680,7 @@ namespace DBModel
             }
         }
 
-        public async Task<bool> Charge_History(string SN, int Amount,string HoursUse,string Card_ID)
+        public async Task<bool> Charge_History(string SN, int Amount,int UsageTime, string Card_ID)
         {
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {
@@ -688,7 +688,7 @@ namespace DBModel
 
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`Charge_History` (`SN`, `Charge_amount`, `Charge_Hours_use`, `RFID_Card_ID`) VALUES('{SN}', '{Amount}', '{HoursUse}', '{Card_ID}');";
+                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`Charge_History` (`SN`, `Charge_amount`, `Charge_UsageTime`, `RFID_Card_ID`) VALUES('{SN}', '{Amount}', '{UsageTime}', '{Card_ID}');";
 
                     int index = command.ExecuteNonQuery();
                     if (index == 1)
