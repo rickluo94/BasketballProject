@@ -464,7 +464,7 @@ namespace First_MVVM.ViewModels
 
                     //建立Charge_History
                     _lC_DBWrite.Inventory(_checkInModel.LockerBoxSelectedIndex, 1);
-                    _dBWrite.Take_History_UPDATE(_checkInModel.Take_SN, _checkInModel.InTime.ToString());
+                    _dBWrite.Take_History_UPDATE(_checkInModel.Take_SN, _checkInModel.InTime.ToString("yyyy-MM-dd HH:mm:ss"));
                     ////存入歷史紀錄
                     _dBWrite.Charge_History(_checkInModel.SN, _checkInModel.Amount, _checkInModel.HoursUse, _checkInModel.CardID);
 
