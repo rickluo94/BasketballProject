@@ -29,19 +29,13 @@ namespace First_MVVM.ViewModels
         private SendMessage _sendMessage = new SendMessage();
         private EasyCard _easyCard = new EasyCard();
         private EasyCardServ _easyCardServ = new EasyCardServ();
+        private DBTransaction _dBTransaction = new DBTransaction();
         private DBRead _dBRead = new DBRead();
         private DBWrite _dBWrite = new DBWrite();
         private LC_DBRead _lC_DBRead = new LC_DBRead();
         private LC_DBWrite _lC_DBWrite = new LC_DBWrite();
 
         #region Interface Preperty
-
-        //private IRegionNavigationJournal _journal;
-        //public IRegionNavigationJournal Journal
-        //{
-        //    get { return _journal; }
-        //    set { SetProperty(ref _journal, value); }
-        //}
 
         private Visibility _loadingVisibility = Visibility.Hidden;
         public Visibility LoadingVisibility
@@ -574,25 +568,13 @@ namespace First_MVVM.ViewModels
 
         private async void RegisterAction()
         {
-            bool RegisterAccount = await _dBWrite.Customer_info(_registerModel.ID, _registerModel.Email);
-
-            DataTable SN = await _dBRead.Customer_info("SN", _registerModel.ID, "INT");
-            if (SN.Rows.Count == 1)
+            bool Result = _dBTransaction.RegisterAccount(_registerModel.ID, _registerModel.Email, _registerModel.Password, _registerModel.City, _registerModel.Area, _registerModel.Card_id, _registerModel.Card_purse_id);
+            
+            if (Result == false)
             {
-                _registerModel.SN = SN.Rows[0]["SN"].ToString();
-                bool RegisterPassword = await _dBWrite.Password_Manager(_registerModel.SN, _registerModel.Password);
-                bool RegisterAddress = await _dBWrite.Customer_Address(_registerModel.SN, _registerModel.City, _registerModel.Area);
-
-                bool RegisterRFIDS = await _dBWrite.RFIDS(_registerModel.SN, _registerModel.Card_id, _registerModel.Card_purse_id);
-                DataTable RFID_SN = await _dBRead.RFIDS(_registerModel.Card_id);
-
-                bool RegisterCard = await _dBWrite.RFID_Customers(_registerModel.SN, "RFID_Card_SN_1", RFID_SN.Rows[0]["RFID_SN"].ToString());
-
-                if (RegisterAccount == RegisterPassword == RegisterAddress == RegisterRFIDS == RegisterCard == true)
-                {
-                    ExitInteraction();
-                }
+                MessageBox.Show("註冊失敗","請重新操作",MessageBoxButton.OK,MessageBoxImage.Error);
             }
+            ExitInteraction();
         }
 
         private void ExitInteraction()

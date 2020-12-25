@@ -1,10 +1,77 @@
 ﻿using System;
 using System.Data;
 using System.Threading.Tasks;
+using System.Transactions;
 using MySqlConnector;
 
 namespace DBModel
 {
+    public class DBTransaction
+    {
+        MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder
+        {
+            Server = "35.221.142.102",
+            Database = "ste_SBSCS",
+            UserID = "LockerUsers",
+            Password = "Jyste42876046",
+            IgnoreCommandTransaction = true,
+        };
+
+        public bool RegisterAccount(string ID,string Email, string Password, string City,string Area, string Card_id,string Card_purse_id)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                conn.Open();
+
+                using (var transaction = conn.BeginTransaction())
+                using (var command = conn.CreateCommand())
+                {
+                    try
+                    {
+                        // *** ADD THIS LINE ***
+                        command.Transaction = transaction;
+
+                        command.CommandText = $"INSERT INTO `ste_SBSCS`.`Customer_info` (`user_id`, `email`) VALUES ('{ID}', '{Email}');";
+                        command.ExecuteNonQuery();
+
+                        long SN = command.LastInsertedId;
+
+                        command.CommandText = $"INSERT INTO `ste_SBSCS`.`Customer_Address` (`SN`, `city`, `area`) VALUES ('{SN}', '{City}', '{Area}');";
+                        command.ExecuteNonQuery();
+
+                        command.CommandText = $"INSERT INTO `ste_SBSCS`.`Password_Manager` (`SN`, `password`) VALUES ('{SN}', '{Password}');";
+                        command.ExecuteNonQuery();
+
+                        command.CommandText = $"INSERT INTO `ste_SBSCS`.`RFIDS` (`SN`, `RFID_Card_ID`, `RFID_Card_Purse_ID`) VALUES ('{SN}', '{Card_id}', '{Card_purse_id}');";
+                        command.ExecuteNonQuery();
+
+                        long RFID_Card_SN = command.LastInsertedId;
+
+                        command.CommandText = $"INSERT INTO `ste_SBSCS`.`RFID_Customers` (`SN`, `RFID_Card_SN_1`) VALUES ('{SN}', '{RFID_Card_SN}');";
+
+                        // otherwise, this will throw System.InvalidOperationException: The transaction associated with this command is not the connection's active transaction.
+                        command.ExecuteScalar();
+
+                        command.Transaction.Commit();
+                    }
+                    catch (MySqlException ex)
+                    {
+                        command.Transaction.Rollback();
+                        return false;
+                    }
+                    catch (Exception ex)
+                    {
+                        command.Transaction.Rollback();
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        }
+
+    }
+
     public class DBRead
     {
         MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder
@@ -501,7 +568,7 @@ namespace DBModel
             //SslMode = MySqlSslMode.Required,
         };
 
-        public async Task<bool> Customer_info(string ID, string Email)
+        public async Task<(bool Result, long SN)> Customer_info(string ID, string Email)
         {
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {
@@ -511,14 +578,16 @@ namespace DBModel
                 {
                     command.CommandText = $"INSERT INTO `ste_SBSCS`.`Customer_info` (`user_id`, `email`) VALUES ('{ID}', '{Email}');";
 
+                    long SN = command.LastInsertedId;
+
                     int index = command.ExecuteNonQuery();
                     if (index == 1)
                     {
-                        return true;
+                        return (Result: true,SN: SN);
                     }
                     else
                     {
-                        return false;
+                        return (Result: true, SN: 0);
                     }
                 }
             }
