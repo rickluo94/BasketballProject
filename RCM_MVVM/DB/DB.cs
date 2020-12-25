@@ -9,14 +9,12 @@ namespace DBModel
     {
         MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder
         {
-            Server = "104.199.138.253",
+            Server = "35.221.142.102",
             Database = "ste_SBSCS",
             UserID = "LockerUsers",
             Password = "Jyste42876046",
             //SslMode = MySqlSslMode.Required,
         };
-
-
 
         public async Task<int> LAST_INSERT_ID()
         {
@@ -146,6 +144,36 @@ namespace DBModel
             }
 
             return table;
+        }
+
+        public async Task<int> Customer_Points(string SN, DateTime Begin, DateTime End)
+        {
+            int Surplus = 0;
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"SELECT sum(Coin) FROM ste_SBSCS.Customer_Points WHERE SN = '{SN}' AND CreateDate BETWEEN '{Begin.ToString("yyyy-MM-dd")} 00:00:00' AND '{End.ToString("yyyy-MM-dd")} 23:59:59';";
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            if (!reader.IsDBNull(reader.GetOrdinal("sum(Coin)")))
+                            {
+                                Surplus = reader.GetInt32(0);
+                            }
+                            else
+                            {
+                                Surplus = 0;
+                            }
+                        }
+                    }
+                }
+
+            }
+            return Surplus;
         }
 
         public async Task<DataTable> Password_Manager(string SN)
@@ -466,7 +494,7 @@ namespace DBModel
     {
         MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder
         {
-            Server = "104.199.138.253",
+            Server = "35.221.142.102",
             Database = "ste_SBSCS",
             UserID = "LockerUsers",
             Password = "Jyste42876046",
@@ -505,6 +533,52 @@ namespace DBModel
                 using (var command = conn.CreateCommand())
                 {
                     command.CommandText = $"UPDATE `ste_SBSCS`.`Customer_info` SET `{Column}` = '{UpValue}' WHERE (`SN` = '{SN}');";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        public async Task<bool> Customer_Points(string SN, int Coin,string Type)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"INSERT INTO `ste_SBSCS`.`Customer_Points` (`SN`, `Coin`, `Type`) VALUES('{SN}', '{Coin}', '{Type}');";
+
+                    int index = command.ExecuteNonQuery();
+                    if (index == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        public async Task<bool> Customer_Points_DELETE(string SN)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"DELETE FROM `ste_SBSCS`.`Customer_Points` WHERE(`SN` = '{SN}');";
 
                     int index = command.ExecuteNonQuery();
                     if (index == 1)
