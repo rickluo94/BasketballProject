@@ -32,7 +32,6 @@ namespace First_MVVM.ViewModels
         private DBRead _dBRead = new DBRead();
         private DBWrite _dBWrite = new DBWrite();
 
-        private DateTimeExtensions dateTimeEx = new DateTimeExtensions();
         private System.Timers.Timer PumpStartTimer;
         private System.Timers.Timer DoorCheckTimer;
 
@@ -169,13 +168,6 @@ namespace First_MVVM.ViewModels
         {
             get { return _confirmPasswordIsEnabled; }
             set { SetProperty(ref _confirmPasswordIsEnabled, value); }
-        }
-
-        private string _timePointStr;
-        public string TimePointStr
-        {
-            get { return _timePointStr; }
-            set { SetProperty(ref _timePointStr, value); }
         }
 
         private int _totalCards;
@@ -350,9 +342,6 @@ namespace First_MVVM.ViewModels
                         DataTable Customer_info = await _dBRead.Customer_info(SN.Rows[0]["SN"].ToString());
                         _memberServiceModel.SN = Customer_info.Rows[0]["SN"].ToString();
                         AccountStr = Customer_info.Rows[0]["user_id"].ToString();
-
-                        _memberServiceModel.TimePoint = await _dBRead.Customer_Points(_memberServiceModel.SN, dateTimeEx.GetDateOfLastDays(DateTime.Now, -7), DateTime.Now);
-                        TimePointStr = $"剩餘點數:{_memberServiceModel.TimePoint}點";
 
                         DataTable _outstanding_Amount = await _dBRead.Charge_History(_memberServiceModel.SN);
                         if (_outstanding_Amount.Rows.Count > 0)
@@ -713,7 +702,8 @@ namespace First_MVVM.ViewModels
                     _memberServiceModel.ID = _accountStr;
                     _memberServiceModel.CardID = _card_id;
                     _memberServiceModel.Balance = _balanceStr;
-                    _memberServiceModel.Amount = Convert.ToInt16(_amountStr);
+                    //測試金額
+                    _memberServiceModel.Amount = 0;
                     break;
                 case "服務選單":
 
@@ -767,9 +757,6 @@ namespace First_MVVM.ViewModels
                     AccountStr = Customer_info.Rows[0]["user_id"].ToString();
                     BalanceStr = (string)JObject.Parse(Data)["result"]["balance"];
 
-                    _memberServiceModel.TimePoint = await _dBRead.Customer_Points(_memberServiceModel.SN, dateTimeEx.GetDateOfLastDays(DateTime.Now, -7), DateTime.Now);
-                    TimePointStr = $"剩餘點數:{_memberServiceModel.TimePoint}點";
-
                     DataTable _outstanding_Amount = await _dBRead.Charge_History(_memberServiceModel.SN);
                     //DataTable _checkOut_History = await _dBRead.Take_History(_memberServiceModel.SN);
                     if (_outstanding_Amount.Rows.Count > 0)
@@ -801,11 +788,13 @@ namespace First_MVVM.ViewModels
         private async void Charge()
         {
             if (string.IsNullOrWhiteSpace(_charge_SN)) return;
+            //測試用
+            _memberServiceModel.Amount = 0;
 
             if (!string.IsNullOrWhiteSpace(_memberServiceModel.Amount.ToString()))
             {
                 DebitIsEnabled = false;
-                string _chargeResult = await Task.Run<string>(() => { return _easyCard.Charge_request(0); });//_memberServiceModel.Amount測試模式
+                string _chargeResult = await Task.Run<string>(() => { return _easyCard.Charge_request(_memberServiceModel.Amount); });
 
                 string _isSuccess = (string)JObject.Parse(_chargeResult)["is_success"];
 

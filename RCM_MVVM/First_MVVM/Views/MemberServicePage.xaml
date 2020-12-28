@@ -281,12 +281,6 @@
                             </Button.ContentTemplate>
                         </Button>
 
-                        <TextBlock Margin="95,95,95,745">
-                            <Viewbox>
-                                <TextBlock Text="{Binding TimePointStr}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Viewbox>
-                        </TextBlock>
-
                         <TextBlock Margin="95,160,95,680">
                             <Viewbox>
                                 <TextBlock Text="{Binding NoticeText}" />

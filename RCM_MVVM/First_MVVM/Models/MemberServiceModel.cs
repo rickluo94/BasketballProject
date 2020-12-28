@@ -15,6 +15,5 @@ namespace First_MVVM.Models
         public string DebitStatus { get; set; }
         public DateTime CheckOut { get; set; }
         public DateTime CheckIn { get; set; }
-        public int TimePoint { get; set; }
     }
 }
