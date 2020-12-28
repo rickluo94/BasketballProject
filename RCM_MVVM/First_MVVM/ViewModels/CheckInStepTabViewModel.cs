@@ -33,6 +33,7 @@ namespace First_MVVM.ViewModels
         private DBRead _dBRead = new DBRead();
         private DBWrite _dBWrite = new DBWrite();
         private LC_DBWrite _lC_DBWrite = new LC_DBWrite();
+        private DBTransaction _dBTransaction = new DBTransaction();
 
         private DateTimeExtensions dateTimeEx = new DateTimeExtensions();
         private System.Timers.Timer ReaderTimer;
@@ -481,13 +482,17 @@ namespace First_MVVM.ViewModels
 
                     //建立Charge_History
                     _lC_DBWrite.Inventory(_checkInModel.LockerBoxSelectedIndex, 1);
-                    _dBWrite.Take_History_UPDATE(_checkInModel.Take_SN, _checkInModel.InTime.ToString("yyyy-MM-dd HH:mm:ss"));
+
+                    _dBTransaction.CheckIn(_checkInModel.SN, _checkInModel.CardID, _checkInModel.Take_SN, 
+                        _checkInModel.Amount, _checkInModel.UsageTime, _checkInModel.InTime.ToString("yyyy-MM-dd HH:mm:ss"), _checkInModel.TimePoint);
+
+                    //_dBWrite.Take_History_UPDATE(_checkInModel.Take_SN, _checkInModel.InTime.ToString("yyyy-MM-dd HH:mm:ss"));
                     //存入歷史紀錄
-                    _dBWrite.Charge_History(_checkInModel.SN, _checkInModel.Amount, _checkInModel.UsageTime, _checkInModel.CardID);
+                    //_dBWrite.Charge_History(_checkInModel.SN, _checkInModel.Amount, _checkInModel.UsageTime, _checkInModel.CardID);
                     //清除帳戶點數
-                    _dBWrite.Customer_Points_DELETE(_checkInModel.SN);
+                    //_dBWrite.Customer_Points_DELETE(_checkInModel.SN);
                     //將剩餘點數寫入
-                    _dBWrite.Customer_Points(_checkInModel.SN, _checkInModel.TimePoint, "TimePoint");
+                    //_dBWrite.Customer_Points(_checkInModel.SN, _checkInModel.TimePoint, "TimePoint");
 
                     NoticeText = "歸還成功，請點擊付款";
                     NextStepIsEnabled = true;
