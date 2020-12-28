@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using System.Timers;
 using RfidModel;
+using First_MVVM.Business;
 
 
 namespace First_MVVM.ViewModels
@@ -23,6 +24,7 @@ namespace First_MVVM.ViewModels
     {
         private readonly IRegionManager _regionManager;
         private CheckInModel _checkInModel { get; set; }
+        private Payment payment = new Payment();
         private EasyCard _easyCard = new EasyCard();
 
         private RFID _RFID = new RFID();
@@ -31,12 +33,15 @@ namespace First_MVVM.ViewModels
         private DBRead _dBRead = new DBRead();
         private DBWrite _dBWrite = new DBWrite();
         private LC_DBWrite _lC_DBWrite = new LC_DBWrite();
+
+        private DateTimeExtensions dateTimeEx = new DateTimeExtensions();
         private System.Timers.Timer ReaderTimer;
         private System.Timers.Timer DoorCheckTimer;
         private System.Timers.Timer DoorCheckWithRFIDVerifyTimer;
         private System.Timers.Timer DebitCheckTimer;
 
         #region Interface Property
+
         private bool _debitIsEnabled;
         public bool DebitIsEnabled
         {
@@ -141,6 +146,13 @@ namespace First_MVVM.ViewModels
             get { return _amountStr; }
             set { SetProperty(ref _amountStr, value); }
         }
+
+        private int _timePoint;
+        public int TimePoint
+        {
+            get { return _timePoint; }
+            set { SetProperty(ref _timePoint, value); }
+        }
         #endregion
 
         #region Interface Command 
@@ -192,11 +204,14 @@ namespace First_MVVM.ViewModels
             {
                 DataTable Customer_info = await _dBRead.Customer_info(RFIDS.Rows[0]["SN"].ToString());
                 _checkInModel.SN = Customer_info.Rows[0]["SN"].ToString();
+                
 
                 if (Customer_info.Rows[0]["Status"].ToString() == "1")
                 {
                     AccountStr = Customer_info.Rows[0]["user_id"].ToString();
                     BalanceStr = (string)JObject.Parse(Data)["result"]["balance"];
+
+                    TimePoint = await _dBRead.Customer_Points(_checkInModel.SN, dateTimeEx.GetDateOfLastDays(DateTime.Now, -7), DateTime.Now);
 
                     DataTable _outstanding_Amount = await _dBRead.Charge_History(_checkInModel.SN);
                     DataTable _checkOut_History = await _dBRead.Take_History(_checkInModel.SN);
@@ -269,7 +284,7 @@ namespace First_MVVM.ViewModels
                     _checkInModel.Balance = _balanceStr;
                     _checkInModel.OutTime = Convert.ToDateTime(_outTimeStr);
                     _checkInModel.LockerBoxSelectedIndex = _lockerBoxSelectedIndex;
-
+                    _checkInModel.TimePoint = _timePoint;
                     break;
                 case "借出紀錄":
                     DateTime inDate = DateTime.Now;
@@ -278,13 +293,16 @@ namespace First_MVVM.ViewModels
                     TimeSpan Duration = _checkInModel.InTime.Subtract(_checkInModel.OutTime).Duration();
                     _checkInModel.UsageTime = (int)Duration.TotalMinutes;
 
+                    var result = payment.CountAmount(_checkInModel.UsageTime, _checkInModel.TimePoint);
+                    AmountStr = Convert.ToString(result.Amount);
+                    _checkInModel.Amount = result.Amount;
+                    _checkInModel.TimePoint = result.Surplus;
+
                     IO.Write(_checkInModel.LockerBoxSelectedIndex, IO.UnLock);
 
                     SetDoorCheckTimer();
                     break;
                 case "歸還":
-                    //計算付款金額填入amount
-                    _checkInModel.Amount = 0;
 
                     SetDebitCheckTimer();
                     break;
@@ -301,14 +319,13 @@ namespace First_MVVM.ViewModels
         private async void Charge()
         {
             DataTable _charge_History = await _dBRead.Charge_History(_checkInModel.SN);
-            int _amount = _checkInModel.Amount;
 
             if (_charge_History.Rows.Count > 0)
             {
                 string _charge_SN = _charge_History.Rows[0]["Charge_SN"].ToString();
 
                 DebitIsEnabled = false;
-                string _chargeResult = await Task.Run<string>(() => { return _easyCard.Charge_request(_amount); });
+                string _chargeResult = await Task.Run<string>(() => { return _easyCard.Charge_request(0); }); //_checkInModel.Amount測試
 
                 string _isSuccess = (string)JObject.Parse(_chargeResult)["is_success"];
 
@@ -465,8 +482,12 @@ namespace First_MVVM.ViewModels
                     //建立Charge_History
                     _lC_DBWrite.Inventory(_checkInModel.LockerBoxSelectedIndex, 1);
                     _dBWrite.Take_History_UPDATE(_checkInModel.Take_SN, _checkInModel.InTime.ToString("yyyy-MM-dd HH:mm:ss"));
-                    ////存入歷史紀錄
+                    //存入歷史紀錄
                     _dBWrite.Charge_History(_checkInModel.SN, _checkInModel.Amount, _checkInModel.UsageTime, _checkInModel.CardID);
+                    //清除帳戶點數
+                    _dBWrite.Customer_Points_DELETE(_checkInModel.SN);
+                    //將剩餘點數寫入
+                    _dBWrite.Customer_Points(_checkInModel.SN, _checkInModel.TimePoint, "TimePoint");
 
                     NoticeText = "歸還成功，請點擊付款";
                     NextStepIsEnabled = true;
