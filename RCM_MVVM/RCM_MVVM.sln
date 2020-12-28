@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtualKeyboard", "VirtualK
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "First_MVVMTests", "First_MVVMTests\First_MVVMTests.csproj", "{832A45F8-6253-4404-AF1D-22EE9D19AD10}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBTests", "DBTests\DBTests.csproj", "{04DEF568-7E24-4612-B678-4BF4A3ECB80F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,7 +59,6 @@ Global
 		{832A45F8-6253-4404-AF1D-22EE9D19AD10}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{832A45F8-6253-4404-AF1D-22EE9D19AD10}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{832A45F8-6253-4404-AF1D-22EE9D19AD10}.Release|Any CPU.Build.0 = Release|Any CPU
-<<<<<<< HEAD
 		{04DEF568-7E24-4612-B678-4BF4A3ECB80F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{04DEF568-7E24-4612-B678-4BF4A3ECB80F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04DEF568-7E24-4612-B678-4BF4A3ECB80F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -65,10 +66,13 @@ Global
 <<<<<<< HEAD
 =======
 >>>>>>> parent of 7234c7f... 新增計費方式&&登入會員顯示點數
+<<<<<<< HEAD
 =======
 >>>>>>> parent of 299ac81... 加入交易連線
 =======
 >>>>>>> parent of dbb73a8... 回朔更新
+=======
+>>>>>>> parent of 59461f7... 回朔連線
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
