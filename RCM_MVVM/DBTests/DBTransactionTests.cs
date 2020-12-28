@@ -47,5 +47,23 @@ namespace DBModel.Tests
             Assert.AreEqual(expected, actual);
         }
 
+        [TestMethod()]
+        public void CheckInTest正常歸還()
+        {
+            bool expected = false;
+            string SN = "";
+            string CardID = "";
+            string Take_SN = "";
+            DateTime CheckInTime = DateTime.Now;
+            int Amount = 0;
+            int UsageTime = 0;
+            int TimePoint = 0;
+
+            var Sut = new DBTransaction();
+
+            var actual = Sut.CheckIn(SN, CardID, Take_SN, Amount, UsageTime, CheckInTime.ToString("yyyy-MM-dd HH:mm:ss"), TimePoint);
+
+            Assert.AreEqual(expected, actual);
+        }
     }
 }

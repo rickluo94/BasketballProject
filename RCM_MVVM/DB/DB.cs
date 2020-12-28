@@ -48,6 +48,54 @@ namespace DBModel
                         long RFID_Card_SN = command.LastInsertedId;
 
                         command.CommandText = $"INSERT INTO `ste_SBSCS`.`RFID_Customers` (`SN`, `RFID_Card_SN_1`) VALUES ('{SN}', '{RFID_Card_SN}');";
+                        command.ExecuteNonQuery();
+
+                        // otherwise, this will throw System.InvalidOperationException: The transaction associated with this command is not the connection's active transaction.
+                        command.ExecuteScalar();
+
+                        command.Transaction.Commit();
+                    }
+                    catch (MySqlException ex)
+                    {
+                        command.Transaction.Rollback();
+                        return false;
+                    }
+                    catch (Exception ex)
+                    {
+                        command.Transaction.Rollback();
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        }
+
+        public bool CheckIn(string SN, string Card_ID, string Take_SN, int Amount, int UsageTime, string CheckInTime, int Coin)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                conn.Open();
+
+                using (var transaction = conn.BeginTransaction())
+                using (var command = conn.CreateCommand())
+                {
+                    try
+                    {
+                        // *** ADD THIS LINE ***
+                        command.Transaction = transaction;
+
+                        command.CommandText = $"UPDATE `ste_SBSCS`.`Take_History` SET `Take_CheckIn` = '{CheckInTime}' WHERE (`Take_SN` = '{Take_SN}');";
+                        command.ExecuteNonQuery();
+
+                        command.CommandText = $"INSERT INTO `ste_SBSCS`.`Charge_History` (`SN`, `Charge_amount`, `Charge_UsageTime`, `RFID_Card_ID`) VALUES('{SN}', '{Amount}', '{UsageTime}', '{Card_ID}');";
+                        command.ExecuteNonQuery();
+
+                        command.CommandText = $"DELETE FROM `ste_SBSCS`.`Customer_Points` WHERE(`SN` = '{SN}');";
+                        command.ExecuteNonQuery();
+
+                        command.CommandText = $"INSERT INTO `ste_SBSCS`.`Customer_Points` (`SN`, `Coin`, `Type`) VALUES('{SN}', '{Coin}', 'TimePoint');";
+                        command.ExecuteNonQuery();
 
                         // otherwise, this will throw System.InvalidOperationException: The transaction associated with this command is not the connection's active transaction.
                         command.ExecuteScalar();
